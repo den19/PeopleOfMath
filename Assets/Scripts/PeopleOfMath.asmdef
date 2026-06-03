@@ -1,0 +1,19 @@
+{
+    "name": "PeopleOfMath",
+    "rootNamespace": "PeopleOfMath",
+    "references": [
+        "Unity.TextMeshPro",
+        "Unity.Localization",
+        "Unity.InputSystem",
+        "Unity.ResourceManager"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
