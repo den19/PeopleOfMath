@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: cartan
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: cartan
+  wikiTitleRu: "\u041A\u0430\u0440\u0442\u0430\u043D, \u042D\u043B\u0438"
+  wikidataId: Q315195
+  fullNameRu: "\u041A\u0430\u0440\u0442\u0430\u043D, \u042D\u043B\u0438 \u0416\u043E\u0437\u0435\u0444"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - france
+  centuryKeys:
+  - 19
+  - 20
+  branchKeys:
+  - algebra
+  - topology
+  achievementsRu: 
+  achievementsEn: 
+  personalLifeRu: 
+  personalLifeEn: 
+  shortBioRu: "\u042D\u043B\u0438\u0301 \u0416\u043E\u0437\u0435\u0301\u0444 \u041A\u0430\u0440\u0442\u0430\u0301\u043D\_\u2014
+    \u0444\u0440\u0430\u043D\u0446\u0443\u0437\u0441\u043A\u0438\u0439 \u043C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u043A,
+    \u0447\u043B\u0435\u043D \u041F\u0430\u0440\u0438\u0436\u0441\u043A\u043E\u0439
+    \u0410\u041D (1931). \u041E\u0442\u0435\u0446 \u043C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u043A\u0430
+    \u0410\u043D\u0440\u0438 \u041A\u0430\u0440\u0442\u0430\u043D\u0430."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%9A%D0%B0%D1%80%D1%82%D0%B0%D0%BD%2C_%D0%AD%D0%BB%D0%B8_%D0%96%D0%BE%D0%B7%D0%B5%D1%84
+  portraits:
+  - sprite: {fileID: 21300000, guid: 14ec7a8c1c502464a92b8fec1c39ef2b, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 51f96b91df13d9048b7d3edf47096813, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

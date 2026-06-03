@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: bernoulli_jakob
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: bernoulli_jakob
+  wikiTitleRu: "Бернулли, Якоб"
+  wikidataId: Q123757
+  fullNameRu: "Бернулли, Якоб"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - switzerland
+  centuryKeys:
+  - 17
+  branchKeys:
+  - analysis
+  - probability
+  achievementsRu: "Я́коб Берну́лли
+    (нем. Jakob Bernoulli, 6 января 1655, Базель,
+    — 16 августа 1705, Базель)
+    — швейцарский математик.
+    Один из основателей
+    теории вероятностей
+    и математического
+    анализа. Старший брат
+    Иоганна Бернулли,
+    совместно с ним положил
+    начало вариационному
+    исчислению. Доказал
+    частный случай закона
+    больших чисел — теорему
+    Бернулли. Профессор
+    математики Базельского
+    университета (с 1687 года).
+    Иностранный член
+    Парижской академии
+    наук (1699) и Берлинской
+    академии наук (1702).\n\n\n==
+    Биография ==\n\nЯкоб родился
+    в семье преуспевающего
+    фармацевта Николu043…"
+  achievementsEn: 
+  personalLifeRu: "Первое триумфальное
+    выступление молодого
+    математика относится
+    к 1690 году. Якоб решает
+    задачу Лейбница о
+    форме кривой, по которой
+    тяжелая точка опускается
+    за равные промежутки
+    времени на равные
+    вертикальные отрезки.
+    Лейбниц и Гюйгенс
+    уже установили, что
+    это полукубическая
+    парабола, но лишь Якоб
+    Бернулли опубликовал
+    доказательство средствами
+    нового анализа, выведя
+    и проинтегрировав
+    дифференциальное
+    уравнение. При этом
+    впервые появился
+    в печати термин «интеграл».\nЯкоб
+    Бернулли внёс огромный
+    вклад в u0…"
+  personalLifeEn: 
+  shortBioRu: "Я́коб Берну́лли\_—
+    швейцарский математик.
+    Один из основателей
+    теории вероятностей
+    и математического
+    анализа. Старший
+    брат Иоганна Бернулли,
+    совместно с ним
+    положил начало
+    вариационному
+    исчислению. Доказал
+    частный случай
+    закона больших
+    чисел\_— теорему
+    Бернулли. Профессор
+    математики Базельского
+    университета. Иностранный
+    член Парижской
+    академии наук (1699)
+    и Берлинской академии
+    наук (1702)."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%91%D0%B5%D1%80%D0%BD%D1%83%D0%BB%D0%BB%D0%B8%2C_%D0%AF%D0%BA%D0%BE%D0%B1
+  portraits:
+  - sprite: {fileID: 21300000, guid: 91e9c269f8927a54fa80d12f06f95ce4, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 10bf0b09d5a3f644a8d6deb8b00aeb89, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

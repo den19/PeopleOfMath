@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: weyl
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: weyl
+  wikiTitleRu: "Вейль, Герман"
+  wikidataId: Q76641
+  fullNameRu: "Вейль, Герман"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - germany
+  - usa
+  centuryKeys:
+  - 20
+  branchKeys:
+  - algebra
+  - mathematical_physics
+  achievementsRu: "Ге́рман Кла́ус
+    Гу́го Вейль [Вайль]
+    (нем. Hermann Klaus Hugo Weyl; 9 ноября 1885,
+    Эльмсхорн, Шлезвиг-Гольштейн,
+    Германская империя
+    — 8 декабря 1955, Цюрих)
+    — немецкий математик
+    и физик-теоретик. Лауреат
+    премии Лобачевского
+    (1927).\n\n\n== Биография ==\nРодился
+    в Эльмсхорне, маленьком
+    городке недалеко
+    от Гамбурга. Посещал
+    гимназию Кристианиум
+    в Альтоне. Его отец,
+    Людвиг Вейль, был управляющим
+    банка; мать, Анна Вейл
+    (урождённая Дик), происходила
+    из богатой семьи.\nВ
+    1904 году поступил в Гёттингенский
+    университет, где стал
+    учеником Д. Гильберта.
+    В 1908 году закончил оu04…"
+  achievementsEn: 
+  personalLifeRu: "Наиболее значительны
+    работы Вейля по алгебре
+    (в области теории непрерывных
+    групп, их представлений
+    и инвариантов) и теории
+    функций комплексного
+    переменного (где его
+    книга (1913) «Идея римановой
+    поверхности» (Die Idee der Riemannschen
+    Fläche) стала классической
+    — впервые было совершенно
+    строго определено
+    понятие римановой
+    поверхности, которое
+    немедленно можно
+    было распространить
+    на любое многообразие).\nТруды
+    Вейля по прикладной
+    линейной алгебре
+    имели значение для
+    последующего создания
+    математического программирования,
+    а рu0…"
+  personalLifeEn: 
+  shortBioRu: "Ге́рман Кла́ус
+    Гу́го Вейль [Вайль]\_—
+    немецкий математик
+    и физик-теоретик.
+    Лауреат премии
+    Лобачевского (1927)."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%92%D0%B5%D0%B9%D0%BB%D1%8C%2C_%D0%93%D0%B5%D1%80%D0%BC%D0%B0%D0%BD
+  portraits:
+  - sprite: {fileID: 21300000, guid: 3184fae4b3339f644a2d4244416b5c9b, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: f6632ec220bdacc48aaa14135e760452, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

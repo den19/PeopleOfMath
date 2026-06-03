@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: turing
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: turing
+  wikiTitleRu: "\u0422\u044C\u044E\u0440\u0438\u043D\u0433, \u0410\u043B\u0430\u043D"
+  wikidataId: Q7251
   fullNameRu: "\u0410\u043B\u0430\u043D \u0422\u044C\u044E\u0440\u0438\u043D\u0433"
   fullNameEn: Alan Turing
   birthDate: "23 \u0438\u044E\u043D\u044F 1912"
@@ -54,3 +56,14 @@ MonoBehaviour:
     \u043B\u043E\u0433\u0438\u043A\u0438."
   shortBioEn: Founder of computer science and theoretical logic.
   wikipediaUrlRu: "https://ru.wikipedia.org/wiki/\u0422\u044C\u044E\u0440\u0438\u043D\u0433,_\u0410\u043B\u0430\u043D"
+  portraits:
+  - sprite: {fileID: 21300000, guid: e313be3d91981184f8a71b9e925716bc, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 646a64b0c0fbd4c4998f54216d4d1cce, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

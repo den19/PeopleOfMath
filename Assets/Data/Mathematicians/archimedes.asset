@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: archimedes
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: archimedes
-  fullNameRu: "\u0410\u0440\u0445\u0438\u043C\u0435\u0434"
+  wikiTitleRu: "Архимед"
+  wikidataId: Q8739
+  fullNameRu: "Архимед"
   fullNameEn: Archimedes
-  birthDate: "\u043E\u043A. 287 \u0434\u043E \u043D.\u044D."
-  deathDate: "212 \u0434\u043E \u043D.\u044D."
+  birthDate: "ок. 287 до н.э."
+  deathDate: "212 до н.э."
   countryKeys:
   - syracuse
   centuryKeys:
@@ -24,34 +26,76 @@ MonoBehaviour:
   branchKeys:
   - geometry
   - mechanics
-  achievementsRu: "\u041E\u0442\u043A\u0440\u044B\u043B \u0437\u0430\u043A\u043E\u043D
-    \u0433\u0438\u0434\u0440\u043E\u0441\u0442\u0430\u0442\u0438\u043A\u0438 \u0438
-    \u0440\u0430\u0437\u0432\u0438\u043B \u043C\u0435\u0442\u043E\u0434\u044B \u0432\u044B\u0447\u0438\u0441\u043B\u0435\u043D\u0438\u044F
-    \u043F\u043B\u043E\u0449\u0430\u0434\u0435\u0439 \u0438 \u043E\u0431\u044A\u0451\u043C\u043E\u0432.
-    \u0421\u043E\u0437\u0434\u0430\u043B \u0438\u043D\u0436\u0435\u043D\u0435\u0440\u043D\u044B\u0435
-    \u043C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u044B \u0434\u043B\u044F \u0437\u0430\u0449\u0438\u0442\u044B
-    \u0421\u0438\u0440\u0430\u043A\u0443\u0437, \u0438\u0437\u0443\u0447\u0430\u043B
-    \u0440\u044B\u0447\u0430\u0433\u0438 \u0438 \u0432\u0438\u043D\u0442. \u0412\u0432\u0451\u043B
-    \u043F\u043E\u043D\u044F\u0442\u0438\u0435 \u03C0 \u0438 \u043E\u0446\u0435\u043D\u0438\u043B
-    \u0435\u0433\u043E \u0441 \u0432\u044B\u0441\u043E\u043A\u043E\u0439 \u0442\u043E\u0447\u043D\u043E\u0441\u0442\u044C\u044E."
+  achievementsRu: "Архиме́д (др.-греч.
+    Ἀρχιμήδης; 287—212 годы
+    до н. э.) — древнегреческий
+    учёный и инженер, самый
+    известный математик
+    Античности. Родился
+    и бо́льшую часть жизни
+    прожил в городе Сиракузы
+    на Сицилии.\nСделал
+    множество открытий
+    в области геометрии,
+    предвосхитил многие
+    идеи математического
+    анализа. Заложил основы
+    механики, гидростатики,
+    был автором ряда важных
+    изобретений. С именем
+    Архимеда связаны
+    многие математические
+    понятия.\nНаиболее
+    известно приближение
+    числа π (22/7), которое называется
+    Архимедовым числом.
+    Кроме u04…"
   achievementsEn: "Discovered the law of hydrostatics and advanced methods for areas
     and volumes. Designed engineering devices to defend Syracuse and studied levers
-    and the screw. Introduced the concept of \u03C0 and estimated it with high accuracy."
-  personalLifeRu: "\u0421\u044B\u043D \u0430\u0441\u0442\u0440\u043E\u043D\u043E\u043C\u0430
-    \u0424\u0438\u0434\u0438\u044F; \u0434\u043E\u043B\u0433\u043E\u0435 \u0432\u0440\u0435\u043C\u044F
-    \u0436\u0438\u043B \u0432 \u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0438\u0438,
-    \u0437\u0430\u0442\u0435\u043C \u0432\u0435\u0440\u043D\u0443\u043B\u0441\u044F
-    \u043D\u0430 \u0440\u043E\u0434\u0438\u043D\u0443. \u041F\u043E\u0433\u0438\u0431
-    \u0432\u043E \u0432\u0440\u0435\u043C\u044F \u043E\u0441\u0430\u0434\u044B \u0421\u0438\u0440\u0430\u043A\u0443\u0437
-    \u0440\u0438\u043C\u043B\u044F\u043D\u0430\u043C\u0438. \u0418\u0437\u0432\u0435\u0441\u0442\u043D\u0430
-    \u0438\u0441\u0442\u043E\u0440\u0438\u044F \u043E \u043A\u0440\u0438\u043A\u0435
-    \xAB\u042D\u0432\u0440\u0438\u043A\u0430!\xBB \u043F\u0440\u0438 \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0438
-    \u043A\u043E\u0440\u043E\u043D\u044B."
+    and the screw. Introduced the concept of π and estimated it with high accuracy."
+  personalLifeRu: "Архимед прославился
+    многими механическими
+    конструкциями. Рычаг
+    был известен и до него,
+    но лишь Архимед изложил
+    его полную теорию
+    и успешно её применял
+    на практике. Плутарх
+    сообщает, что Архимед
+    построил в порту Сиракуз
+    немало блочно-рычажных
+    механизмов для облегчения
+    подъёма и транспортировки
+    тяжёлых грузов. В легенде
+    о том, как Архимед движением
+    руки начал двигать
+    корабль, современники
+    видят работу не рычага,
+    а полиспаста или многоступенчатого
+    редуктора, которые
+    сумел создать древнегреческий
+    сирu04…"
   personalLifeEn: Son of the astronomer Phidias; lived in Alexandria for a long time,
     then returned home. Died during the Roman siege of Syracuse. The story of shouting
     Eureka while studying the king's crown is well known.
-  shortBioRu: "\u041A\u0440\u0443\u043F\u043D\u0435\u0439\u0448\u0438\u0439 \u0443\u0447\u0451\u043D\u044B\u0439
-    \u044D\u043B\u043B\u0438\u043D\u0438\u0441\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0439
-    \u044D\u043F\u043E\u0445\u0438, \u0440\u043E\u0434\u043E\u043C \u0438\u0437 \u0421\u0438\u0440\u0430\u043A\u0443\u0437."
+  shortBioRu: "Архиме́д\_— древнегреческий
+    учёный и инженер,
+    самый известный
+    математик Античности.
+    Родился и бо́льшую
+    часть жизни прожил
+    в городе Сиракузы
+    на Сицилии."
   shortBioEn: Leading scientist of the Hellenistic era, from Syracuse.
-  wikipediaUrlRu: "https://ru.wikipedia.org/wiki/\u0410\u0440\u0445\u0438\u043C\u0435\u0434"
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%90%D1%80%D1%85%D0%B8%D0%BC%D0%B5%D0%B4
+  portraits:
+  - sprite: {fileID: 21300000, guid: 60ee0d73957233647a61f6047cb774c3, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: a15e15d86fb8e3343860824f3bfe7e6e, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

@@ -13,46 +13,97 @@ MonoBehaviour:
   m_Name: euclid
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: euclid
-  fullNameRu: "\u0415\u0432\u043A\u043B\u0438\u0434"
+  wikiTitleRu: "Евклид"
+  wikidataId: Q8737
+  fullNameRu: "Евклид"
   fullNameEn: Euclid
-  birthDate: "\u043E\u043A. 325 \u0434\u043E \u043D.\u044D."
-  deathDate: "\u043E\u043A. 265 \u0434\u043E \u043D.\u044D."
+  birthDate: "ок. 325 до н.э."
+  deathDate: "ок. 265 до н.э."
   countryKeys:
   - greece
   centuryKeys:
   - 3bc
   branchKeys:
   - geometry
-  achievementsRu: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430\u0442\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u043B
-    \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044E \u0432 13 \u043A\u043D\u0438\u0433\u0430\u0445
-    \xAB\u041D\u0430\u0447\u0430\u043B\xBB, \u0432\u0432\u0435\u0434\u044F \u0430\u043A\u0441\u0438\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0439
-    \u043C\u0435\u0442\u043E\u0434. \u0410\u043B\u0433\u043E\u0440\u0438\u0442\u043C
-    \u043D\u0430\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F \u043D\u0430\u0438\u0431\u043E\u043B\u044C\u0448\u0435\u0433\u043E
-    \u043E\u0431\u0449\u0435\u0433\u043E \u0434\u0435\u043B\u0438\u0442\u0435\u043B\u044F
-    \u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043D \u043A\u0430\u043A \u0430\u043B\u0433\u043E\u0440\u0438\u0442\u043C
-    \u0415\u0432\u043A\u043B\u0438\u0434\u0430. \u0415\u0433\u043E \u043F\u043E\u0434\u0445\u043E\u0434
-    \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u043B \u043F\u0440\u0435\u043F\u043E\u0434\u0430\u0432\u0430\u043D\u0438\u0435
-    \u043C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u043A\u0438 \u0431\u043E\u043B\u0435\u0435
-    \u0434\u0432\u0443\u0445 \u0442\u044B\u0441\u044F\u0447\u0435\u043B\u0435\u0442\u0438\u0439."
+  achievementsRu: "Евкли́д (или Эвкли́д,
+    др.-греч. Εὐκλείδης,
+    от «добрая слава»;
+    жил примерно в период
+    325—265 годы до н. э.) — древнегреческий
+    математик, геометр,
+    автор первого из дошедших
+    до нас теоретических
+    трактатов по математике.
+    Биографические сведения
+    о Евклиде крайне скудны.
+    Достоверным можно
+    считать лишь то, что
+    его научная деятельность
+    протекала в Александрии
+    в III веке до н. э.\nЕвклид
+    — первый математик
+    Александрийской школы.
+    Его главная работа
+    «Начала» (Στοιχεῖα,
+    в латинизированной
+    форме — «Элементы»)
+    содержит изложение
+    плu0…"
   achievementsEn: Systematized geometry in thirteen books of the Elements, introducing
     the axiomatic method. The algorithm for the greatest common divisor is known
     as Euclid's algorithm. His approach shaped mathematics education for more than
     two millennia.
-  personalLifeRu: "\u041F\u0440\u0435\u043F\u043E\u0434\u0430\u0432\u0430\u043B \u0432
-    \u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0438\u0438 \u043F\u0440\u0438
-    \u041F\u0442\u043E\u043B\u0435\u043C\u0435\u044F\u0445; \u0441\u0432\u0435\u0434\u0435\u043D\u0438\u0439
-    \u043E \u043B\u0438\u0447\u043D\u043E\u0439 \u0436\u0438\u0437\u043D\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u043B\u043E\u0441\u044C
-    \u043C\u0430\u043B\u043E. \u0410\u043D\u0442\u0438\u0447\u043D\u044B\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438
-    \u043D\u0430\u0437\u044B\u0432\u0430\u044E\u0442 \u0435\u0433\u043E \xAB\u043E\u0442\u0446\u043E\u043C
-    \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u0438\xBB. \u0414\u043E\u0441\u0442\u043E\u0432\u0435\u0440\u043D\u044B\u0435
-    \u043F\u043E\u0440\u0442\u0440\u0435\u0442\u044B \u0438 \u043F\u043E\u0434\u0440\u043E\u0431\u043D\u0430\u044F
-    \u0431\u0438\u043E\u0433\u0440\u0430\u0444\u0438\u044F \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u044B."
+  personalLifeRu: "Геометрические
+    чертежи, на которых
+    при проведении вспомогательных
+    линий неявная истина
+    становится очевидной,
+    служат иллюстрацией
+    для учения о припоминании,
+    развитого Платоном
+    в Меноне и других диалогах.
+    Предложения геометрии
+    потому и называются
+    теоремами, что для
+    постижения их истины
+    требуется воспринимать
+    чертёж не простым
+    чувственным зрением,
+    но «очами разума».
+    Всякий же чертёж к
+    теореме представляет
+    собой идею: мы видим
+    перед собой эту фигуру,
+    а ведём рассуждения
+    и делаем заключения
+    сразу для u04…"
   personalLifeEn: Taught in Alexandria under the Ptolemies; little is known about
     his personal life. Ancient sources call him the father of geometry. Reliable
     portraits and a detailed biography are unknown.
-  shortBioRu: "\u0410\u0432\u0442\u043E\u0440 \xAB\u041D\u0430\u0447\u0430\u043B\xBB
-    \u2014 \u0444\u0443\u043D\u0434\u0430\u043C\u0435\u043D\u0442\u0430\u043B\u044C\u043D\u043E\u0433\u043E
-    \u0442\u0440\u0443\u0434\u0430 \u043F\u043E \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u0438
-    \u0430\u043D\u0442\u0438\u0447\u043D\u043E\u0441\u0442\u0438."
+  shortBioRu: "Евкли́д\_— древнегреческий
+    математик, геометр,
+    автор первого из
+    дошедших до нас
+    теоретических
+    трактатов по математике.
+    Биографические
+    сведения о Евклиде
+    крайне скудны. Достоверным
+    можно считать лишь
+    то, что его научная
+    деятельность протекала
+    в Александрии в
+    III\_веке до\_н.\_э."
   shortBioEn: Author of the Elements, the fundamental treatise on ancient geometry.
-  wikipediaUrlRu: "https://ru.wikipedia.org/wiki/\u0415\u0432\u043A\u043B\u0438\u0434"
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%95%D0%B2%D0%BA%D0%BB%D0%B8%D0%B4
+  portraits:
+  - sprite: {fileID: 21300000, guid: cdad3be0720a67048b6cc117a114adba, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: c0b739ce102f645468fc018edee77324, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

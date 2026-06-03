@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: huygens
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: huygens
+  wikiTitleRu: "Гюйгенс, Христиан"
+  wikidataId: Q7293
+  fullNameRu: "Гюйгенс, Христиан"
+  fullNameEn: 
+  birthDate: 1666
+  deathDate: 1681
+  countryKeys:
+  - netherlands
+  centuryKeys:
+  - 17
+  branchKeys:
+  - probability
+  - mechanics
+  achievementsRu: "Христиа́н Гю́йгенс
+    ван Зёйлихем (нид. Christiaan
+    Huygens МФА: ; 14 апреля 1629, Гаага
+    — 8 июля 1695, там же) — голландский
+    механик, физик, математик,
+    астроном и изобретатель.
+    Первый иностранный
+    член Лондонского
+    королевского общества
+    (1663), член Французской
+    академии наук с момента
+    её основания (1666) и её
+    первый президент
+    (1666—1681).\nОдин из основоположников
+    теоретической механики
+    и теории вероятностей.
+    Внёс значительный
+    вклад в оптику, молекулярную
+    физику, астрономию,
+    геометрию, часовое
+    дело. Открыл кольца
+    Сатурна и Титан (спутник
+    Сатурна). Изобрёл u04…"
+  achievementsEn: 
+  personalLifeRu: "Если сложный маятник,
+    выйдя из покоя, совершил
+    некоторую часть своего
+    качания, большую полуразмаха,
+    и если связь между
+    всеми его частицами
+    будет уничтожена,
+    то каждая из этих частиц
+    поднимется на такую
+    высоту, что общий центр
+    тяжести их при этом
+    будет на той высоте,
+    на которой он был при
+    выходе маятника из
+    покоя.\nЭто предложение,
+    не доказанное у Гюйгенса,
+    является у него в качестве
+    основного начала,
+    между тем как теперь
+    оно представляет
+    простое следствие
+    закона сохранения
+    энергии.\nТеория физического
+    маятниu…"
+  personalLifeEn: 
+  shortBioRu: "Христиа́н Гю́йгенс
+    ван Зёйлихем\_— голландский
+    механик, физик, математик,
+    астроном и изобретатель.
+    Первый иностранный
+    член Лондонского
+    королевского общества
+    (1663), член Французской
+    академии наук с
+    момента её основания
+    (1666) и её первый президент
+    (1666—1681)."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%93%D1%8E%D0%B9%D0%B3%D0%B5%D0%BD%D1%81%2C_%D0%A5%D1%80%D0%B8%D1%81%D1%82%D0%B8%D0%B0%D0%BD
+  portraits:
+  - sprite: {fileID: 21300000, guid: ae7929b0803ab2f42903689a8c63c0d7, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: d81ece5fa4c6d1247b9bfcbc7b659554, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

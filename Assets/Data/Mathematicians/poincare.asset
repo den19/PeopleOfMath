@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: poincare
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: poincare
+  wikiTitleRu: "\u041F\u0443\u0430\u043D\u043A\u0430\u0440\u0435, \u0410\u043D\u0440\u0438"
+  wikidataId: Q3581
   fullNameRu: "\u0410\u043D\u0440\u0438 \u041F\u0443\u0430\u043D\u043A\u0430\u0440\u0435"
   fullNameEn: "Henri Poincar\xE9"
   birthDate: "29 \u0430\u043F\u0440\u0435\u043B\u044F 1854"
@@ -55,3 +57,14 @@ MonoBehaviour:
   shortBioEn: "A universal mathematician and philosopher of science at the fin de
     si\xE8cle."
   wikipediaUrlRu: "https://ru.wikipedia.org/wiki/\u041F\u0443\u0430\u043D\u043A\u0430\u0440\u0435,_\u0410\u043D\u0440\u0438"
+  portraits:
+  - sprite: {fileID: 21300000, guid: 6cb6cc33d8ece044fa083b566dd83ff7, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 8ca40c431dd3df64d97f8d755b4f5699, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

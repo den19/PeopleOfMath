@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: napier
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: napier
+  wikiTitleRu: "Непер, Джон"
+  wikidataId: Q312371
+  fullNameRu: "Непер, Джон"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - scotland
+  centuryKeys:
+  - 16
+  - 17
+  branchKeys:
+  - analysis
+  achievementsRu: "Джон Не́пер (англ.
+    John Napier ['neɪpɪə]; 1550—1617) — шотландский
+    математик, один из
+    изобретателей логарифмов,
+    первый публикатор
+    логарифмических таблиц,
+    астроном. 8-й лэрд Мерчистона
+    из клана Непер.\n\n\n== Биография
+    ==\nПодробности жизни
+    учёного известны
+    главным образом из
+    книги «Биография
+    Джона Непера из Мерчистона,
+    его родословная, жизнь
+    и время, с историей
+    изобретения логарифмов»,
+    написанной его потомком
+    Марком Непером (1798—1879).\n6-й
+    лэрд Александр Непер,
+    дед учёного, погиб
+    в битве при Пинки (1547
+    год), и замок перешёл
+    к его старшему сыну,
+    14-летнеu04…"
+  achievementsEn: 
+  personalLifeRu: "Сочинение Непера
+    разделено на 2 книги,
+    из которых первая
+    посвящена логарифмам,
+    а вторая — плоской
+    и сферической тригонометрии,
+    причём вторая часть
+    одновременно служит
+    практическим пособием
+    по первой. Более развёрнутое
+    описание содержалось
+    в другом труде, изданном
+    посмертно его сыном;
+    там же Непер пояснил,
+    как он составлял свои
+    таблицы. Понятия функции
+    тогда ещё не было, и
+    Непер определил логарифм
+    кинематически, сопоставив
+    равномерное и логарифмически
+    замедленное движение.
+    В современной записи
+    моделu…"
+  personalLifeEn: 
+  shortBioRu: "Джон Не́пер —
+    шотландский математик,
+    один из изобретателей
+    логарифмов, первый
+    публикатор логарифмических
+    таблиц, астроном.
+    8-й лэрд Мерчистона
+    из клана Непер."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%9D%D0%B5%D0%BF%D0%B5%D1%80%2C_%D0%94%D0%B6%D0%BE%D0%BD
+  portraits:
+  - sprite: {fileID: 21300000, guid: fedb063b73888ac4b872b86999ef2cbb, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 8ff5c773674594145a077386d9a51122, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

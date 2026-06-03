@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: banach
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: banach
+  wikiTitleRu: "Банах, Стефан"
+  wikidataId: Q5528
+  fullNameRu: "Банах, Стефан"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - poland
+  centuryKeys:
+  - 20
+  branchKeys:
+  - analysis
+  achievementsRu: "Сте́фан Ба́нах
+    (пол. Stefan Banach; род. 30 марта
+    1892, Краков, Австро-Венгрия
+    — 31 августа 1945, Львов,
+    УССР, СССР) — польский
+    математик, профессор
+    Университета Яна
+    Казимира (1924), декан физико-математического
+    факультета Львовского
+    университета (1939).\nЧлен
+    Польской АН. Один из
+    создателей современного
+    функционального анализа
+    и львовской математической
+    школы.\n\n\n== Биография
+    ==\nРодился в семье Стефана
+    Гречека и Катажины
+    Банах, уроженцев южно-польской
+    провинции Подгалье.
+    Его отец был рядовым
+    и не имел права жениться,
+    а мать была слишком
+    бедной, u0…"
+  achievementsEn: 
+  personalLifeRu: "В годы немецкой
+    оккупации Львовский
+    университет был закрыт,
+    Банах оказался в тюрьме,
+    но довольно быстро
+    был выпущен и сумел
+    устроиться на работу
+    «кормителя вшей»
+    на завод по производству
+    противотифозной вакцины
+    при институте по исследованию
+    тифа под руководством
+    профессора Рудольфа
+    Вайгля. Это была одна
+    из немногих возможностей
+    для Банаха получить
+    работу в оккупированном
+    Львове, дающая также
+    защиту от возможных
+    репрессий со стороны
+    оккупантов. Вместе
+    с Банахом «кормителями
+    вшей» работали многиu0…"
+  personalLifeEn: 
+  shortBioRu: "Сте́фан Ба́нах\_—
+    польский математик,
+    профессор Университета
+    Яна Казимира (1924), декан
+    физико-математического
+    факультета Львовского
+    университета (1939)."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%91%D0%B0%D0%BD%D0%B0%D1%85%2C_%D0%A1%D1%82%D0%B5%D1%84%D0%B0%D0%BD
+  portraits:
+  - sprite: {fileID: 21300000, guid: 36197cea5580e284ca2c27dd9937b887, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 266cc45e8c780274a81a5e5616c361bd, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

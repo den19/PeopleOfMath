@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: jacobi
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: jacobi
+  wikiTitleRu: "Якоби, Карл"
+  wikidataId: Q76564
+  fullNameRu: "Якоби, Карл"
+  fullNameEn: 
+  birthDate: 1804
+  deathDate: 1851
+  countryKeys:
+  - germany
+  centuryKeys:
+  - 19
+  branchKeys:
+  - algebra
+  - number_theory
+  achievementsRu: 'Карл Якоби:
+
+
+    Якоби,
+    Карл Густав Якоб (1804—1851)
+    — немецкий математик.
+
+    Якоби,
+    Карл (1775—1858) — немецкий
+    врач-психиатр, учредитель
+    спецклиники в Зигбурге.'
+  achievementsEn: 
+  personalLifeRu: 'Якоби, Карл Рудольф
+    (1828—1904) — прусский политик
+    и государственный
+    деятель.
+
+    Якоби (Джакоуби),
+    Карл (1908—1994) — американский
+    писатель, журналист
+    и редактор
+
+
+
+    == Примечания
+    =='
+  personalLifeEn: 
+  shortBioRu: "Карл Якоби:Якоби,
+    Карл Густав Якоб
+    (1804—1851)\_— немецкий математик.\nЯкоби,
+    Карл (1775—1858)\_— немецкий
+    врач-психиатр, учредитель
+    спецклиники в Зигбурге.\nЯкоби,
+    Карл Рудольф (1828—1904)\_—
+    прусский политик
+    и государственный
+    деятель.\nЯкоби (Джакоуби),
+    Карл (1908—1994)\_— американский
+    писатель, журналист
+    и редактор"
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%AF%D0%BA%D0%BE%D0%B1%D0%B8%2C_%D0%9A%D0%B0%D1%80%D0%BB
+  portraits:
+  - sprite: {fileID: 21300000, guid: e4509c494d871654ea97d7980f04904a, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 1a2b566399258cf49abac035f24b1388, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

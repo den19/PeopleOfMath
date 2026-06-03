@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: wallis
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: wallis
+  wikiTitleRu: "\u0423\u043E\u043B\u043B\u0438\u0441, \u0414\u0436\u043E\u043D"
+  wikidataId: Q123762
+  fullNameRu: "\u0423\u043E\u043B\u043B\u0438\u0441, \u0414\u0436\u043E\u043D"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - england
+  centuryKeys:
+  - 17
+  branchKeys:
+  - analysis
+  achievementsRu: 
+  achievementsEn: 
+  personalLifeRu: 
+  personalLifeEn: 
+  shortBioRu: 
+  shortBioEn: 
+  wikipediaUrlRu: 
+  portraits:
+  - sprite: {fileID: 21300000, guid: 46e46897857a6214ebda8175ad6c362b, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 86b71e26f14cb4d4f9f2071992cf0022, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

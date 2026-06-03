@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: cardano
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: cardano
+  wikiTitleRu: "Кардано, Джероламо"
+  wikidataId: Q184871
+  fullNameRu: "Кардано, Джероламо"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - italy
+  centuryKeys:
+  - 16
+  branchKeys:
+  - algebra
+  - probability
+  achievementsRu: "Джеро́ламо (Джироламо,
+    Иероним) Карда́но
+    (лат. Hieronymus Cardanus, итал. Girolamo Cardano,
+    Gerolamo Cardano; 24 сентября 1501, Павия
+    — 21 сентября 1576, Рим) —
+    итальянский математик,
+    инженер, философ, врач,
+    астролог. Опубликовал
+    фундаментальные труды
+    по алгебре, теории
+    вероятностей и механике,
+    оказавшие огромное
+    влияние на развитие
+    науки.\n\n\n== Биография
+    ==\nДжероламо Кардано
+    был побочным сыном
+    юриста Фацио (Fazio) Кардано,
+    отец узаконил его
+    лишь незадолго до
+    своей смерти в 1524 году,
+    женившись на Кларе
+    Мичери, его матери.
+    Мальчик часто болел,
+    один раз даже был при
+    смерти, но чудом u043…"
+  achievementsEn: 
+  personalLifeRu: "Прикладное значение
+    формул Кардано было
+    не слишком велико,
+    так как к этому моменту
+    математики уже разработали
+    численные методы
+    для вычисления корней
+    уравнений любой степени
+    с хорошей точностью;
+    один из таких расчётных
+    алгоритмов (автор
+    называл его «золотым
+    правилом», которое
+    является развитием
+    «правила двойного
+    ложного положения»)
+    разработал и подробно
+    изложил в «Великом
+    искусстве» сам Кардано.
+    Однако открытие нового
+    теоретического метода,
+    неизвестного ни грекам,
+    ни математикам исламского
+    мирu04…"
+  personalLifeEn: 
+  shortBioRu: "Джеро́ламо Карда́но\_—
+    итальянский математик,
+    инженер, философ,
+    врач, астролог. Опубликовал
+    фундаментальные
+    труды по алгебре,
+    теории вероятностей
+    и механике, оказавшие
+    огромное влияние
+    на развитие науки."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%9A%D0%B0%D1%80%D0%B4%D0%B0%D0%BD%D0%BE%2C_%D0%94%D0%B6%D0%B5%D1%80%D0%BE%D0%BB%D0%B0%D0%BC%D0%BE
+  portraits:
+  - sprite: {fileID: 21300000, guid: d02d42b9f793710449c4eb4881e43d58, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: f63c1d7acd826b04eb90e8f03474ff35, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

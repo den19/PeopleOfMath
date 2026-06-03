@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: faltings
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: faltings
+  wikiTitleRu: "Фальтингс, Герд"
+  wikidataId: Q310781
+  fullNameRu: "Фальтингс, Герд"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - germany
+  centuryKeys:
+  - 20
+  branchKeys:
+  - number_theory
+  - geometry
+  achievementsRu: "Герд Фальтингс
+    (нем. Gerd Faltings, род. 28 июля 1954,
+    Гельзенкирхен-Бюр)
+    — немецкий математик,
+    лауреат Филдсовской
+    (1986) и Абелевской (2026) премии,
+    известен своими работами
+    в области алгебраической
+    геометрии.\n\n\n== Биография
+    ==\nС 1972 по 1978 год изучал
+    математику и физику
+    в Вестфальском университете
+    имени Вильгельма.
+    В 1978 году получил степень
+    Ph.D. по математике, а в
+    1981 году прошёл хабилитацию
+    (и то и другое — в том
+    же Вестфальском университете
+    имени Вильгельма).
+    С 1982 по 1984 год был профессором
+    Вуппертальского университета,
+    затем — профессором
+    Принстонскu0…"
+  achievementsEn: 
+  personalLifeRu: "В 2015 году вместе
+    с Хенриком Иванецем
+    был удостоен премии
+    Шао за введение и развитие
+    базовых инструментов
+    теории чисел, позволивших
+    им и другим решить
+    некоторые ставшие
+    классическими задачи.\nЧлен
+    Леопольдины (1992), Рейнско-Вестфальской
+    АН (1999) и Европейской
+    академии (2014), Берлинско-Бранденбургской
+    АН, членкор Гёттингенской
+    АН (1991), иностранный член
+    Лондонского королевского
+    общества (2016), Национальной
+    академии наук США
+    (2018).\n\n\n== Награды и отличия
+    ==\nНаучные:\n\n1983 — Премия
+    имени Дэнни Хайнемана\n1986
+    — Филдсовская премия\n1988
+    — Стипендия u…"
+  personalLifeEn: 
+  shortBioRu: "Герд Фальтингс\_—
+    немецкий математик,
+    лауреат Филдсовской
+    (1986) и Абелевской (2026)
+    премии, известен
+    своими работами
+    в области алгебраической
+    геометрии."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%BB%D1%8C%D1%82%D0%B8%D0%BD%D0%B3%D1%81%2C_%D0%93%D0%B5%D1%80%D0%B4
+  portraits:
+  - sprite: {fileID: 21300000, guid: 1c71bd5c9f291e7449b61288e55a468b, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 9e83a19138f1d21458ac3f9ef305ea97, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

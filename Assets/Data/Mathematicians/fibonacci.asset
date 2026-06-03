@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: fibonacci
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: fibonacci
+  wikiTitleRu: "Фибоначчи"
+  wikidataId: Q8763
+  fullNameRu: "Фибоначчи"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - italy
+  centuryKeys:
+  - 13
+  branchKeys:
+  - number_theory
+  achievementsRu: "Леона́рдо Пиза́нский
+    (лат. Leonardus Pisanus, итал. Leonardo Pisano, около
+    1170 года, Пиза — около
+    1250 года, там же) — первый
+    крупный математик
+    средневековой Европы.
+    Наиболее известен
+    под прозвищем Фибона́ччи
+    (итал. Fibonacci).\nОтец Фибоначчи
+    по торговым делам
+    часто бывал в Алжире,
+    и Леонардо изучал
+    там математику у арабских
+    учителей. Позже Фибоначчи
+    посетил Египет, Сирию,
+    Византию, Сицилию.
+    Он ознакомился с достижениями
+    арабских математиков,
+    а также античных и
+    индийских в арабском
+    переводе. На основе
+    усвоенных им знаний
+    Фибоначчи написал
+    ряд матема…"
+  achievementsEn: 
+  personalLifeRu: "Другая книга Фибоначчи,
+    «Практика геометрии»
+    (Practica geometriae, 1220), состоит из семи
+    частей и содержит
+    разнообразные теоремы
+    с доказательствами,
+    относящиеся к измерительным
+    методам. Наряду с классическими
+    результатами Фибоначчи
+    приводит свои собственные
+    — например, первое
+    доказательство того,
+    что три медианы треугольника
+    пересекаются в одной
+    точке (Архимеду этот
+    факт был известен,
+    но если его доказательство
+    и существовало, до
+    нас оно не дошло). Среди
+    землемерных приёмов,
+    которым посвящён
+    последний раздел
+    книги, — u043…"
+  personalLifeEn: 
+  shortBioRu: "Леона́рдо Пиза́нский\_—
+    первый крупный
+    математик средневековой
+    Европы. Наиболее
+    известен под прозвищем
+    Фибона́ччи."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%A4%D0%B8%D0%B1%D0%BE%D0%BD%D0%B0%D1%87%D1%87%D0%B8
+  portraits:
+  - sprite: {fileID: 21300000, guid: 85be18b30d7e15946a22d24eaa65804c, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: a1d9c0d21a20a9e48be1b4c1f37ab906, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

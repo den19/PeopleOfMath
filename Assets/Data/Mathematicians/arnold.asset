@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: arnold
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: arnold
+  wikiTitleRu: "Арнольд, Владимир"
+  wikidataId: Q157295
+  fullNameRu: "Арнольд, Владимир"
+  fullNameEn: 
+  birthDate: 1937
+  deathDate: 2010
+  countryKeys:
+  - russia
+  centuryKeys:
+  - 20
+  branchKeys:
+  - dynamical_systems
+  achievementsRu: 'Владимир Арнольд:
+
+
+    Арнольд,
+    Владимир Игоревич
+    (1937—2010) — советский и российский
+    математик, педагог.'
+  achievementsEn: 
+  personalLifeRu: Арнольд, Владимир
+    Фёдорович (1872—1918) — русский
+    экономист и статистик.
+  personalLifeEn: 
+  shortBioRu: "Владимир Арнольд:Арнольд,
+    Владимир Игоревич
+    (1937—2010) — советский
+    и российский математик,
+    педагог.\nАрнольд,
+    Владимир Фёдорович
+    (1872—1918) — русский экономист
+    и статистик."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%90%D1%80%D0%BD%D0%BE%D0%BB%D1%8C%D0%B4%2C_%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80
+  portraits:
+  - sprite: {fileID: 21300000, guid: c6774648df8b9a448a73d03cd0850e45, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 3da62b32f79d42745a09955d4a247a29, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

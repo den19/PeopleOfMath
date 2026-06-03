@@ -1,0 +1,228 @@
+{
+  "mathematicians": [
+    {
+      "id": "pythagoras",
+      "wikiTitleRu": "Пифагор",
+      "wikidataId": "Q10261",
+      "countryKeys": [
+        "greece"
+      ],
+      "centuryKeys": [
+        "6bc",
+        "5bc"
+      ],
+      "branchKeys": [
+        "geometry",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "euclid",
+      "wikiTitleRu": "Евклид",
+      "wikidataId": "Q8737",
+      "countryKeys": [
+        "greece"
+      ],
+      "centuryKeys": [
+        "3bc"
+      ],
+      "branchKeys": [
+        "geometry"
+      ]
+    },
+    {
+      "id": "archimedes",
+      "wikiTitleRu": "Архимед",
+      "wikidataId": "Q8739",
+      "countryKeys": [
+        "syracuse"
+      ],
+      "centuryKeys": [
+        "3bc"
+      ],
+      "branchKeys": [
+        "geometry",
+        "mechanics"
+      ]
+    },
+    {
+      "id": "fermat",
+      "wikiTitleRu": "Ферма, Пьер",
+      "wikidataId": "Q2965",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "newton",
+      "wikiTitleRu": "Ньютон, Исаак",
+      "wikidataId": "Q935",
+      "countryKeys": [
+        "england"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "analysis",
+        "mechanics"
+      ]
+    },
+    {
+      "id": "euler",
+      "wikiTitleRu": "Эйлер, Леонард",
+      "wikidataId": "Q7604",
+      "countryKeys": [
+        "switzerland",
+        "russia"
+      ],
+      "centuryKeys": [
+        "18"
+      ],
+      "branchKeys": [
+        "analysis",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "gauss",
+      "wikiTitleRu": "Гаусс, Карл Фридрих",
+      "wikidataId": "Q6722",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "18",
+        "19"
+      ],
+      "branchKeys": [
+        "number_theory",
+        "geometry"
+      ]
+    },
+    {
+      "id": "galois",
+      "wikiTitleRu": "Галуа, Эварист",
+      "wikidataId": "Q1744",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "algebra"
+      ]
+    },
+    {
+      "id": "lobachevsky",
+      "wikiTitleRu": "Лобачевский, Николай Иванович",
+      "wikidataId": "Q4372",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "geometry"
+      ]
+    },
+    {
+      "id": "kovalevskaya",
+      "wikiTitleRu": "Ковалевская, Софья Васильевна",
+      "wikidataId": "Q184653",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "riemann",
+      "wikiTitleRu": "Риман, Бернхард",
+      "wikidataId": "Q42299",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "analysis",
+        "geometry"
+      ]
+    },
+    {
+      "id": "cantor",
+      "wikiTitleRu": "Кантор, Георг",
+      "wikidataId": "Q7294",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "set_theory"
+      ]
+    },
+    {
+      "id": "poincare",
+      "wikiTitleRu": "Пуанкаре, Анри",
+      "wikidataId": "Q3581",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "topology",
+        "dynamical_systems"
+      ]
+    },
+    {
+      "id": "hilbert",
+      "wikiTitleRu": "Гильберт, Давид",
+      "wikidataId": "Q6694",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "geometry",
+        "logic"
+      ]
+    },
+    {
+      "id": "turing",
+      "wikiTitleRu": "Тьюринг, Алан",
+      "wikidataId": "Q7251",
+      "countryKeys": [
+        "uk"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "logic",
+        "informatics"
+      ]
+    }
+  ]
+}

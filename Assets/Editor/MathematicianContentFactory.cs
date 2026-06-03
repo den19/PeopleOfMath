@@ -48,6 +48,8 @@ namespace PeopleOfMath.Editor
         static void CopyFields(MathematicianData from, MathematicianData to)
         {
             to.id = from.id;
+            to.wikiTitleRu = from.wikiTitleRu;
+            to.wikidataId = from.wikidataId;
             to.fullNameRu = from.fullNameRu;
             to.fullNameEn = from.fullNameEn;
             to.birthDate = from.birthDate;
@@ -62,6 +64,9 @@ namespace PeopleOfMath.Editor
             to.shortBioRu = from.shortBioRu;
             to.shortBioEn = from.shortBioEn;
             to.wikipediaUrlRu = from.wikipediaUrlRu;
+            to.portraits = from.portraits != null
+                ? new List<PortraitEntry>(from.portraits)
+                : new List<PortraitEntry>();
         }
 
         static MathematicianData BuildPythagoras()

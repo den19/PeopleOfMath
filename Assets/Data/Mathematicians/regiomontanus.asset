@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: regiomontanus
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: regiomontanus
+  wikiTitleRu: "Региомонтан"
+  wikidataId: Q76364
+  fullNameRu: "Региомонтан"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - germany
+  centuryKeys:
+  - 15
+  branchKeys:
+  - geometry
+  - algebra
+  achievementsRu: "Региомонта́н (лат.
+    Regiomontanus, подлинное имя
+    — Иоганн Мюллер, нем.
+    Johannes Müller) (6 июня 1436, Кёнигсберг-ин-Байерн,
+    Священная Римская
+    империя — 6 июля 1476, Рим,
+    Священная Римская
+    империя) — немецкий
+    астроном и математик,
+    также занимался астрологией.\nИмя
+    Региомонтан, которое
+    образовано от латинизированного
+    названия родного
+    города Иоганна Мюллера
+    (лат. Regiomontium = нем. Königsberg), по-видимому,
+    впервые употребил
+    Филипп Меланхтон
+    в предисловии к своему
+    изданию книги «Сфера
+    мира» Сакробоско.\n\n\n==
+    Биография ==\nИоганн
+    Мюллер родился в городе
+    Кёнигсберге в Бавu0…"
+  achievementsEn: 
+  personalLifeRu: "Первая книга этого
+    сочинения посвящена
+    решению плоских треугольников.
+    Во второй книге вводится
+    теорема синусов для
+    плоских треугольников
+    и рассматривается
+    ряд задач о плоских
+    треугольниках, приводящих
+    к квадратным уравнениям.
+    Третья книга излагает
+    основы сферической
+    геометрии. Её содержание
+    в значительной мере
+    совпадает со «Сферикой»
+    Менелая и с аналогичными
+    работами арабоязычных
+    авторов. Центральной
+    теоремой четвёртой
+    книги является сферическая
+    теорема синусов. В
+    пятой книге доказываетсu044…"
+  personalLifeEn: 
+  shortBioRu: "Региомонта́н
+    — немецкий астроном
+    и математик, также
+    занимался астрологией."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B3%D0%B8%D0%BE%D0%BC%D0%BE%D0%BD%D1%82%D0%B0%D0%BD
+  portraits:
+  - sprite: {fileID: 21300000, guid: 152c68bd3eb550846a17f8ce268bffdb, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 48b7b6a06a702d249b1ca86c504569e0, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

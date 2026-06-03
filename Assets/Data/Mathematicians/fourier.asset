@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: fourier
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: fourier
+  wikiTitleRu: "\u0424\u0443\u0440\u044C\u0435, \u0416\u043E\u0437\u0435\u0444"
+  wikidataId: Q8771
+  fullNameRu: "\u0424\u0443\u0440\u044C\u0435, \u0416\u043E\u0437\u0435\u0444"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - france
+  centuryKeys:
+  - 18
+  - 19
+  branchKeys:
+  - analysis
+  - applied_math
+  achievementsRu: 
+  achievementsEn: 
+  personalLifeRu: 
+  personalLifeEn: 
+  shortBioRu: 
+  shortBioEn: 
+  wikipediaUrlRu: 
+  portraits:
+  - sprite: {fileID: 21300000, guid: 7309506d4da4f734d922f94c8f792ef8, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: ecb815ac807cd29468a854288909beb4, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

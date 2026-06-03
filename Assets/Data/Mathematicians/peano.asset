@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: peano
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: peano
+  wikiTitleRu: "Пеано, Джузеппе"
+  wikidataId: Q191033
+  fullNameRu: "Пеано, Джузеппе"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - italy
+  centuryKeys:
+  - 19
+  - 20
+  branchKeys:
+  - logic
+  - analysis
+  achievementsRu: "Джузе́ппе Пеа́но
+    (итал. Giuseppe Peano /dʒuˈzɛppe/; 27 августа
+    1858 — 20 апреля 1932) — итальянский
+    математик. Внёс вклад
+    в математическую
+    логику, аксиоматику,
+    философию математики.
+    Создатель вспомогательного
+    искусственного языка
+    латино-сине-флексионе.
+    Более всего известен
+    как автор стандартной
+    аксиоматизации натуральной
+    арифметики — арифметики
+    Пеано.\nАвтор более
+    200 книг и статей, он был
+    одним из основателей
+    математической логики
+    и теории множеств.\n\n\n==
+    Биография ==\n\nПеано
+    родился и вырос на
+    ферме в Спинетте. По
+    окончании лицея поступил…"
+  achievementsEn: 
+  personalLifeRu: "Во-первых, фундаментальная
+    причина связана с
+    гносеологической
+    проблемой обоснования
+    математики. Вместо
+    того чтобы, начав с
+    целых и рациональных
+    чисел, перейти к иррациональным
+    и комплексным числам,
+    а затем к алгебре и
+    математическому анализу,
+    так уж исторически
+    сложилось, что события
+    в последовательном
+    обосновании математики
+    развивались в обратном
+    порядке. После доказательства
+    в начале прошлого
+    века теорем Гёделя
+    о неполноте стало
+    понятно, что все это
+    было вовсе не случайно.
+    Во-вторых, можно указатu…"
+  personalLifeEn: 
+  shortBioRu: "Джузе́ппе Пеа́но\_—
+    итальянский математик.
+    Внёс вклад в математическую
+    логику, аксиоматику,
+    философию математики.
+    Создатель вспомогательного
+    искусственного
+    языка латино-сине-флексионе.
+    Более всего известен
+    как автор стандартной
+    аксиоматизации
+    натуральной арифметики\_—
+    арифметики Пеано."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%9F%D0%B5%D0%B0%D0%BD%D0%BE%2C_%D0%94%D0%B6%D1%83%D0%B7%D0%B5%D0%BF%D0%BF%D0%B5
+  portraits:
+  - sprite: {fileID: 21300000, guid: d6c64f0def65ac64fb2c04d704573b29, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: fd563a9ccc1934249b1bafbbc8f04c06, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

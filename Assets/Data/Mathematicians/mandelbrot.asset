@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: mandelbrot
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: mandelbrot
+  wikiTitleRu: "Мандельброт,
+    Бенуа"
+  wikidataId: Q233663
+  fullNameRu: "Мандельброт,
+    Бенуа"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - france
+  - usa
+  centuryKeys:
+  - 20
+  branchKeys:
+  - applied_math
+  - dynamical_systems
+  achievementsRu: "Бенуа́ Мандельбро́т
+    (фр. Benoît B. Mandelbrot, при рождении
+    Мандельбройт; 20 ноября
+    1924, Варшава — 14 октября
+    2010, Кембридж) — французский
+    и американский математик,
+    создатель фрактальной
+    геометрии. Лауреат
+    премии Вольфа по физике
+    (1993).\n\n\n== Биография ==\nРодился
+    в Варшаве в 1924 году в
+    семье литовских евреев.
+    Его мать, Белла Лурье,
+    была врачом; отец, Карл
+    Соломонович Мандельбройт
+    (?—1951) — галантерейщиком.
+    В 1936 году вся семья эмигрировала
+    во Францию и поселилась
+    в Париже. Здесь Мандельброт
+    попал под влияние
+    своего дяди Шолема
+    Мандельбройта, известногu0…"
+  achievementsEn: 
+  personalLifeRu: "В 1967 году Мандельброт
+    опубликовал свою
+    работу Какова длина
+    побережья Великобритании?
+    — первое исследование
+    фракталов. Понятие
+    «фрактал» придумал
+    сам Бенуа Мандельброт
+    (от лат. fractus, означающего
+    «сломанный, разбитый»).
+    Используя находящиеся
+    в его распоряжении
+    компьютеры IBM, Мандельброт
+    создал графические
+    изображения, сформированные
+    на основе множества
+    Мандельброта. По словам
+    математика, он не чувствовал
+    себя изобретателем,
+    несмотря на то, что
+    никто до него не создавал
+    ничего подобного.\nУмер
+    14 октября 2010 годu043…"
+  personalLifeEn: 
+  shortBioRu: "Бенуа́ Мандельбро́т\_—
+    французский и американский
+    математик, создатель
+    фрактальной геометрии.
+    Лауреат премии
+    Вольфа по физике
+    (1993)."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BD%D0%B4%D0%B5%D0%BB%D1%8C%D0%B1%D1%80%D0%BE%D1%82%2C_%D0%91%D0%B5%D0%BD%D1%83%D0%B0
+  portraits:
+  - sprite: {fileID: 21300000, guid: 5268b959328f99745bb3fbd0337c170d, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 08d7f7ac144b35f4c9e39eea87888700, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

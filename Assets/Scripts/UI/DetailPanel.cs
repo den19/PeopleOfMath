@@ -21,6 +21,7 @@ namespace PeopleOfMath.UI
         [SerializeField] TMP_Text countriesLabel;
         [SerializeField] TMP_Text centuriesLabel;
         [SerializeField] TMP_Text branchesLabel;
+        [SerializeField] PortraitGalleryView gallery;
 
         string _currentId;
 
@@ -56,6 +57,7 @@ namespace PeopleOfMath.UI
             branchesText.text = data.GetBranchesDisplay(english);
             achievementsText.text = data.GetAchievements(english);
             personalLifeText.text = data.GetPersonalLife(english);
+            gallery?.Bind(data);
 
             if (countriesLabel != null)
                 countriesLabel.text = english ? "Countries" : "Страны";

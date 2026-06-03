@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: pontryagin
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: pontryagin
+  wikiTitleRu: "\u041F\u043E\u043D\u0442\u0440\u044F\u0433\u0438\u043D, \u041B\u0435\u0432"
+  wikidataId: Q323787
+  fullNameRu: "\u041F\u043E\u043D\u0442\u0440\u044F\u0433\u0438\u043D, \u041B\u0435\u0432"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - russia
+  centuryKeys:
+  - 20
+  branchKeys:
+  - topology
+  - algebra
+  achievementsRu: 
+  achievementsEn: 
+  personalLifeRu: 
+  personalLifeEn: 
+  shortBioRu: 
+  shortBioEn: 
+  wikipediaUrlRu: 
+  portraits:
+  - sprite: {fileID: 21300000, guid: 4c91df656a7faca4895d968d3e8a2cb5, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 528cc5fc1c27e4148bab6f37a85ae8cb, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

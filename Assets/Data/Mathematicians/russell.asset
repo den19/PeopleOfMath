@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: russell
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: russell
+  wikiTitleRu: "Рассел, Бертран"
+  wikidataId: Q33760
+  fullNameRu: "Рассел, Бертран"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - uk
+  centuryKeys:
+  - 19
+  - 20
+  branchKeys:
+  - logic
+  - set_theory
+  achievementsRu: "Бе́ртран А́ртур
+    Уи́льям Ра́ссел, 3-й
+    граф Рассел (англ. Bertrand
+    Arthur William Russell, 3rd Earl Russell; 18 мая 1872, Треллек,
+    графство Монмутшир,
+    Уэльс, Великобритания
+    — 2 февраля 1970, Пенриндайдрант,
+    графство Гуинет, Уэльс,
+    Великобритания) —
+    британский философ,
+    логик, математик и
+    общественный деятель.
+    Внёс значительный
+    вклад в математическую
+    логику, историю философии
+    и теорию познания.
+    Рассел считается
+    одним из основателей
+    английского неореализма,
+    а также неопозитивизма.
+    Лауреат Нобелевской
+    премии по литературе
+    (1950).\nИзвестен своими
+    работами в защиту…"
+  achievementsEn: 
+  personalLifeRu: "При этом Бертран
+    Рассел считал себя
+    сторонником социал-демократии.
+    Критика коммунизма,
+    проводимая им в это
+    время, сводится к критике
+    марксизма.\n9 июня 1949 года
+    Рассел был награждён
+    орденом Заслуг. В 1950
+    году 78-летнему Расселу
+    была присуждена Нобелевская
+    премия по литературе
+    за книгу «Брак и мораль»
+    (1929) и публицистическую
+    деятельность:\n\nВ знак
+    признания его разнообразных
+    и значимых произведений,
+    в которых он защищает
+    гуманитарные идеалы
+    и свободу мысли.\n\nВ
+    одной из книг, в которых
+    он критикует оптимистический
+    взгu…"
+  personalLifeEn: 
+  shortBioRu: "Бе́ртран А́ртур
+    Уи́льям Ра́ссел,
+    3-й граф Рассел\_—
+    британский философ,
+    логик, математик
+    и общественный
+    деятель. Внёс значительный
+    вклад в математическую
+    логику, историю
+    философии и теорию
+    познания. Рассел
+    считается одним
+    из основателей
+    английского неореализма,
+    а также неопозитивизма.
+    Лауреат Нобелевской
+    премии по литературе
+    (1950)."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%A0%D0%B0%D1%81%D1%81%D0%B5%D0%BB%2C_%D0%91%D0%B5%D1%80%D1%82%D1%80%D0%B0%D0%BD
+  portraits:
+  - sprite: {fileID: 21300000, guid: 7e304a5de47857b4a967b695d1578109, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 92442dc8761b7dd4da340e3ec7e56abd, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

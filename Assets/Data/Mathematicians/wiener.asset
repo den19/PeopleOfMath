@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: wiener
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: wiener
+  wikiTitleRu: "Винер, Норберт"
+  wikidataId: Q78494
+  fullNameRu: "Винер, Норберт"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - usa
+  centuryKeys:
+  - 20
+  branchKeys:
+  - applied_math
+  - probability
+  achievementsRu: "Но́рберт Ви́нер
+    (англ. Norbert Wiener; 26 ноября 1894,
+    США, штат Миссури, США
+    — 18 марта 1964, Стокгольм,
+    Швеция) — американский
+    математик, один из
+    основоположников
+    кибернетики и теории
+    искусственного интеллекта.
+    Профессор MIT, где работал
+    с 1919 года. Удостоен Национальной
+    научной медали США.\n\n\n==
+    Биография ==\nНорберт
+    Винер родился в еврейской
+    семье. Он был первым
+    ребёнком Лео Винера
+    и Берты Кан. Отец учёного,
+    Лео Винер (1862—1939), родился
+    в Белостоке Российской
+    империи, учился в Минской,
+    а затем Варшавской
+    гимназии, поступил
+    в Берлинский технический
+    u…"
+  achievementsEn: 
+  personalLifeRu: "Для обработки
+    сигналов фильтр Винера
+    — это фильтр, предложенный
+    Винером в 1940-х годах
+    и опубликованный
+    в 1942 году в виде засекреченного
+    документа. Его цель
+    — уменьшить количество
+    шума в сигнале, сравнивая
+    его с оценкой желаемого
+    сигнала без шума. Винер
+    разработал этот фильтр
+    в Радиационной лаборатории
+    MIT для предсказания
+    положения немецких
+    бомбардировщиков
+    по отражениям радиолокационного
+    сигнала. В результате
+    возникла математическая
+    теория большой общности
+    — теория предсказания
+    будущего наилучшим
+    обu…"
+  personalLifeEn: 
+  shortBioRu: "Но́рберт Ви́нер\_—
+    американский математик,
+    один из основоположников
+    кибернетики и теории
+    искусственного
+    интеллекта. Профессор
+    MIT, где работал с 1919
+    года. Удостоен Национальной
+    научной медали
+    США."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%92%D0%B8%D0%BD%D0%B5%D1%80%2C_%D0%9D%D0%BE%D1%80%D0%B1%D0%B5%D1%80%D1%82
+  portraits:
+  - sprite: {fileID: 21300000, guid: 943588234c54f9f46a954f0faea3a135, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: dba18c296fd584a4cb1de0a23b7ac8fd, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

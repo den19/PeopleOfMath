@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: lagrange
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: lagrange
+  wikiTitleRu: "Лагранж, Жозеф
+    Луи"
+  wikidataId: Q8022
+  fullNameRu: "Лагранж, Жозеф
+    Луи"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - france
+  - italy
+  centuryKeys:
+  - 18
+  branchKeys:
+  - analysis
+  - number_theory
+  achievementsRu: "Жозе́ф Луи́ Лагра́нж
+    (фр. Joseph Louis Lagrange, итал. Giuseppe Lodovico Lagrangia;
+    25 января 1736, Турин — 10 апреля
+    1813, Париж) — французский
+    математик, астроном
+    и механик итальянского
+    происхождения. Наряду
+    с Эйлером — крупнейший
+    математик XVIII века. Особенно
+    прославился исключительным
+    мастерством в области
+    обобщения и синтеза
+    накопленного научного
+    материала.\nАвтор классического
+    трактата «Аналитическая
+    механика», в котором
+    установил фундаментальный
+    «принцип возможных
+    перемещений» и завершил
+    математизацию механики.
+    Внёс огромный вклад
+    в математиu0…"
+  achievementsEn: 
+  personalLifeRu: "В области механики
+    Лагранж исследовал
+    проблему вращательного
+    движения твёрдого
+    тела и в 1773 году установил
+    геометрические свойства
+    тетраэдра с применением
+    аналитического метода,
+    близкого к современным
+    матричным вычислениям.
+    В Берлине была подготовлена
+    и «Аналитическая
+    механика» (фр. Mécanique analytique).
+    Этот труд, в основном
+    завершённый уже к
+    1782 году, был, однако, опубликован
+    лишь в 1788 году в Париже
+    и стал вершиной научной
+    деятельности Лагранжа.
+    Гамильтон назвал
+    этот шедевр «научной
+    поэмой». В основе всей
+    статики в монu…"
+  personalLifeEn: 
+  shortBioRu: "Жозе́ф Луи́ Лагра́нж\_—
+    французский математик,
+    астроном и механик
+    итальянского происхождения.
+    Наряду с Эйлером\_—
+    крупнейший математик
+    XVIII\_века. Особенно
+    прославился исключительным
+    мастерством в области
+    обобщения и синтеза
+    накопленного научного
+    материала."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%9B%D0%B0%D0%B3%D1%80%D0%B0%D0%BD%D0%B6%2C_%D0%96%D0%BE%D0%B7%D0%B5%D1%84_%D0%9B%D1%83%D0%B8
+  portraits:
+  - sprite: {fileID: 21300000, guid: 43f8644f2681b15489d2115fde0dbb56, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 6595e017d42a99d44a346273932cd900, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

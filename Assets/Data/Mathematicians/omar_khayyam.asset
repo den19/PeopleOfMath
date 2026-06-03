@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: omar_khayyam
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: omar_khayyam
+  wikiTitleRu: "\u041E\u043C\u0430\u0440 \u0425\u0430\u0439\u044F\u043C"
+  wikidataId: Q9440
+  fullNameRu: "\u041E\u043C\u0430\u0440 \u0425\u0430\u0439\u044F\u043C"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - iran
+  centuryKeys:
+  - 11
+  - 12
+  branchKeys:
+  - algebra
+  - geometry
+  achievementsRu: 
+  achievementsEn: 
+  personalLifeRu: 
+  personalLifeEn: 
+  shortBioRu: 
+  shortBioEn: 
+  wikipediaUrlRu: 
+  portraits:
+  - sprite: {fileID: 21300000, guid: ce5f74ef116fd93478cb86e56065e042, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: c96bacbdb0a8592478b821c8324ba5cd, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

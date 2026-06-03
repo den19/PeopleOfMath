@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: bernoulli_daniel
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: bernoulli_daniel
+  wikiTitleRu: "Бернулли, Даниил"
+  wikidataId: Q123761
+  fullNameRu: "Бернулли, Даниил"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - switzerland
+  centuryKeys:
+  - 18
+  branchKeys:
+  - analysis
+  - probability
+  achievementsRu: "Дании́л Берну́лли
+    (Daniel Bernoulli; 29 января (8 февраля)
+    1700 — 17 марта 1782) — швейцарский
+    физик, механик и математик,
+    один из создателей
+    кинетической теории
+    газов, гидродинамики
+    и математической
+    физики. Сын Иоганна
+    Бернулли.\nАкадемик
+    и иностранный почётный
+    член (1733) Петербургской
+    академии наук, член
+    Академий: Болонской
+    (1724), Берлинской (1747), Парижской
+    (1748), Лондонского королевского
+    общества (1750).\n\n\n== Биография
+    ==\n\nДаниил родился 29 января
+    (8 февраля) 1700 года в Гронингене
+    (Голландия), где его
+    отец Иоганн Бернулли
+    тогда преподавал
+    математику в университu…"
+  achievementsEn: 
+  personalLifeRu: "Физик-универсал,
+    он создал количественную
+    кинетическую теорию
+    газов, основательно
+    обогатил гидродинамику
+    и аэродинамику, теорию
+    упругости и т. д. Он
+    первый выступил с
+    утверждением, что
+    причиной давления
+    газа является тепловое
+    движение молекул.
+    В своей классической
+    «Гидродинамике» Даниил
+    Бернулли вывел уравнение
+    стационарного течения
+    несжимаемой жидкости
+    (закон Бернулли), лежащее
+    в основе динамики
+    жидкостей и газов.
+    С точки зрения молекулярной
+    теории он объяснил
+    закон Бойля — Мариотта.\nДаниилу
+    Беu044…"
+  personalLifeEn: 
+  shortBioRu: "Дании́л Берну́лли\_—
+    швейцарский физик,
+    механик и математик,
+    один из создателей
+    кинетической теории
+    газов, гидродинамики
+    и математической
+    физики. Сын Иоганна
+    Бернулли."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%91%D0%B5%D1%80%D0%BD%D1%83%D0%BB%D0%BB%D0%B8%2C_%D0%94%D0%B0%D0%BD%D0%B8%D0%B8%D0%BB
+  portraits:
+  - sprite: {fileID: 21300000, guid: d28703d2791f5974fb46eb078cf6f563, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: fb617675b6e870c4588a2ebeed07d401, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

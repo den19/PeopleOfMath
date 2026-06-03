@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: serre
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: serre
+  wikiTitleRu: "Серр, Жан-Пьер"
+  wikidataId: Q76641
+  fullNameRu: "Серр, Жан-Пьер"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - france
+  centuryKeys:
+  - 20
+  branchKeys:
+  - algebra
+  - topology
+  achievementsRu: "Жан-Пьер Серр (фр.
+    Jean-Pierre Serre; род. 15 сентября
+    1926[…], Баж) — французский
+    математик, работающий
+    в области алгебраической
+    геометрии, теории
+    чисел и топологии.
+    Доктор; почётный профессор
+    Коллеж де Франс; член
+    Французской академии
+    наук и иностранный
+    член АН России, США
+    и Великобритании,
+    а также Американского
+    философского общества
+    (1998). Самый молодой лауреат
+    Филдсовской премии
+    (1954).\n\n\n== Биография ==\nРодился
+    в Баже на юге Франции.
+    В 1945—1948 годах обучался
+    в Парижской высшей
+    нормальной школе.
+    В 1951 году получил диплом
+    доктора философии
+    в Париж…"
+  achievementsEn: 
+  personalLifeRu: "В 1955 году Серр выдвинул
+    гипотезу, которая
+    впоследствии подтвердилась
+    в 1976 году, о том что над
+    аффинным пространством
+    произвольной размерности
+    не существует нетривиальных
+    векторных расслоений
+    (Проблема Серра). Около
+    1958 года Серр предположил,
+    что изотривиальные
+    расслоения на алгебраическом
+    многообразии, то есть
+    расслоения, которые
+    становятся тривиальными
+    после взятия прообраза
+    относительно некоторого
+    конечного этального
+    отображения, могут
+    быть важны для поставленной
+    задачи. Это стало одним
+    из источu…"
+  personalLifeEn: 
+  shortBioRu: "Жан-Пьер Серр\_—
+    французский математик,
+    работающий в области
+    алгебраической
+    геометрии, теории
+    чисел и топологии.
+    Доктор; почётный
+    профессор Коллеж
+    де Франс; член Французской
+    академии наук и
+    иностранный член
+    АН России, США и
+    Великобритании,
+    а также Американского
+    философского общества
+    (1998). Самый молодой
+    лауреат Филдсовской
+    премии (1954)."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%A1%D0%B5%D1%80%D1%80%2C_%D0%96%D0%B0%D0%BD-%D0%9F%D1%8C%D0%B5%D1%80
+  portraits:
+  - sprite: {fileID: 21300000, guid: a2ab792cac75bd44882e0db3dd0d69db, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 61420932708e36e44b21a14742506ff3, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

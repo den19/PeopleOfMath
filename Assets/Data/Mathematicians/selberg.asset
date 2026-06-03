@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: selberg
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: selberg
+  wikiTitleRu: "Сельберг, Атле"
+  wikidataId: Q310781
+  fullNameRu: "Сельберг, Атле"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - norway
+  - usa
+  centuryKeys:
+  - 20
+  branchKeys:
+  - number_theory
+  achievementsRu: "Атле Сельберг
+    (норв. Atle Selberg; 14 июня 1917 — 6 августа
+    2007) — норвежский математик,
+    известный своими
+    работами в области
+    аналитической теории
+    чисел и теории автоморфных
+    функций.\n\n\n== Биография
+    ==\nСельберг родился
+    в 1917 году в норвежском
+    городе Лангесун (Langesund).
+    Получил образование
+    в Университете Осло,
+    который окончил в
+    1943 году, получив степень
+    Ph.D.\nВ 1942 году он доказал,
+    что конечная доля
+    всех нулей дзета-функции
+    Римана лежит на критической
+    прямой Re(s)=1⁄2. В 1947 году
+    разработал «метод
+    решета Сельберга»,
+    применявшийся в исследовании
+    вопросов аналиu04…"
+  achievementsEn: 
+  personalLifeRu: "Переехав в США,
+    начал работу в Институте
+    перспективных исследований
+    в Принстоне (штат Нью-Джерси).
+    В 1956 году он опубликовал
+    одну из наиболее значимых
+    своих работ, в которой
+    доказывал формулу,
+    получившую название
+    «Формула следа Сельберга»
+    (применяется в теории
+    автоморфных функций,
+    в теории представлений
+    и других разделах
+    математики и физики).\nВ
+    1986 году за его работы
+    по теории чисел, дискретным
+    группам и автоморфным
+    формам Сельберг был
+    удостоен Премии Вольфа.
+    Также он был избран
+    членом Норвежской
+    академии наu…"
+  personalLifeEn: 
+  shortBioRu: "Атле Сельберг\_—
+    норвежский математик,
+    известный своими
+    работами в области
+    аналитической
+    теории чисел и теории
+    автоморфных функций."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%A1%D0%B5%D0%BB%D1%8C%D0%B1%D0%B5%D1%80%D0%B3%2C_%D0%90%D1%82%D0%BB%D0%B5
+  portraits:
+  - sprite: {fileID: 21300000, guid: a0105d1cc725a104b9392fac644eed24, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: d2deb3647d382224bbca1e4a6a512fb2, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

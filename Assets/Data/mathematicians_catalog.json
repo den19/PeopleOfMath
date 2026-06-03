@@ -1,0 +1,1509 @@
+{
+  "mathematicians": [
+    {
+      "id": "pythagoras",
+      "wikiTitleRu": "Пифагор",
+      "wikidataId": "Q10261",
+      "countryKeys": [
+        "greece"
+      ],
+      "centuryKeys": [
+        "6bc",
+        "5bc"
+      ],
+      "branchKeys": [
+        "geometry",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "thales",
+      "wikiTitleRu": "Фалес",
+      "wikidataId": "Q635",
+      "countryKeys": [
+        "greece"
+      ],
+      "centuryKeys": [
+        "6bc"
+      ],
+      "branchKeys": [
+        "geometry"
+      ]
+    },
+    {
+      "id": "euclid",
+      "wikiTitleRu": "Евклид",
+      "wikidataId": "Q8737",
+      "countryKeys": [
+        "greece"
+      ],
+      "centuryKeys": [
+        "3bc"
+      ],
+      "branchKeys": [
+        "geometry"
+      ]
+    },
+    {
+      "id": "archimedes",
+      "wikiTitleRu": "Архимед",
+      "wikidataId": "Q8739",
+      "countryKeys": [
+        "syracuse"
+      ],
+      "centuryKeys": [
+        "3bc"
+      ],
+      "branchKeys": [
+        "geometry",
+        "mechanics"
+      ]
+    },
+    {
+      "id": "apollonius",
+      "wikiTitleRu": "Аполлоний Пергский",
+      "wikidataId": "Q8733",
+      "countryKeys": [
+        "greece"
+      ],
+      "centuryKeys": [
+        "3bc"
+      ],
+      "branchKeys": [
+        "geometry"
+      ]
+    },
+    {
+      "id": "eratosthenes",
+      "wikiTitleRu": "Эратосфен",
+      "wikidataId": "Q344",
+      "countryKeys": [
+        "egypt"
+      ],
+      "centuryKeys": [
+        "3bc"
+      ],
+      "branchKeys": [
+        "number_theory",
+        "geometry"
+      ]
+    },
+    {
+      "id": "diophantus",
+      "wikiTitleRu": "Диофант",
+      "wikidataId": "Q17886",
+      "countryKeys": [
+        "egypt"
+      ],
+      "centuryKeys": [
+        "3"
+      ],
+      "branchKeys": [
+        "number_theory",
+        "algebra"
+      ]
+    },
+    {
+      "id": "hypatia",
+      "wikiTitleRu": "Гипатия",
+      "wikidataId": "Q10261",
+      "countryKeys": [
+        "egypt"
+      ],
+      "centuryKeys": [
+        "4"
+      ],
+      "branchKeys": [
+        "geometry",
+        "algebra"
+      ]
+    },
+    {
+      "id": "heron",
+      "wikiTitleRu": "Герон Александрийский",
+      "wikidataId": "Q8773",
+      "countryKeys": [
+        "egypt"
+      ],
+      "centuryKeys": [
+        "1"
+      ],
+      "branchKeys": [
+        "geometry",
+        "mechanics"
+      ]
+    },
+    {
+      "id": "ptolemy",
+      "wikiTitleRu": "Птолемей",
+      "wikidataId": "Q34981",
+      "countryKeys": [
+        "egypt"
+      ],
+      "centuryKeys": [
+        "2"
+      ],
+      "branchKeys": [
+        "geometry",
+        "applied_math"
+      ]
+    },
+    {
+      "id": "brahmagupta",
+      "wikiTitleRu": "Брахмагупта",
+      "wikidataId": "Q7262",
+      "countryKeys": [
+        "india"
+      ],
+      "centuryKeys": [
+        "7"
+      ],
+      "branchKeys": [
+        "algebra",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "al_khwarizmi",
+      "wikiTitleRu": "Аль-Хорезми",
+      "wikidataId": "Q9038",
+      "countryKeys": [
+        "iran"
+      ],
+      "centuryKeys": [
+        "9"
+      ],
+      "branchKeys": [
+        "algebra"
+      ]
+    },
+    {
+      "id": "omar_khayyam",
+      "wikiTitleRu": "Омар Хайям",
+      "wikidataId": "Q9440",
+      "countryKeys": [
+        "iran"
+      ],
+      "centuryKeys": [
+        "11",
+        "12"
+      ],
+      "branchKeys": [
+        "algebra",
+        "geometry"
+      ]
+    },
+    {
+      "id": "bhaskara",
+      "wikiTitleRu": "Бхаскара II",
+      "wikidataId": "Q7263",
+      "countryKeys": [
+        "india"
+      ],
+      "centuryKeys": [
+        "12"
+      ],
+      "branchKeys": [
+        "algebra"
+      ]
+    },
+    {
+      "id": "fibonacci",
+      "wikiTitleRu": "Фибоначчи",
+      "wikidataId": "Q8763",
+      "countryKeys": [
+        "italy"
+      ],
+      "centuryKeys": [
+        "13"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "zhu_shijie",
+      "wikiTitleRu": "Чжу Шицзе",
+      "wikidataId": "Q7263",
+      "countryKeys": [
+        "china"
+      ],
+      "centuryKeys": [
+        "14"
+      ],
+      "branchKeys": [
+        "algebra",
+        "combinatorics"
+      ]
+    },
+    {
+      "id": "regiomontanus",
+      "wikiTitleRu": "Региомонтан",
+      "wikidataId": "Q76364",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "15"
+      ],
+      "branchKeys": [
+        "geometry",
+        "algebra"
+      ]
+    },
+    {
+      "id": "cardano",
+      "wikiTitleRu": "Кардано, Джероламо",
+      "wikidataId": "Q184871",
+      "countryKeys": [
+        "italy"
+      ],
+      "centuryKeys": [
+        "16"
+      ],
+      "branchKeys": [
+        "algebra",
+        "probability"
+      ]
+    },
+    {
+      "id": "vieta",
+      "wikiTitleRu": "Виет, Франсуа",
+      "wikidataId": "Q55929",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "16"
+      ],
+      "branchKeys": [
+        "algebra"
+      ]
+    },
+    {
+      "id": "napier",
+      "wikiTitleRu": "Непер, Джон",
+      "wikidataId": "Q312371",
+      "countryKeys": [
+        "scotland"
+      ],
+      "centuryKeys": [
+        "16",
+        "17"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "descartes",
+      "wikiTitleRu": "Декарт, Рене",
+      "wikidataId": "Q9190",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "geometry",
+        "algebra"
+      ]
+    },
+    {
+      "id": "fermat",
+      "wikiTitleRu": "Ферма, Пьер",
+      "wikidataId": "Q2965",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "pascal",
+      "wikiTitleRu": "Паскаль, Блез",
+      "wikidataId": "Q1290",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "probability",
+        "geometry"
+      ]
+    },
+    {
+      "id": "newton",
+      "wikiTitleRu": "Ньютон, Исаак",
+      "wikidataId": "Q935",
+      "countryKeys": [
+        "england"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "analysis",
+        "mechanics"
+      ]
+    },
+    {
+      "id": "leibniz",
+      "wikiTitleRu": "Лейбниц, Готфрид Вильгельм",
+      "wikidataId": "Q9047",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "analysis",
+        "logic"
+      ]
+    },
+    {
+      "id": "bernoulli_jakob",
+      "wikiTitleRu": "Бернулли, Якоб",
+      "wikidataId": "Q123757",
+      "countryKeys": [
+        "switzerland"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "analysis",
+        "probability"
+      ]
+    },
+    {
+      "id": "euler",
+      "wikiTitleRu": "Эйлер, Леонард",
+      "wikidataId": "Q7604",
+      "countryKeys": [
+        "switzerland",
+        "russia"
+      ],
+      "centuryKeys": [
+        "18"
+      ],
+      "branchKeys": [
+        "analysis",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "lagrange",
+      "wikiTitleRu": "Лагранж, Жозеф Луи",
+      "wikidataId": "Q8022",
+      "countryKeys": [
+        "france",
+        "italy"
+      ],
+      "centuryKeys": [
+        "18"
+      ],
+      "branchKeys": [
+        "analysis",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "laplace",
+      "wikiTitleRu": "Лаплас, Пьер-Симон",
+      "wikidataId": "Q8737",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "18",
+        "19"
+      ],
+      "branchKeys": [
+        "probability",
+        "analysis"
+      ]
+    },
+    {
+      "id": "fourier",
+      "wikiTitleRu": "Фурье, Жозеф",
+      "wikidataId": "Q8771",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "18",
+        "19"
+      ],
+      "branchKeys": [
+        "analysis",
+        "applied_math"
+      ]
+    },
+    {
+      "id": "gauss",
+      "wikiTitleRu": "Гаусс, Карл Фридрих",
+      "wikidataId": "Q6722",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "18",
+        "19"
+      ],
+      "branchKeys": [
+        "number_theory",
+        "geometry"
+      ]
+    },
+    {
+      "id": "cauchy",
+      "wikiTitleRu": "Коши, Огюстен",
+      "wikidataId": "Q8814",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "abel",
+      "wikiTitleRu": "Абель, Нильс",
+      "wikidataId": "Q1247",
+      "countryKeys": [
+        "norway"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "algebra",
+        "analysis"
+      ]
+    },
+    {
+      "id": "galois",
+      "wikiTitleRu": "Галуа, Эварист",
+      "wikidataId": "Q1744",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "algebra"
+      ]
+    },
+    {
+      "id": "lobachevsky",
+      "wikiTitleRu": "Лобачевский, Николай Иванович",
+      "wikidataId": "Q4372",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "geometry"
+      ]
+    },
+    {
+      "id": "kovalevskaya",
+      "wikiTitleRu": "Ковалевская, Софья Васильевна",
+      "wikidataId": "Q184653",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "riemann",
+      "wikiTitleRu": "Риман, Бернхард",
+      "wikidataId": "Q42299",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "analysis",
+        "geometry"
+      ]
+    },
+    {
+      "id": "cantor",
+      "wikiTitleRu": "Кантор, Георг",
+      "wikidataId": "Q7294",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "set_theory"
+      ]
+    },
+    {
+      "id": "dedekind",
+      "wikiTitleRu": "Дедекинд, Рихард",
+      "wikidataId": "Q7324",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "number_theory",
+        "algebra"
+      ]
+    },
+    {
+      "id": "weierstrass",
+      "wikiTitleRu": "Вейерштрасс, Карл",
+      "wikidataId": "Q77103",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "klein",
+      "wikiTitleRu": "Клейн, Феликс",
+      "wikidataId": "Q76641",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "geometry"
+      ]
+    },
+    {
+      "id": "poincare",
+      "wikiTitleRu": "Пуанкаре, Анри",
+      "wikidataId": "Q3581",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "topology",
+        "dynamical_systems"
+      ]
+    },
+    {
+      "id": "hilbert",
+      "wikiTitleRu": "Гильберт, Давид",
+      "wikidataId": "Q6694",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "geometry",
+        "logic"
+      ]
+    },
+    {
+      "id": "noether",
+      "wikiTitleRu": "Нётер, Эмми",
+      "wikidataId": "Q7099",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "algebra"
+      ]
+    },
+    {
+      "id": "ramanujan",
+      "wikiTitleRu": "Рамануджан",
+      "wikidataId": "Q83163",
+      "countryKeys": [
+        "india",
+        "uk"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "hardy",
+      "wikiTitleRu": "Харди, Годфри",
+      "wikidataId": "Q184337",
+      "countryKeys": [
+        "uk"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "number_theory",
+        "analysis"
+      ]
+    },
+    {
+      "id": "godel",
+      "wikiTitleRu": "Гёдель, Курт",
+      "wikidataId": "Q9394",
+      "countryKeys": [
+        "austria",
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "logic"
+      ]
+    },
+    {
+      "id": "turing",
+      "wikiTitleRu": "Тьюринг, Алан",
+      "wikidataId": "Q7251",
+      "countryKeys": [
+        "uk"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "logic",
+        "informatics"
+      ]
+    },
+    {
+      "id": "von_neumann",
+      "wikiTitleRu": "фон Нейман, Джон",
+      "wikidataId": "Q83396",
+      "countryKeys": [
+        "hungary",
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "logic",
+        "informatics"
+      ]
+    },
+    {
+      "id": "nash",
+      "wikiTitleRu": "Нэш, Джон",
+      "wikidataId": "Q185592",
+      "countryKeys": [
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "analysis",
+        "topology"
+      ]
+    },
+    {
+      "id": "grothendieck",
+      "wikiTitleRu": "Гротендик, Александр",
+      "wikidataId": "Q77141",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "algebra",
+        "topology"
+      ]
+    },
+    {
+      "id": "perelman",
+      "wikiTitleRu": "Перельман, Григорий",
+      "wikidataId": "Q117346",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "20",
+        "21"
+      ],
+      "branchKeys": [
+        "topology",
+        "geometry"
+      ]
+    },
+    {
+      "id": "huygens",
+      "wikiTitleRu": "Гюйгенс, Христиан",
+      "wikidataId": "Q7293",
+      "countryKeys": [
+        "netherlands"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "probability",
+        "mechanics"
+      ]
+    },
+    {
+      "id": "bernoulli_daniel",
+      "wikiTitleRu": "Бернулли, Даниил",
+      "wikidataId": "Q123761",
+      "countryKeys": [
+        "switzerland"
+      ],
+      "centuryKeys": [
+        "18"
+      ],
+      "branchKeys": [
+        "analysis",
+        "probability"
+      ]
+    },
+    {
+      "id": "legendre",
+      "wikiTitleRu": "Лежандр, Адриен",
+      "wikidataId": "Q182103",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "18",
+        "19"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "jacobi",
+      "wikiTitleRu": "Якоби, Карл",
+      "wikidataId": "Q76564",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "algebra",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "chebyshev",
+      "wikiTitleRu": "Чебышёв, Пафнутий",
+      "wikidataId": "Q206005",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "markov",
+      "wikiTitleRu": "Марков, Андрей",
+      "wikidataId": "Q32955",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "probability",
+        "statistics"
+      ]
+    },
+    {
+      "id": "bolzano",
+      "wikiTitleRu": "Больцано, Бернард",
+      "wikidataId": "Q81090",
+      "countryKeys": [
+        "czech"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "analysis",
+        "logic"
+      ]
+    },
+    {
+      "id": "boole",
+      "wikiTitleRu": "Буль, Джордж",
+      "wikidataId": "Q307",
+      "countryKeys": [
+        "uk",
+        "ireland"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "logic",
+        "algebra"
+      ]
+    },
+    {
+      "id": "cayley",
+      "wikiTitleRu": "Кэли, Артур",
+      "wikidataId": "Q178608",
+      "countryKeys": [
+        "uk"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "algebra"
+      ]
+    },
+    {
+      "id": "hamilton",
+      "wikiTitleRu": "Гамильтон, Уильям",
+      "wikidataId": "Q169470",
+      "countryKeys": [
+        "ireland"
+      ],
+      "centuryKeys": [
+        "19"
+      ],
+      "branchKeys": [
+        "algebra",
+        "mechanics"
+      ]
+    },
+    {
+      "id": "peano",
+      "wikiTitleRu": "Пеано, Джузеппе",
+      "wikidataId": "Q191033",
+      "countryKeys": [
+        "italy"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "logic",
+        "analysis"
+      ]
+    },
+    {
+      "id": "frege",
+      "wikiTitleRu": "Фреге, Готлоб",
+      "wikidataId": "Q60025",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "logic"
+      ]
+    },
+    {
+      "id": "russell",
+      "wikiTitleRu": "Рассел, Бертран",
+      "wikidataId": "Q33760",
+      "countryKeys": [
+        "uk"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "logic",
+        "set_theory"
+      ]
+    },
+    {
+      "id": "banach",
+      "wikiTitleRu": "Банах, Стефан",
+      "wikidataId": "Q5528",
+      "countryKeys": [
+        "poland"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "kolmogorov",
+      "wikiTitleRu": "Колмогоров, Андрей",
+      "wikidataId": "Q153224",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "probability",
+        "statistics"
+      ]
+    },
+    {
+      "id": "wiener",
+      "wikiTitleRu": "Винер, Норберт",
+      "wikidataId": "Q78494",
+      "countryKeys": [
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "applied_math",
+        "probability"
+      ]
+    },
+    {
+      "id": "erdos",
+      "wikiTitleRu": "Эрдёш, Пал",
+      "wikidataId": "Q173746",
+      "countryKeys": [
+        "hungary"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "combinatorics",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "knuth",
+      "wikiTitleRu": "Кнут, Дональд",
+      "wikidataId": "Q1744",
+      "countryKeys": [
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "informatics",
+        "combinatorics"
+      ]
+    },
+    {
+      "id": "shannon",
+      "wikiTitleRu": "Шеннон, Клод",
+      "wikidataId": "Q180918",
+      "countryKeys": [
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "informatics",
+        "probability"
+      ]
+    },
+    {
+      "id": "mandelbrot",
+      "wikiTitleRu": "Мандельброт, Бенуа",
+      "wikidataId": "Q233663",
+      "countryKeys": [
+        "france",
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "applied_math",
+        "dynamical_systems"
+      ]
+    },
+    {
+      "id": "lebesgue",
+      "wikiTitleRu": "Лебег, Анри",
+      "wikidataId": "Q164307",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "brouwer",
+      "wikiTitleRu": "Брауэр, Лёйтен",
+      "wikidataId": "Q154290",
+      "countryKeys": [
+        "netherlands"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "topology",
+        "logic"
+      ]
+    },
+    {
+      "id": "weyl",
+      "wikiTitleRu": "Вейль, Герман",
+      "wikidataId": "Q76641",
+      "countryKeys": [
+        "germany",
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "algebra",
+        "mathematical_physics"
+      ]
+    },
+    {
+      "id": "minkowski",
+      "wikiTitleRu": "Минковский, Герман",
+      "wikidataId": "Q57246",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "geometry",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "cartan",
+      "wikiTitleRu": "Картан, Эли",
+      "wikidataId": "Q315195",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "19",
+        "20"
+      ],
+      "branchKeys": [
+        "algebra",
+        "topology"
+      ]
+    },
+    {
+      "id": "atiyah",
+      "wikiTitleRu": "Атья, Майкл",
+      "wikidataId": "Q172644",
+      "countryKeys": [
+        "uk"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "topology"
+      ]
+    },
+    {
+      "id": "wiles",
+      "wikiTitleRu": "Уайлс, Эндрю",
+      "wikidataId": "Q184337",
+      "countryKeys": [
+        "uk"
+      ],
+      "centuryKeys": [
+        "20",
+        "21"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "tao",
+      "wikiTitleRu": "Тао, Теренс",
+      "wikidataId": "Q335492",
+      "countryKeys": [
+        "usa"
+      ],
+      "centuryKeys": [
+        "20",
+        "21"
+      ],
+      "branchKeys": [
+        "analysis",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "mirzakhani",
+      "wikiTitleRu": "Мирзахани, Мариам",
+      "wikidataId": "Q1356138",
+      "countryKeys": [
+        "iran",
+        "usa"
+      ],
+      "centuryKeys": [
+        "20",
+        "21"
+      ],
+      "branchKeys": [
+        "topology",
+        "geometry"
+      ]
+    },
+    {
+      "id": "serre",
+      "wikiTitleRu": "Серр, Жан-Пьер",
+      "wikidataId": "Q76641",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "algebra",
+        "topology"
+      ]
+    },
+    {
+      "id": "deligne",
+      "wikiTitleRu": "Делинь, Пьер",
+      "wikidataId": "Q77141",
+      "countryKeys": [
+        "belgium",
+        "france"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "algebra",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "weil",
+      "wikiTitleRu": "Вейль, Андре",
+      "wikidataId": "Q76641",
+      "countryKeys": [
+        "france"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "number_theory",
+        "algebra"
+      ]
+    },
+    {
+      "id": "artin",
+      "wikiTitleRu": "Артин, Эмиль",
+      "wikidataId": "Q76641",
+      "countryKeys": [
+        "germany",
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "algebra",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "pontryagin",
+      "wikiTitleRu": "Понтрягин, Лев",
+      "wikidataId": "Q323787",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "topology",
+        "algebra"
+      ]
+    },
+    {
+      "id": "gelfand",
+      "wikiTitleRu": "Гельфанд, Израиль",
+      "wikidataId": "Q323787",
+      "countryKeys": [
+        "russia",
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "algebra",
+        "analysis"
+      ]
+    },
+    {
+      "id": "sobolev",
+      "wikiTitleRu": "Соболев, Сергей",
+      "wikidataId": "Q323787",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "analysis",
+        "applied_math"
+      ]
+    },
+    {
+      "id": "vinogradov",
+      "wikiTitleRu": "Виноградов, Иван",
+      "wikidataId": "Q1392604",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "shafarevich",
+      "wikiTitleRu": "Шафаревич, Игорь",
+      "wikidataId": "Q1392604",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "algebra",
+        "number_theory"
+      ]
+    },
+    {
+      "id": "arnold",
+      "wikiTitleRu": "Арнольд, Владимир",
+      "wikidataId": "Q157295",
+      "countryKeys": [
+        "russia"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "dynamical_systems"
+      ]
+    },
+    {
+      "id": "gromov",
+      "wikiTitleRu": "Громов, Михаил",
+      "wikidataId": "Q310781",
+      "countryKeys": [
+        "russia",
+        "france"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "geometry",
+        "topology"
+      ]
+    },
+    {
+      "id": "faltings",
+      "wikiTitleRu": "Фальтингс, Герд",
+      "wikidataId": "Q310781",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "number_theory",
+        "geometry"
+      ]
+    },
+    {
+      "id": "witten",
+      "wikiTitleRu": "Виттен, Эдвард",
+      "wikidataId": "Q107419",
+      "countryKeys": [
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "mathematical_physics",
+        "topology"
+      ]
+    },
+    {
+      "id": "lovasz",
+      "wikiTitleRu": "Ловас, Ласло",
+      "wikidataId": "Q310781",
+      "countryKeys": [
+        "hungary"
+      ],
+      "centuryKeys": [
+        "20",
+        "21"
+      ],
+      "branchKeys": [
+        "combinatorics"
+      ]
+    },
+    {
+      "id": "selberg",
+      "wikiTitleRu": "Сельберг, Атле",
+      "wikidataId": "Q310781",
+      "countryKeys": [
+        "norway",
+        "usa"
+      ],
+      "centuryKeys": [
+        "20"
+      ],
+      "branchKeys": [
+        "number_theory"
+      ]
+    },
+    {
+      "id": "wallis",
+      "wikiTitleRu": "Уоллис, Джон",
+      "wikidataId": "Q123762",
+      "countryKeys": [
+        "england"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "torricelli",
+      "wikiTitleRu": "Торричелли, Эванджелиста",
+      "wikidataId": "Q123762",
+      "countryKeys": [
+        "italy"
+      ],
+      "centuryKeys": [
+        "17"
+      ],
+      "branchKeys": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "galileo",
+      "wikiTitleRu": "Галилей",
+      "wikidataId": "Q307",
+      "countryKeys": [
+        "italy"
+      ],
+      "centuryKeys": [
+        "16",
+        "17"
+      ],
+      "branchKeys": [
+        "mechanics",
+        "applied_math"
+      ]
+    },
+    {
+      "id": "kepler",
+      "wikiTitleRu": "Кеплер, Иоганн",
+      "wikidataId": "Q8963",
+      "countryKeys": [
+        "germany"
+      ],
+      "centuryKeys": [
+        "16",
+        "17"
+      ],
+      "branchKeys": [
+        "geometry",
+        "applied_math"
+      ]
+    }
+  ]
+}

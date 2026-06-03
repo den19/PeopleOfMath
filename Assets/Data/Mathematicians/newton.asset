@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: newton
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: newton
+  wikiTitleRu: "\u041D\u044C\u044E\u0442\u043E\u043D, \u0418\u0441\u0430\u0430\u043A"
+  wikidataId: Q935
   fullNameRu: "\u0418\u0441\u0430\u0430\u043A \u041D\u044C\u044E\u0442\u043E\u043D"
   fullNameEn: Isaac Newton
   birthDate: "4 \u044F\u043D\u0432\u0430\u0440\u044F 1643"
@@ -58,3 +60,14 @@ MonoBehaviour:
     \u0430\u043D\u0430\u043B\u0438\u0437\u0430."
   shortBioEn: Creator of classical mechanics and co-inventor of calculus.
   wikipediaUrlRu: "https://ru.wikipedia.org/wiki/\u041D\u044C\u044E\u0442\u043E\u043D,_\u0418\u0441\u0430\u0430\u043A"
+  portraits:
+  - sprite: {fileID: 21300000, guid: 4f9c815f8d7ef71489c85830fe3b13b5, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 140a4e8ebbf181e4397248364f99cff0, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

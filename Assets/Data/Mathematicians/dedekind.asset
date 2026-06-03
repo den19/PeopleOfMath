@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: dedekind
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: dedekind
+  wikiTitleRu: "Дедекинд, Рихард"
+  wikidataId: Q7324
+  fullNameRu: "Дедекинд, Рихард"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - germany
+  centuryKeys:
+  - 19
+  branchKeys:
+  - number_theory
+  - algebra
+  achievementsRu: "Ю́лиус Вильге́льм
+    Ри́хард Де́декинд
+    (нем. Julius Wilhelm Richard Dedekind; 6 октября
+    1831 — 12 февраля 1916) — немецкий
+    математик, известный
+    работами по общей
+    алгебре и основаниям
+    вещественных чисел.
+    Ученик Гаусса и Дирихле.\nЧлен
+    Берлинской (1880), иностранный
+    член Римской и Французской
+    (1910) академий наук. Получил
+    докторские степени
+    в университетах Осло,
+    Цюриха и Брауншвейга.\n\n\n==
+    Биография ==\nРихард
+    Дедекинд был младшим
+    ребёнком из 4 детей
+    в семье Юлиуса Левина
+    Ульриха Дедекинда
+    — брауншвейгского
+    профессора-юриста
+    и деятеля высшего
+    образования. Стаu04…"
+  achievementsEn: 
+  personalLifeRu: "В 1871 году Дедекинд,
+    обобщив теорию многочленов
+    и алгебраических
+    чисел, вводит в математику
+    абстрактные алгебраические
+    структуры: кольца,
+    идеалы и модули. Совместно
+    с Кронекером он создаёт
+    общую теорию делимости.
+    Исследования Дедекинда
+    были изданы в виде
+    приложения к «Теории
+    чисел» Дирихле. Ряд
+    биографов полагает,
+    что эта книга, изданная
+    после смерти Дирихле,
+    в действительности
+    написана Дедекиндом\n.
+    Уровень общности
+    результатов, приложимых
+    к самым разным областям
+    математики, стимулировал
+    дальнейшее u04…"
+  personalLifeEn: 
+  shortBioRu: "Ю́лиус Вильге́льм
+    Ри́хард Де́декинд\_—
+    немецкий математик,
+    известный работами
+    по общей алгебре
+    и основаниям вещественных
+    чисел. Ученик Гаусса
+    и Дирихле."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%94%D0%B5%D0%B4%D0%B5%D0%BA%D0%B8%D0%BD%D0%B4%2C_%D0%A0%D0%B8%D1%85%D0%B0%D1%80%D0%B4
+  portraits:
+  - sprite: {fileID: 21300000, guid: cb5c2b950209cdf4bb5ecc64eeb16355, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 1950808106b017f44bd18fd496256f79, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

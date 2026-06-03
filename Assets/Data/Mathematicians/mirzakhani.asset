@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a672b690bf32c7d4bb64dcb90c19974b, type: 3}
+  m_Name: mirzakhani
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
+  id: mirzakhani
+  wikiTitleRu: "Мирзахани, Мариам"
+  wikidataId: Q1356138
+  fullNameRu: "Мирзахани, Мариам"
+  fullNameEn: 
+  birthDate: 
+  deathDate: 
+  countryKeys:
+  - iran
+  - usa
+  centuryKeys:
+  - 20
+  - 21
+  branchKeys:
+  - topology
+  - geometry
+  achievementsRu: "Мариа́м Мирзахани́
+    (англ. Maryam Mirzakhani, перс.    مریم
+    میرزاخانی ‎; 12 мая 1977
+    года, Тегеран — 14 июля
+    2017 года, Стэнфорд) — иранский
+    и американский математик,
+    специализировавшаяся
+    в геометрии Лобачевского,
+    пространствах Тейхмюллера,
+    эргодической теории,
+    симплектической геометрии.\nПрофессор
+    Стэнфордского университета,
+    член Американского
+    философского общества
+    (2015), член Национальной
+    академии наук США
+    (2016), иностранный член
+    Французской академии
+    наук (2015).\nВ 2014 году удостоилась
+    Филдсовской премии,
+    став первой женщиной-лауреатом
+    и пеu04…"
+  achievementsEn: 
+  personalLifeRu: "В 2010 году на Международном
+    математическом конгрессе
+    была приглашённым
+    докладчиком на тему
+    «Топология, динамические
+    системы и обыкновенные
+    дифференциальные
+    уравнения».\nВ 2014 году
+    стала лауреатом Филдсовской
+    премии за «выдающийся
+    вклад в динамику и
+    геометрию римановых
+    поверхностей и теорию
+    пространств их модулей».\nСкончалась
+    в июле 2017 года в Медицинском
+    центре Стэнфордского
+    университета от последствий
+    рака груди, который
+    был впервые диагностирован
+    в 2013 году.\nМуж — Ян Вондрак
+    (чеш. Jan Vondrák), учёный в области
+    ин…"
+  personalLifeEn: 
+  shortBioRu: "Мариа́м Мирзахани́\_—
+    иранский и американский
+    математик, специализировавшаяся
+    в геометрии Лобачевского,
+    пространствах
+    Тейхмюллера, эргодической
+    теории, симплектической
+    геометрии."
+  shortBioEn: 
+  wikipediaUrlRu: https://ru.wikipedia.org/wiki/%D0%9C%D0%B8%D1%80%D0%B7%D0%B0%D1%85%D0%B0%D0%BD%D0%B8%2C_%D0%9C%D0%B0%D1%80%D0%B8%D0%B0%D0%BC
+  portraits:
+  - sprite: {fileID: 21300000, guid: 0b112666e5e6cb9479b0eefe3021ba70, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 
+  - sprite: {fileID: 21300000, guid: 6b3d2b4f0924c924abfbf68a03ee2088, type: 3}
+    sourceUrl: 
+    licenseShort: 
+    attributionRu: 
+    attributionEn: 

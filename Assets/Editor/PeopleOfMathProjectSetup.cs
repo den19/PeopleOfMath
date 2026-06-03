@@ -64,7 +64,9 @@ namespace PeopleOfMath.Editor
             SetupRenderPipeline();
             SetupPlayerSettings();
             SetupAndroidTarget();
-            var mathematicians = MathematicianContentFactory.CreateAll(DataFolder);
+            var mathematicians = MathematicianRepositoryRefresh.LoadAllFromFolder(DataFolder);
+            if (mathematicians.Count == 0)
+                mathematicians = MathematicianContentFactory.CreateAll(DataFolder);
             var localization = SetupLocalization();
             var listItemPrefab = CreateListItemPrefab();
             EnsureListItemInResources();
@@ -97,7 +99,8 @@ namespace PeopleOfMath.Editor
             foreach (var dir in new[]
                      {
                          "Assets/Scenes", DataFolder, SettingsFolder, LocalizationFolder,
-                         PrefabFolder, "Assets/Scripts", "Assets/Editor"
+                         PrefabFolder, "Assets/Scripts", "Assets/Editor",
+                         "Assets/Data/Images", "Assets/Data"
                      })
             {
                 if (!Directory.Exists(dir))
@@ -203,6 +206,9 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "btn_russian", "Русский", "Russian");
             AddUiEntry(collection, "btn_english", "English", "English");
             AddUiEntry(collection, "empty_list", "Нет математиков по выбранному фильтру", "No mathematicians for this filter");
+            AddUiEntry(collection, "gallery_license", "Лицензия", "License");
+            AddUiEntry(collection, "gallery_source", "Источник", "Source");
+            AddUiEntry(collection, "gallery_no_images", "Изображения недоступны", "No images available");
 
             if (!LocalizationEditorSettings.GetLocales().Contains(ru))
                 LocalizationEditorSettings.AddLocale(ru);
@@ -595,6 +601,7 @@ namespace PeopleOfMath.Editor
             var scroll = CreateScrollView(panel.transform, "DetailScroll");
             var content = scroll.content;
 
+            var gallery = CreatePortraitGallery(content);
             var name = AddDetailField(content, "Name", 26, FontStyles.Bold);
             var dates = AddDetailField(content, "Dates", 16, FontStyles.Normal);
             var countriesLabel = AddDetailField(content, "CountriesLabel", 15, FontStyles.Bold);
@@ -623,8 +630,99 @@ namespace PeopleOfMath.Editor
             so.FindProperty("achievementsText").objectReferenceValue = achievements;
             so.FindProperty("personalLifeLabel").objectReferenceValue = personalLabel;
             so.FindProperty("personalLifeText").objectReferenceValue = personal;
+            so.FindProperty("gallery").objectReferenceValue = gallery;
             so.ApplyModifiedPropertiesWithoutUndo();
             return panel;
+        }
+
+        static PortraitGalleryView CreatePortraitGallery(Transform contentParent)
+        {
+            var block = new GameObject("PortraitGallery", typeof(RectTransform));
+            block.transform.SetParent(contentParent, false);
+            var blockRt = block.GetComponent<RectTransform>();
+            var le = block.AddComponent<LayoutElement>();
+            le.preferredHeight = 340;
+            le.flexibleWidth = 1;
+
+            var scrollGo = new GameObject("GalleryScroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
+            scrollGo.transform.SetParent(block.transform, false);
+            var scrollRt = scrollGo.GetComponent<RectTransform>();
+            scrollRt.anchorMin = Vector2.zero;
+            scrollRt.anchorMax = Vector2.one;
+            scrollRt.offsetMin = new Vector2(0, 48);
+            scrollRt.offsetMax = new Vector2(0, -40);
+            scrollGo.GetComponent<Image>().color = new Color(0.1f, 0.11f, 0.14f, 1f);
+
+            var viewport = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask));
+            viewport.transform.SetParent(scrollGo.transform, false);
+            var vpRt = viewport.GetComponent<RectTransform>();
+            vpRt.anchorMin = Vector2.zero;
+            vpRt.anchorMax = Vector2.one;
+            vpRt.offsetMin = Vector2.zero;
+            vpRt.offsetMax = Vector2.zero;
+            viewport.GetComponent<Image>().color = Color.clear;
+            viewport.GetComponent<Mask>().showMaskGraphic = false;
+
+            var pages = new GameObject("Pages", typeof(RectTransform));
+            pages.transform.SetParent(viewport.transform, false);
+            var pagesRt = pages.GetComponent<RectTransform>();
+            pagesRt.anchorMin = new Vector2(0, 0);
+            pagesRt.anchorMax = new Vector2(0, 1);
+            pagesRt.pivot = new Vector2(0, 0.5f);
+            pagesRt.sizeDelta = new Vector2(400, 0);
+
+            var pageTpl = new GameObject("PageTemplate", typeof(RectTransform), typeof(Image));
+            pageTpl.transform.SetParent(pages.transform, false);
+            pageTpl.SetActive(false);
+
+            var scroll = scrollGo.GetComponent<ScrollRect>();
+            scroll.viewport = vpRt;
+            scroll.content = pagesRt;
+            scroll.horizontal = true;
+            scroll.vertical = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.inertia = false;
+            scrollGo.AddComponent<GalleryScrollSnap>();
+
+            var dots = new GameObject("Dots", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            dots.transform.SetParent(block.transform, false);
+            var dotsRt = dots.GetComponent<RectTransform>();
+            dotsRt.anchorMin = new Vector2(0, 0);
+            dotsRt.anchorMax = new Vector2(1, 0);
+            dotsRt.pivot = new Vector2(0.5f, 0);
+            dotsRt.sizeDelta = new Vector2(0, 24);
+            dotsRt.anchoredPosition = new Vector2(0, 8);
+            var hlg = dots.GetComponent<HorizontalLayoutGroup>();
+            hlg.spacing = 8;
+            hlg.childAlignment = TextAnchor.MiddleCenter;
+            hlg.childControlWidth = false;
+            hlg.childControlHeight = false;
+
+            var dotTpl = new GameObject("DotTemplate", typeof(RectTransform), typeof(Image));
+            dotTpl.transform.SetParent(dots.transform, false);
+            dotTpl.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 10);
+            dotTpl.GetComponent<Image>().color = new Color(0.45f, 0.48f, 0.55f, 0.8f);
+            dotTpl.SetActive(false);
+
+            var caption = CreateTmpChild(block.transform, "Caption", 11, FontStyles.Italic, new Vector2(8, 4));
+            var capRt = caption.GetComponent<RectTransform>();
+            capRt.anchorMin = new Vector2(0, 0);
+            capRt.anchorMax = new Vector2(1, 0);
+            capRt.pivot = new Vector2(0, 0);
+            capRt.sizeDelta = new Vector2(-16, 36);
+            caption.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.TopLeft;
+
+            var gallery = block.AddComponent<PortraitGalleryView>();
+            var gso = new SerializedObject(gallery);
+            gso.FindProperty("scrollRect").objectReferenceValue = scroll;
+            gso.FindProperty("pageContainer").objectReferenceValue = pagesRt;
+            gso.FindProperty("pageTemplate").objectReferenceValue = pageTpl.GetComponent<Image>();
+            gso.FindProperty("captionText").objectReferenceValue = caption.GetComponent<TMP_Text>();
+            gso.FindProperty("dotsRoot").objectReferenceValue = dots.transform;
+            gso.FindProperty("dotTemplate").objectReferenceValue = dotTpl.GetComponent<Image>();
+            gso.FindProperty("snap").objectReferenceValue = scrollGo.GetComponent<GalleryScrollSnap>();
+            gso.ApplyModifiedPropertiesWithoutUndo();
+            return gallery;
         }
 
         static TMP_Text AddDetailField(Transform parent, string name, float size, FontStyles style, float height = 36)
@@ -755,17 +853,7 @@ namespace PeopleOfMath.Editor
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static void AssignMathematicians(MathematicianRepository repository, List<MathematicianData> list)
-        {
-            var so = new SerializedObject(repository);
-            var prop = so.FindProperty("mathematicians");
-            prop.ClearArray();
-            for (var i = 0; i < list.Count; i++)
-            {
-                prop.InsertArrayElementAtIndex(i);
-                prop.GetArrayElementAtIndex(i).objectReferenceValue = list[i];
-            }
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
+        static void AssignMathematicians(MathematicianRepository repository, List<MathematicianData> list) =>
+            MathematicianRepositoryRefresh.AssignToRepository(repository, list);
     }
 }
