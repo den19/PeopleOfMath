@@ -314,30 +314,75 @@ namespace PeopleOfMath.Editor
             var path = $"{PrefabFolder}/MathematicianListItem.prefab";
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (existing != null)
+            {
+                ConfigureListItem(existing);
+                EditorUtility.SetDirty(existing);
                 return existing.GetComponent<MathematicianListItem>();
+            }
 
             var root = new GameObject("MathematicianListItem", typeof(RectTransform), typeof(Image), typeof(Button));
-            var rt = root.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(0, 120);
             var img = root.GetComponent<Image>();
             img.color = new Color(0.2f, 0.22f, 0.28f, 1f);
 
-            var nameGo = CreateTmpChild(root.transform, "Name", 20, FontStyles.Bold, new Vector2(10, -10));
-            var datesGo = CreateTmpChild(root.transform, "Dates", 14, FontStyles.Normal, new Vector2(10, -38));
-            var bioGo = CreateTmpChild(root.transform, "Bio", 13, FontStyles.Italic, new Vector2(10, -58));
-            bioGo.GetComponent<RectTransform>().sizeDelta = new Vector2(-20, 50);
+            CreateTmpChild(root.transform, "Name", UiLayoutMetrics.ListItemNameBaseFontSize, FontStyles.Bold, UiLayoutMetrics.ListItemNamePos);
+            CreateTmpChild(root.transform, "Dates", UiLayoutMetrics.ListItemDatesBaseFontSize, FontStyles.Normal, UiLayoutMetrics.ListItemDatesPos);
+            CreateTmpChild(root.transform, "Bio", UiLayoutMetrics.ListItemBioBaseFontSize, FontStyles.Italic, UiLayoutMetrics.ListItemBioPos);
+            ConfigureListItem(root);
 
             var item = root.AddComponent<MathematicianListItem>();
             var so = new SerializedObject(item);
-            so.FindProperty("nameText").objectReferenceValue = nameGo.GetComponent<TMP_Text>();
-            so.FindProperty("datesText").objectReferenceValue = datesGo.GetComponent<TMP_Text>();
-            so.FindProperty("bioText").objectReferenceValue = bioGo.GetComponent<TMP_Text>();
+            so.FindProperty("nameText").objectReferenceValue = root.transform.Find("Name").GetComponent<TMP_Text>();
+            so.FindProperty("datesText").objectReferenceValue = root.transform.Find("Dates").GetComponent<TMP_Text>();
+            so.FindProperty("bioText").objectReferenceValue = root.transform.Find("Bio").GetComponent<TMP_Text>();
             so.FindProperty("button").objectReferenceValue = root.GetComponent<Button>();
             so.ApplyModifiedPropertiesWithoutUndo();
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
             Object.DestroyImmediate(root);
             return prefab.GetComponent<MathematicianListItem>();
+        }
+
+        public static void ConfigureListItem(GameObject go)
+        {
+            var rt = go.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.sizeDelta = new Vector2(rt.sizeDelta.x, UiLayoutMetrics.ListItemRowHeight);
+
+            ConfigureListItemText(go, "Name", UiLayoutMetrics.ListItemNameFontSize, FontStyles.Bold,
+                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemTextLineHeight);
+            ConfigureListItemText(go, "Dates", UiLayoutMetrics.ListItemDatesFontSize, FontStyles.Normal,
+                UiLayoutMetrics.ListItemDatesPos, UiLayoutMetrics.ListItemTextLineHeight);
+            ConfigureListItemText(go, "Bio", UiLayoutMetrics.ListItemBioFontSize, FontStyles.Italic,
+                UiLayoutMetrics.ListItemBioPos, UiLayoutMetrics.ListItemBioHeight);
+        }
+
+        static void ConfigureListItemText(
+            GameObject root,
+            string childName,
+            float fontSize,
+            FontStyles style,
+            Vector2 anchoredPos,
+            float height)
+        {
+            var child = root.transform.Find(childName);
+            if (child == null)
+                return;
+
+            var childRt = child.GetComponent<RectTransform>();
+            childRt.anchoredPosition = anchoredPos;
+            childRt.sizeDelta = new Vector2(-UiLayoutMetrics.ListItemHorizontalInset, height);
+
+            var tmp = child.GetComponent<TextMeshProUGUI>();
+            if (tmp == null)
+                return;
+
+            tmp.fontSize = fontSize;
+            tmp.fontStyle = style;
+            var so = new SerializedObject(tmp);
+            var baseProp = so.FindProperty("m_fontSizeBase");
+            if (baseProp != null)
+                baseProp.floatValue = fontSize;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static GameObject CreateTmpChild(Transform parent, string name, float size, FontStyles style, Vector2 anchoredPos)
@@ -542,7 +587,12 @@ namespace PeopleOfMath.Editor
 
                 var labelRt = label.rectTransform;
                 if (labelRt != null)
-                    labelRt.sizeDelta = new Vector2(labelRt.sizeDelta.x, UiLayoutMetrics.FilterButtonLabelHeight);
+                {
+                    labelRt.anchoredPosition = UiLayoutMetrics.FilterButtonLabelOffset;
+                    labelRt.sizeDelta = new Vector2(
+                        -UiLayoutMetrics.FilterButtonLabelHorizontalInset,
+                        UiLayoutMetrics.FilterButtonLabelHeight);
+                }
             }
         }
 
@@ -558,11 +608,11 @@ namespace PeopleOfMath.Editor
             }
 
             var go = new GameObject("FilterButton", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
-            ConfigureFilterButton(go);
             var img = go.GetComponent<Image>();
             img.color = new Color(0.28f, 0.35f, 0.48f);
-            var label = CreateTmpChild(go.transform, "Label", UiLayoutMetrics.FilterButtonBaseFontSize * 2f, FontStyles.Normal, new Vector2(16, -14));
+            var label = CreateTmpChild(go.transform, "Label", UiLayoutMetrics.FilterButtonBaseFontSize, FontStyles.Normal, UiLayoutMetrics.FilterButtonLabelOffset);
             label.GetComponent<RectTransform>().anchorMax = Vector2.one;
+            ConfigureFilterButton(go);
             var btn = go.GetComponent<Button>();
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
             Object.DestroyImmediate(go);
@@ -571,11 +621,10 @@ namespace PeopleOfMath.Editor
 
         static void AddSectionLabel(Transform parent, StringTableCollection collection, string key)
         {
-            var label = CreateTmpChild(parent, key, 18, FontStyles.Bold, Vector2.zero);
-            var rt = label.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(0, UiLayoutMetrics.ScaleFont(36));
-            var le = label.AddComponent<LayoutElement>();
-            le.preferredHeight = UiLayoutMetrics.ScaleFont(36);
+            var label = CreateTmpChild(parent, key, UiLayoutMetrics.SectionLabelBaseFontSize, FontStyles.Bold, Vector2.zero);
+            HomeListPanelLayout.ConfigureSectionLabel(label);
+            var le = label.GetComponent<LayoutElement>() ?? label.AddComponent<LayoutElement>();
+            le.preferredHeight = UiLayoutMetrics.SectionLabelHeight;
             var lse = label.AddComponent<LocalizeStringEvent>();
             var ls = MakeLocalized(collection, key);
             var so = new SerializedObject(lse);
@@ -590,8 +639,7 @@ namespace PeopleOfMath.Editor
             var vlg = go.GetComponent<VerticalLayoutGroup>();
             vlg.childControlHeight = true;
             vlg.childForceExpandHeight = false;
-            vlg.spacing = 8;
-            vlg.padding = new RectOffset(0, 0, 4, 12);
+            HomeListPanelLayout.ConfigureBrowseGroup(vlg);
             var fitter = go.GetComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             var le = go.AddComponent<LayoutElement>();
@@ -613,8 +661,7 @@ namespace PeopleOfMath.Editor
             contentRt.anchorMin = new Vector2(0, 1);
             contentRt.anchorMax = new Vector2(1, 1);
             var vlg = content.AddComponent<VerticalLayoutGroup>();
-            vlg.padding = new RectOffset(24, 24, 16, 24);
-            vlg.spacing = 12;
+            HomeListPanelLayout.ConfigureBrowseScrollContent(vlg);
             vlg.childControlWidth = true;
             vlg.childForceExpandWidth = true;
             var fitter = content.AddComponent<ContentSizeFitter>();
@@ -872,7 +919,8 @@ namespace PeopleOfMath.Editor
             var panel = CreatePanel(parent, "ListPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             panel.SetActive(false);
             var scroll = CreateScrollView(panel.transform, "ListScroll");
-            var empty = CreateTmpChild(panel.transform, "Empty", 16, FontStyles.Italic, new Vector2(40, -200));
+            var empty = CreateTmpChild(panel.transform, "Empty", UiLayoutMetrics.EmptyStateBaseFontSize, FontStyles.Italic, UiLayoutMetrics.EmptyStatePosition);
+            HomeListPanelLayout.ConfigureEmptyState(empty);
             empty.SetActive(false);
             var lse = empty.AddComponent<LocalizeStringEvent>();
             var soLse = new SerializedObject(lse);

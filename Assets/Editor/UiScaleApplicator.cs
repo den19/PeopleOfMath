@@ -131,10 +131,7 @@ namespace PeopleOfMath.Editor
                     PeopleOfMathProjectSetup.ConfigureFilterButton(root);
                 }
                 else
-                {
-                    foreach (var tmp in root.GetComponentsInChildren<TextMeshProUGUI>(true))
-                        ScaleTextAdditional(tmp);
-                }
+                    PeopleOfMathProjectSetup.ConfigureListItem(root);
 
                 PrefabUtility.SaveAsPrefabAsset(root, path);
             }
