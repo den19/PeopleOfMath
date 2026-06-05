@@ -87,6 +87,7 @@ namespace PeopleOfMath.Editor
             EditorUtility.ClearProgressBar();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+            MathematicianAssetYamlSync.SyncAllMathematicianAssets();
             Debug.Log($"Import catalog done: {ok} ok, {fail} failed.");
         }
 

@@ -901,15 +901,13 @@ namespace PeopleOfMath.Editor
             scrollRt.offsetMax = new Vector2(0, -40);
             scrollGo.GetComponent<Image>().color = new Color(0.1f, 0.11f, 0.14f, 1f);
 
-            var viewport = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask));
+            var viewport = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D));
             viewport.transform.SetParent(scrollGo.transform, false);
             var vpRt = viewport.GetComponent<RectTransform>();
             vpRt.anchorMin = Vector2.zero;
             vpRt.anchorMax = Vector2.one;
             vpRt.offsetMin = Vector2.zero;
             vpRt.offsetMax = Vector2.zero;
-            viewport.GetComponent<Image>().color = Color.clear;
-            viewport.GetComponent<Mask>().showMaskGraphic = false;
 
             var pages = new GameObject("Pages", typeof(RectTransform));
             pages.transform.SetParent(viewport.transform, false);

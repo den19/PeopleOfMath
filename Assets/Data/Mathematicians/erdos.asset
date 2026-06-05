@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: erdos
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: erdos
-  wikiTitleRu: "\u042D\u0440\u0434\u0451\u0448, \u041F\u0430\u043B"
+  wikiTitleRu: "Эрдёш, Пал"
   wikidataId: Q173746
-  fullNameRu: "\u042D\u0440\u0434\u0451\u0448, \u041F\u0430\u043B"
+  fullNameRu: "Эрдёш, Пал"
   fullNameEn: 
   birthDate: 
   deathDate: 

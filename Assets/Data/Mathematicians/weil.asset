@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: weil
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: weil
-  wikiTitleRu: "\u0412\u0435\u0439\u043B\u044C, \u0410\u043D\u0434\u0440\u0435"
+  wikiTitleRu: "Вейль, Андре"
   wikidataId: Q76641
-  fullNameRu: "\u0412\u0435\u0439\u043B\u044C, \u0410\u043D\u0434\u0440\u0435"
+  fullNameRu: "Вейль, Андре"
   fullNameEn: 
   birthDate: 
   deathDate: 

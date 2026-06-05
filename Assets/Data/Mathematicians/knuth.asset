@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: knuth
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: knuth
-  wikiTitleRu: "\u041A\u043D\u0443\u0442, \u0414\u043E\u043D\u0430\u043B\u044C\u0434"
+  wikiTitleRu: "Кнут, Дональд"
   wikidataId: Q1744
-  fullNameRu: "\u041A\u043D\u0443\u0442, \u0414\u043E\u043D\u0430\u043B\u044C\u0434"
+  fullNameRu: "Кнут, Дональд"
   fullNameEn: 
   birthDate: 
   deathDate: 

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: artin
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: artin
-  wikiTitleRu: "\u0410\u0440\u0442\u0438\u043D, \u042D\u043C\u0438\u043B\u044C"
+  wikiTitleRu: "Артин, Эмиль"
   wikidataId: Q76641
-  fullNameRu: "\u0410\u0440\u0442\u0438\u043D, \u042D\u043C\u0438\u043B\u044C"
+  fullNameRu: "Артин, Эмиль"
   fullNameEn: 
   birthDate: 
   deathDate: 

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: torricelli
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: torricelli
-  wikiTitleRu: "\u0422\u043E\u0440\u0440\u0438\u0447\u0435\u043B\u043B\u0438, \u042D\u0432\u0430\u043D\u0434\u0436\u0435\u043B\u0438\u0441\u0442\u0430"
+  wikiTitleRu: "Торричелли, Эванджелиста"
   wikidataId: Q123762
-  fullNameRu: "\u0422\u043E\u0440\u0440\u0438\u0447\u0435\u043B\u043B\u0438, \u042D\u0432\u0430\u043D\u0434\u0436\u0435\u043B\u0438\u0441\u0442\u0430"
+  fullNameRu: "Торричелли, Эванджелиста"
   fullNameEn: 
   birthDate: 
   deathDate: 

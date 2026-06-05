@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: pontryagin
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: pontryagin
-  wikiTitleRu: "\u041F\u043E\u043D\u0442\u0440\u044F\u0433\u0438\u043D, \u041B\u0435\u0432"
+  wikiTitleRu: "Понтрягин, Лев"
   wikidataId: Q323787
-  fullNameRu: "\u041F\u043E\u043D\u0442\u0440\u044F\u0433\u0438\u043D, \u041B\u0435\u0432"
+  fullNameRu: "Понтрягин, Лев"
   fullNameEn: 
   birthDate: 
   deathDate: 

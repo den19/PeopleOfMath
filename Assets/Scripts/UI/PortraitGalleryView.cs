@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using PeopleOfMath.Data;
@@ -24,10 +25,13 @@ namespace PeopleOfMath.UI
         readonly List<Image> _pages = new();
         readonly List<Image> _dots = new();
         IReadOnlyList<PortraitEntry> _entries = new List<PortraitEntry>();
+        int _layoutPageCount;
+        bool _relayoutScheduled;
 
         void OnEnable()
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+            ScheduleRelayout();
         }
 
         void OnDisable()
@@ -36,6 +40,8 @@ namespace PeopleOfMath.UI
             if (snap != null)
                 snap.PageChanged -= OnPageChanged;
         }
+
+        void OnRectTransformDimensionsChange() => ScheduleRelayout();
 
         void OnLocaleChanged(UnityEngine.Localization.Locale _) => RefreshCaption();
 
@@ -73,6 +79,8 @@ namespace PeopleOfMath.UI
                 SetCaption(LocaleHelper.IsEnglish
                     ? "No images available"
                     : "Изображения недоступны");
+
+            ScheduleRelayout();
         }
 
         void BuildPages(List<PortraitEntry> valid)
@@ -87,25 +95,28 @@ namespace PeopleOfMath.UI
             if (pageTemplate != null)
                 pageTemplate.gameObject.SetActive(false);
 
+            _layoutPageCount = Mathf.Max(1, valid.Count);
+
             if (valid.Count == 0)
             {
                 var empty = CreatePage();
                 empty.sprite = placeholderSprite;
                 empty.color = new Color(0.2f, 0.22f, 0.28f, 1f);
                 _pages.Add(empty);
-                return;
             }
-
-            foreach (var entry in valid)
+            else
             {
-                var img = CreatePage();
-                img.sprite = entry.sprite;
-                img.preserveAspect = true;
-                img.color = Color.white;
-                _pages.Add(img);
+                foreach (var entry in valid)
+                {
+                    var img = CreatePage();
+                    img.sprite = entry.sprite;
+                    img.preserveAspect = true;
+                    img.color = Color.white;
+                    _pages.Add(img);
+                }
             }
 
-            LayoutPages(valid.Count);
+            LayoutPages(_layoutPageCount);
             if (pageContainer != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(pageContainer);
             if (scrollRect != null)
@@ -123,23 +134,40 @@ namespace PeopleOfMath.UI
             if (width < 1f)
                 width = 400f;
 
-            var height = scrollRect.viewport != null
-                ? scrollRect.viewport.rect.height
-                : 280f;
-            if (height < 80f)
-                height = 280f;
-
-            pageContainer.sizeDelta = new Vector2(width * Mathf.Max(1, count), height);
+            pageContainer.sizeDelta = new Vector2(width * Mathf.Max(1, count), 0f);
             for (var i = 0; i < _pages.Count; i++)
             {
                 var rt = _pages[i].rectTransform;
                 rt.anchorMin = new Vector2(0, 0);
                 rt.anchorMax = new Vector2(0, 1);
                 rt.pivot = new Vector2(0, 0.5f);
-                rt.sizeDelta = new Vector2(width, height);
+                rt.sizeDelta = new Vector2(width, 0f);
                 rt.anchoredPosition = new Vector2(i * width, 0);
                 _pages[i].type = Image.Type.Simple;
             }
+        }
+
+        void ScheduleRelayout()
+        {
+            if (_pages.Count == 0 || _relayoutScheduled || !isActiveAndEnabled)
+                return;
+
+            _relayoutScheduled = true;
+            StartCoroutine(RelayoutNextFrame());
+        }
+
+        IEnumerator RelayoutNextFrame()
+        {
+            yield return null;
+            _relayoutScheduled = false;
+
+            if (!isActiveAndEnabled || _pages.Count == 0)
+                yield break;
+
+            Canvas.ForceUpdateCanvases();
+            LayoutPages(_layoutPageCount);
+            if (pageContainer != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(pageContainer);
         }
 
         Image CreatePage()

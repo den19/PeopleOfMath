@@ -11,10 +11,18 @@ namespace PeopleOfMath.Editor
         [MenuItem("PeopleOfMath/Fix Portrait Texture Import (Sprite)")]
         public static void FixAll()
         {
+            var count = ReimportAll();
+            AssetDatabase.Refresh();
+            WikimediaPortraitImporter.LinkAllFromFolders();
+            Debug.Log($"Reimported {count} portrait textures as Sprites.");
+        }
+
+        public static int ReimportAll()
+        {
             if (!Directory.Exists(ResourcesRoot))
             {
                 Debug.LogWarning("No Resources/Portraits folder.");
-                return;
+                return 0;
             }
 
             var count = 0;
@@ -32,16 +40,29 @@ namespace PeopleOfMath.Editor
                 if (importer == null)
                     continue;
 
-                importer.textureType = TextureImporterType.Sprite;
-                importer.spriteImportMode = SpriteImportMode.Single;
-                importer.maxTextureSize = 512;
+                ApplyPortraitImportSettings(importer, assetPath);
                 importer.SaveAndReimport();
                 count++;
             }
 
-            AssetDatabase.Refresh();
-            WikimediaPortraitImporter.LinkAllFromFolders();
-            Debug.Log($"Reimported {count} portrait textures as Sprites.");
+            return count;
+        }
+
+        internal static void ApplyPortraitImportSettings(TextureImporter importer, string assetPath)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.maxTextureSize = 512;
+
+            var settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
+            settings.spriteMeshType = SpriteMeshType.FullRect;
+
+            var ext = Path.GetExtension(assetPath).ToLowerInvariant();
+            if (ext is ".jpg" or ".jpeg")
+                settings.alphaIsTransparency = false;
+
+            importer.SetTextureSettings(settings);
         }
     }
 }

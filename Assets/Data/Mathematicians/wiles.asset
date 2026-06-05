@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: wiles
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: wiles
-  wikiTitleRu: "\u0423\u0430\u0439\u043B\u0441, \u042D\u043D\u0434\u0440\u044E"
+  wikiTitleRu: "Уайлс, Эндрю"
   wikidataId: Q184337
-  fullNameRu: "\u0423\u0430\u0439\u043B\u0441, \u042D\u043D\u0434\u0440\u044E"
+  fullNameRu: "Уайлс, Эндрю"
   fullNameEn: 
   birthDate: 
   deathDate: 

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: markov
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: markov
-  wikiTitleRu: "\u041C\u0430\u0440\u043A\u043E\u0432, \u0410\u043D\u0434\u0440\u0435\u0439"
+  wikiTitleRu: "Марков, Андрей"
   wikidataId: Q32955
-  fullNameRu: "\u041C\u0430\u0440\u043A\u043E\u0432, \u0410\u043D\u0434\u0440\u0435\u0439"
+  fullNameRu: "Марков, Андрей"
   fullNameEn: 
   birthDate: 
   deathDate: 

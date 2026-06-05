@@ -1,0 +1,4 @@
+Python portrait import 2026-06-06 05:46 empty_only=False
+WARN thales: only 0 image(s)
+Summary: OK files=0, SKIP=0, FAIL events=0
+Next: Unity → Link Portraits From Folders

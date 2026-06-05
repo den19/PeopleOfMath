@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: omar_khayyam
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: omar_khayyam
-  wikiTitleRu: "\u041E\u043C\u0430\u0440 \u0425\u0430\u0439\u044F\u043C"
+  wikiTitleRu: "Омар Хайям"
   wikidataId: Q9440
-  fullNameRu: "\u041E\u043C\u0430\u0440 \u0425\u0430\u0439\u044F\u043C"
+  fullNameRu: "Омар Хайям"
   fullNameEn: 
   birthDate: 
   deathDate: 

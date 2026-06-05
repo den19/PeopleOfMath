@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: abel
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: abel
-  wikiTitleRu: "\u0410\u0431\u0435\u043B\u044C, \u041D\u0438\u043B\u044C\u0441"
+  wikiTitleRu: "Абель, Нильс"
   wikidataId: Q1247
-  fullNameRu: "\u0410\u0431\u0435\u043B\u044C, \u041D\u0438\u043B\u044C\u0441"
+  fullNameRu: "Абель, Нильс"
   fullNameEn: 
   birthDate: 
   deathDate: 

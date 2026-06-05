@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: tao
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: tao
-  wikiTitleRu: "\u0422\u0430\u043E, \u0422\u0435\u0440\u0435\u043D\u0441"
+  wikiTitleRu: "Тао, Теренс"
   wikidataId: Q335492
-  fullNameRu: "\u0422\u0430\u043E, \u0422\u0435\u0440\u0435\u043D\u0441"
+  fullNameRu: "Тао, Теренс"
   fullNameEn: 
   birthDate: 
   deathDate: 

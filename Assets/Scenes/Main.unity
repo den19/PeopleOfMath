@@ -127,6 +127,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 161506810}
     m_Modifications:
+    - target: {fileID: 3260371348515332706, guid: 9bd79cd7659adea40b3b28b8dd43c4dc, type: 3}
+      propertyPath: m_fontSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3260371348515332706, guid: 9bd79cd7659adea40b3b28b8dd43c4dc, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 5362570490914708770, guid: 9bd79cd7659adea40b3b28b8dd43c4dc, type: 3}
       propertyPath: m_Name
       value: DetailSection_Countries
@@ -214,6 +222,14 @@ PrefabInstance:
     - target: {fileID: 5773650957916516274, guid: 9bd79cd7659adea40b3b28b8dd43c4dc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6896795942563006775, guid: 9bd79cd7659adea40b3b28b8dd43c4dc, type: 3}
+      propertyPath: m_fontSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 6896795942563006775, guid: 9bd79cd7659adea40b3b28b8dd43c4dc, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -370,8 +386,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -431,6 +447,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 161506810}
     m_Modifications:
+    - target: {fileID: 671780042289516241, guid: 24d658bb38d43474f977958271d93f3e, type: 3}
+      propertyPath: m_Color.a
+      value: 0.47058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 671780042289516241, guid: 24d658bb38d43474f977958271d93f3e, type: 3}
+      propertyPath: m_Color.b
+      value: 0.47058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 671780042289516241, guid: 24d658bb38d43474f977958271d93f3e, type: 3}
+      propertyPath: m_Color.g
+      value: 0.47058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 671780042289516241, guid: 24d658bb38d43474f977958271d93f3e, type: 3}
+      propertyPath: m_Color.r
+      value: 0.47058824
+      objectReference: {fileID: 0}
     - target: {fileID: 1964838247108001371, guid: 24d658bb38d43474f977958271d93f3e, type: 3}
       propertyPath: m_Name
       value: DetailSection_Portraits
@@ -970,8 +1002,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 55
+  m_fontSizeBase: 55
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3444,8 +3476,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3932,6 +3964,14 @@ PrefabInstance:
     - target: {fileID: 8007036512175896892, guid: 13b33dfc94e6dd94d8f29815abcce23e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405752219745710103, guid: 13b33dfc94e6dd94d8f29815abcce23e, type: 3}
+      propertyPath: m_fontSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405752219745710103, guid: 13b33dfc94e6dd94d8f29815abcce23e, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4668,6 +4708,14 @@ PrefabInstance:
     - target: {fileID: 2488832351627418736, guid: 38fed05634901fb46ad105d663d51c27, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3373872793988993265, guid: 38fed05634901fb46ad105d663d51c27, type: 3}
+      propertyPath: m_fontSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3373872793988993265, guid: 38fed05634901fb46ad105d663d51c27, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 3675796450228955908, guid: 38fed05634901fb46ad105d663d51c27, type: 3}
       propertyPath: m_Pivot.x
@@ -5437,6 +5485,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2716552535602927844, guid: c4c2841a3b7483a40991dda4e6291fbf, type: 3}
+      propertyPath: m_fontSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716552535602927844, guid: c4c2841a3b7483a40991dda4e6291fbf, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 3918081043671945365, guid: c4c2841a3b7483a40991dda4e6291fbf, type: 3}
       propertyPath: m_Name
       value: DetailSection_Identity
@@ -5444,6 +5500,14 @@ PrefabInstance:
     - target: {fileID: 3918081043671945365, guid: c4c2841a3b7483a40991dda4e6291fbf, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8356815034116030459, guid: c4c2841a3b7483a40991dda4e6291fbf, type: 3}
+      propertyPath: m_fontSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8356815034116030459, guid: c4c2841a3b7483a40991dda4e6291fbf, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5474,6 +5538,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 161506810}
     m_Modifications:
+    - target: {fileID: 1321897324860402684, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
+      propertyPath: m_fontSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1321897324860402684, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 2820333423724664252, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5562,6 +5634,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8941923533204366956, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
+      propertyPath: m_fontSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 8941923533204366956, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 60
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5591,6 +5671,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 161506810}
     m_Modifications:
+    - target: {fileID: 2965129531241595491, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
+      propertyPath: m_fontSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 2965129531241595491, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 3584526127150068450, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
       propertyPath: m_Name
       value: DetailSection_Centuries
@@ -5598,6 +5686,14 @@ PrefabInstance:
     - target: {fileID: 3584526127150068450, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259302587200207542, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
+      propertyPath: m_fontSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259302587200207542, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6632352897366926266, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
       propertyPath: m_Pivot.x
@@ -6257,8 +6353,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6746,8 +6842,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

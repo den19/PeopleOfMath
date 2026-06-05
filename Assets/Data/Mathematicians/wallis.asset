@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: wallis
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: wallis
-  wikiTitleRu: "\u0423\u043E\u043B\u043B\u0438\u0441, \u0414\u0436\u043E\u043D"
+  wikiTitleRu: "Уоллис, Джон"
   wikidataId: Q123762
-  fullNameRu: "\u0423\u043E\u043B\u043B\u0438\u0441, \u0414\u0436\u043E\u043D"
+  fullNameRu: "Уоллис, Джон"
   fullNameEn: 
   birthDate: 
   deathDate: 

@@ -107,6 +107,20 @@ namespace PeopleOfMath.Editor
             Debug.Log($"Linked real portraits for {n} mathematicians.");
         }
 
+        public static int LinkAllFromFolders(int minLinked = MinImages)
+        {
+            var count = 0;
+            var guids = AssetDatabase.FindAssets("t:MathematicianData", new[] { DataFolder });
+            foreach (var guid in guids)
+            {
+                var data = AssetDatabase.LoadAssetAtPath<MathematicianData>(
+                    AssetDatabase.GUIDToAssetPath(guid));
+                if (data != null && LinkFromFolder(data) >= minLinked)
+                    count++;
+            }
+            return count;
+        }
+
         public static void ImportAllPortraits(
             bool forceReplace = false,
             bool finalize = false,
@@ -185,20 +199,6 @@ namespace PeopleOfMath.Editor
         {
             LinkAllFromFolders();
             PortraitTextureImportFix.FixAll();
-        }
-
-        public static int LinkAllFromFolders()
-        {
-            var count = 0;
-            var guids = AssetDatabase.FindAssets("t:MathematicianData", new[] { DataFolder });
-            foreach (var guid in guids)
-            {
-                var data = AssetDatabase.LoadAssetAtPath<MathematicianData>(
-                    AssetDatabase.GUIDToAssetPath(guid));
-                if (data != null && LinkFromFolder(data) >= MinImages)
-                    count++;
-            }
-            return count;
         }
 
         static int LinkFromFolder(MathematicianData data)
@@ -596,9 +596,8 @@ namespace PeopleOfMath.Editor
             var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
             if (importer == null)
                 return;
-            importer.textureType = TextureImporterType.Sprite;
-            importer.spriteImportMode = SpriteImportMode.Single;
             importer.maxTextureSize = MaxSide;
+            PortraitTextureImportFix.ApplyPortraitImportSettings(importer, assetPath);
             importer.SaveAndReimport();
         }
 

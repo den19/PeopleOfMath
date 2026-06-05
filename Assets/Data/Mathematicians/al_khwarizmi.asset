@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: al_khwarizmi
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: al_khwarizmi
-  wikiTitleRu: "\u0410\u043B\u044C-\u0425\u043E\u0440\u0435\u0437\u043C\u0438"
+  wikiTitleRu: "Аль-Хорезми"
   wikidataId: Q9038
-  fullNameRu: "\u0410\u043B\u044C-\u0425\u043E\u0440\u0435\u0437\u043C\u0438"
+  fullNameRu: "Аль-Хорезми"
   fullNameEn: 
   birthDate: 
   deathDate: 
