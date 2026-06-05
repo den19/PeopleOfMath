@@ -528,6 +528,22 @@ namespace PeopleOfMath.Editor
                 le.preferredWidth = UiLayoutMetrics.FilterButtonWidth;
                 le.preferredHeight = UiLayoutMetrics.FilterButtonHeight;
             }
+
+            var label = go.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (label != null)
+            {
+                var fontSize = UiLayoutMetrics.FilterButtonFontSize;
+                label.fontSize = fontSize;
+                var so = new SerializedObject(label);
+                var baseProp = so.FindProperty("m_fontSizeBase");
+                if (baseProp != null)
+                    baseProp.floatValue = fontSize;
+                so.ApplyModifiedPropertiesWithoutUndo();
+
+                var labelRt = label.rectTransform;
+                if (labelRt != null)
+                    labelRt.sizeDelta = new Vector2(labelRt.sizeDelta.x, UiLayoutMetrics.FilterButtonLabelHeight);
+            }
         }
 
         static Button CreateFilterButtonPrefab()
@@ -545,7 +561,7 @@ namespace PeopleOfMath.Editor
             ConfigureFilterButton(go);
             var img = go.GetComponent<Image>();
             img.color = new Color(0.28f, 0.35f, 0.48f);
-            var label = CreateTmpChild(go.transform, "Label", 18, FontStyles.Normal, new Vector2(16, -14));
+            var label = CreateTmpChild(go.transform, "Label", UiLayoutMetrics.FilterButtonBaseFontSize * 2f, FontStyles.Normal, new Vector2(16, -14));
             label.GetComponent<RectTransform>().anchorMax = Vector2.one;
             var btn = go.GetComponent<Button>();
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
