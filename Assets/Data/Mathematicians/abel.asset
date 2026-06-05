@@ -34,12 +34,7 @@ MonoBehaviour:
   shortBioEn: 
   wikipediaUrlRu: 
   portraits:
-  - sprite: {fileID: 21300000, guid: fc91a7aa101450049a3ccec5e864ccd1, type: 3}
-    sourceUrl: 
-    licenseShort: 
-    attributionRu: 
-    attributionEn: 
-  - sprite: {fileID: 21300000, guid: 5b80af07a9e6031459f6e2ab62a0f7f4, type: 3}
+  - sprite: {fileID: 21300000, guid: b56fb396c3998fd4daed2cb9997de081, type: 3}
     sourceUrl: 
     licenseShort: 
     attributionRu: 

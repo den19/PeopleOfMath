@@ -3,27 +3,23 @@ using PeopleOfMath.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
+using UnityEngine.UI;
 
 namespace PeopleOfMath.UI
 {
     public class DetailPanel : MonoBehaviour
     {
         [SerializeField] MathematicianRepository repository;
-        [SerializeField] TMP_Text nameText;
-        [SerializeField] TMP_Text datesText;
-        [SerializeField] TMP_Text countriesText;
-        [SerializeField] TMP_Text centuriesText;
-        [SerializeField] TMP_Text branchesText;
-        [SerializeField] TMP_Text achievementsText;
-        [SerializeField] TMP_Text personalLifeText;
-        [SerializeField] TMP_Text achievementsLabel;
-        [SerializeField] TMP_Text personalLifeLabel;
-        [SerializeField] TMP_Text countriesLabel;
-        [SerializeField] TMP_Text centuriesLabel;
-        [SerializeField] TMP_Text branchesLabel;
-        [SerializeField] PortraitGalleryView gallery;
+        [SerializeField] MathematicianDetailSection[] sections;
+        [SerializeField] HeaderTitleBinder headerTitle;
+        [SerializeField] Button sectionNextButton;
+        [SerializeField] TMP_Text pageIndicator;
 
+        int _sectionIndex;
         string _currentId;
+
+        public bool CanGoNext =>
+            sections != null && _sectionIndex < sections.Length - 1;
 
         void OnEnable()
         {
@@ -40,7 +36,26 @@ namespace PeopleOfMath.UI
         public void Bind(string mathematicianId)
         {
             _currentId = mathematicianId;
+            _sectionIndex = 0;
+            ShowSection(0);
             Refresh();
+        }
+
+        public bool TryGoBack()
+        {
+            if (_sectionIndex > 0)
+            {
+                ShowSection(_sectionIndex - 1);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void GoNext()
+        {
+            if (CanGoNext)
+                ShowSection(_sectionIndex + 1);
         }
 
         void Refresh()
@@ -50,25 +65,53 @@ namespace PeopleOfMath.UI
                 return;
 
             var english = LocaleHelper.IsEnglish;
-            nameText.text = data.GetFullName(english);
-            datesText.text = data.GetLifeDatesLabel(english);
-            countriesText.text = data.GetCountriesDisplay(english);
-            centuriesText.text = data.GetCenturiesDisplay(english);
-            branchesText.text = data.GetBranchesDisplay(english);
-            achievementsText.text = data.GetAchievements(english);
-            personalLifeText.text = data.GetPersonalLife(english);
-            gallery?.Bind(data);
+            if (sections == null)
+                return;
 
-            if (countriesLabel != null)
-                countriesLabel.text = english ? "Countries" : "Страны";
-            if (centuriesLabel != null)
-                centuriesLabel.text = english ? "Centuries" : "Века";
-            if (branchesLabel != null)
-                branchesLabel.text = english ? "Fields" : "Разделы";
-            if (achievementsLabel != null)
-                achievementsLabel.text = english ? "Achievements and contributions" : "Достижения и вклад";
-            if (personalLifeLabel != null)
-                personalLifeLabel.text = english ? "Personal life" : "Личная жизнь";
+            foreach (var section in sections)
+            {
+                if (section != null)
+                    section.Bind(data, english);
+            }
+
+            var current = sections != null && sections.Length > 0
+                ? sections[Mathf.Clamp(_sectionIndex, 0, sections.Length - 1)]
+                : null;
+            if (current != null && headerTitle != null)
+                headerTitle.SetDetailSectionTitle(current.GetSectionTitle(english));
+
+            UpdateNavState();
+        }
+
+        void ShowSection(int index)
+        {
+            if (sections == null || sections.Length == 0)
+                return;
+
+            _sectionIndex = Mathf.Clamp(index, 0, sections.Length - 1);
+            for (var i = 0; i < sections.Length; i++)
+            {
+                if (sections[i] != null)
+                    sections[i].gameObject.SetActive(i == _sectionIndex);
+            }
+
+            var english = LocaleHelper.IsEnglish;
+            var current = sections != null && sections.Length > 0
+                ? sections[Mathf.Clamp(_sectionIndex, 0, sections.Length - 1)]
+                : null;
+            if (current != null && headerTitle != null)
+                headerTitle.SetDetailSectionTitle(current.GetSectionTitle(english));
+
+            UpdateNavState();
+        }
+
+        void UpdateNavState()
+        {
+            if (pageIndicator != null && sections != null && sections.Length > 0)
+                pageIndicator.text = $"{_sectionIndex + 1} / {sections.Length}";
+
+            if (sectionNextButton != null)
+                sectionNextButton.gameObject.SetActive(CanGoNext);
         }
     }
 }

@@ -20,9 +20,17 @@ namespace PeopleOfMath.UI
 
         public event System.Action<int> PageChanged;
 
-        void Awake()
+        void Awake() => EnsureInitialized();
+
+        void EnsureInitialized()
         {
+            if (_scroll != null)
+                return;
+
             _scroll = GetComponent<ScrollRect>();
+            if (_scroll == null)
+                return;
+
             _content = _scroll.content;
             _scroll.movementType = ScrollRect.MovementType.Clamped;
             _scroll.inertia = false;
@@ -30,6 +38,10 @@ namespace PeopleOfMath.UI
 
         public void Configure(int pageCount)
         {
+            EnsureInitialized();
+            if (_scroll == null)
+                return;
+
             _pageCount = Mathf.Max(1, pageCount);
             CurrentIndex = Mathf.Clamp(CurrentIndex, 0, _pageCount - 1);
             _targetIndex = CurrentIndex;
@@ -60,7 +72,8 @@ namespace PeopleOfMath.UI
 
         void Update()
         {
-            if (_pageCount <= 1 || _content == null)
+            EnsureInitialized();
+            if (_pageCount <= 1 || _content == null || _scroll == null)
                 return;
 
             if (!_dragging)
@@ -82,7 +95,7 @@ namespace PeopleOfMath.UI
 
         int NearestIndex()
         {
-            if (_pageCount <= 1)
+            if (_pageCount <= 1 || _scroll == null)
                 return 0;
             var pos = _scroll.horizontalNormalizedPosition;
             var idx = Mathf.RoundToInt(pos * (_pageCount - 1));
@@ -98,6 +111,10 @@ namespace PeopleOfMath.UI
 
         void SnapImmediate(int index)
         {
+            EnsureInitialized();
+            if (_scroll == null)
+                return;
+
             _targetIndex = index;
             CurrentIndex = index;
             _scroll.horizontalNormalizedPosition = GetNormalizedPosition(index);

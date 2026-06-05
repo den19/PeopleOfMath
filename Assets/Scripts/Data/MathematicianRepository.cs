@@ -6,6 +6,8 @@ namespace PeopleOfMath.Data
 {
     public class MathematicianRepository : MonoBehaviour
     {
+        const string CatalogResourcePath = "MathematicianCatalog";
+
         [SerializeField] List<MathematicianData> mathematicians = new();
 
         readonly Dictionary<string, MathematicianData> _byId = new();
@@ -13,6 +15,23 @@ namespace PeopleOfMath.Data
         public IReadOnlyList<MathematicianData> All => mathematicians;
 
         void Awake()
+        {
+            if (mathematicians == null || mathematicians.Count == 0)
+                TryLoadFromResourcesCatalog();
+
+            RebuildIndex();
+        }
+
+        void TryLoadFromResourcesCatalog()
+        {
+            var catalog = Resources.Load<MathematicianCatalog>(CatalogResourcePath);
+            if (catalog == null || catalog.All.Count == 0)
+                return;
+
+            mathematicians = catalog.mathematicians.Where(m => m != null).ToList();
+        }
+
+        void RebuildIndex()
         {
             _byId.Clear();
             foreach (var m in mathematicians)
@@ -30,7 +49,7 @@ namespace PeopleOfMath.Data
         public void SetMathematicians(List<MathematicianData> list)
         {
             mathematicians = list.Where(m => m != null).ToList();
-            Awake();
+            RebuildIndex();
         }
     }
 }

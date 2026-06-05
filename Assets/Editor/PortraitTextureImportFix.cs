@@ -24,6 +24,9 @@ namespace PeopleOfMath.Editor
                 if (ext is not (".jpg" or ".jpeg" or ".png" or ".webp"))
                     continue;
 
+                if (PortraitPlaceholderDetection.IsPlaceholderFile(file))
+                    continue;
+
                 var assetPath = file.Replace('\\', '/');
                 var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
                 if (importer == null)

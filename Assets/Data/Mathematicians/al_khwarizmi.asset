@@ -33,12 +33,12 @@ MonoBehaviour:
   shortBioEn: 
   wikipediaUrlRu: 
   portraits:
-  - sprite: {fileID: 21300000, guid: 25bd082de1ae9e24cb8e7fdbad1f150a, type: 3}
+  - sprite: {fileID: 21300000, guid: de882c3d7660f554fbaf34c43b270c76, type: 3}
     sourceUrl: 
     licenseShort: 
     attributionRu: 
     attributionEn: 
-  - sprite: {fileID: 21300000, guid: 214d039bb64b930408e5f2ef518018dc, type: 3}
+  - sprite: {fileID: 21300000, guid: 5847646c28fe1c54db5fcf9efa57e53f, type: 3}
     sourceUrl: 
     licenseShort: 
     attributionRu: 

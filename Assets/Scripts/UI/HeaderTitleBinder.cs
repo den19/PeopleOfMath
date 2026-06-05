@@ -82,6 +82,18 @@ namespace PeopleOfMath.UI
                 titleText.text = detailTitle.GetLocalizedString();
         }
 
+        public void SetDetailSectionTitle(string title)
+        {
+            _mode = TitleMode.Detail;
+            homeTitleEvent?.gameObject.SetActive(false);
+            settingsTitleEvent?.gameObject.SetActive(false);
+            if (titleText != null)
+            {
+                titleText.gameObject.SetActive(true);
+                titleText.text = title;
+            }
+        }
+
         void RefreshCurrent()
         {
             switch (_mode)

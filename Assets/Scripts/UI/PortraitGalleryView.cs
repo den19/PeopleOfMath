@@ -264,6 +264,7 @@ namespace PeopleOfMath.UI
             if (sprites != null && sprites.Length > 0)
             {
                 return sprites
+                    .Where(s => !HasPlaceholderMarker(mathematicianId, s.name))
                     .OrderBy(s => s.name, StringComparer.OrdinalIgnoreCase)
                     .Select(s => new PortraitEntry { sprite = s })
                     .ToList();
@@ -274,6 +275,7 @@ namespace PeopleOfMath.UI
                 return new List<PortraitEntry>();
 
             return textures
+                .Where(t => !HasPlaceholderMarker(mathematicianId, t.name))
                 .OrderBy(t => t.name, StringComparer.OrdinalIgnoreCase)
                 .Select(t =>
                 {
@@ -286,5 +288,8 @@ namespace PeopleOfMath.UI
                 })
                 .ToList();
         }
+
+        static bool HasPlaceholderMarker(string mathematicianId, string assetName) =>
+            Resources.Load<TextAsset>($"Portraits/{mathematicianId}/{assetName}.placeholder") != null;
     }
 }

@@ -9,8 +9,7 @@ namespace PeopleOfMath.Editor
         public static void ImportAll()
         {
             MathematicianImportPipeline.ImportCatalog();
-            WikimediaPortraitImporter.ImportAllPortraits();
-            WikimediaPortraitImporter.LinkAllFromFolders();
+            WikimediaPortraitImporter.ImportAllPortraits(forceReplace: true, finalize: true);
             MathematicianRepositoryRefresh.RefreshAllInOpenScene();
             Debug.Log("Import All finished. Regenerate Main Scene if Detail gallery is missing.");
         }

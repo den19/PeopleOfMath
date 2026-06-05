@@ -7,6 +7,7 @@ using PeopleOfMath.UI;
 using TMPro;
 using UnityEditor;
 using UnityEditor.Build;
+using UnityEditor.Events;
 using UnityEditor.Localization;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -15,6 +16,7 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
 using UnityEngine.Localization.Settings;
+using UnityEngine.Events;
 using UnityEngine.Localization.Tables;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -30,6 +32,7 @@ namespace PeopleOfMath.Editor
         const string SettingsFolder = "Assets/Settings";
         const string LocalizationFolder = "Assets/Localization";
         const string PrefabFolder = "Assets/Prefabs/UI";
+        const string DetailPrefabFolder = "Assets/Prefabs/UI/Detail";
 
         [MenuItem("PeopleOfMath/Setup Project")]
         public static void SetupMenu() => Run();
@@ -71,6 +74,13 @@ namespace PeopleOfMath.Editor
             var listItemPrefab = CreateListItemPrefab();
             EnsureListItemInResources();
             CreateMainScene(mathematicians, localization, listItemPrefab);
+            MathematicianRepositoryRefresh.RefreshAllInOpenScene();
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+
+            var repo = Object.FindAnyObjectByType<MathematicianRepository>();
+            if (repo == null || repo.All.Count == 0)
+                Debug.LogError("PeopleOfMath setup: repository is empty after save — run Refresh Repository List.");
+
             EditorBuildSettings.scenes = new[]
             {
                 new EditorBuildSettingsScene(ScenePath, true)
@@ -83,6 +93,21 @@ namespace PeopleOfMath.Editor
         public static void RunBatch()
         {
             Run();
+            EditorApplication.Exit(0);
+        }
+
+        public static void RunRefreshBatch()
+        {
+            var list = MathematicianRepositoryRefresh.LoadAllFromFolder(DataFolder);
+            MathematicianRepositoryRefresh.UpdateResourcesCatalog(list);
+            if (File.Exists(ScenePath))
+            {
+                EditorSceneManager.OpenScene(ScenePath);
+                MathematicianRepositoryRefresh.RefreshAllInOpenScene();
+                EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+            }
+            AssetDatabase.SaveAssets();
+            Debug.Log($"PeopleOfMath repository refresh completed with {list.Count} mathematicians.");
             EditorApplication.Exit(0);
         }
 
@@ -99,7 +124,7 @@ namespace PeopleOfMath.Editor
             foreach (var dir in new[]
                      {
                          "Assets/Scenes", DataFolder, SettingsFolder, LocalizationFolder,
-                         PrefabFolder, "Assets/Scripts", "Assets/Editor",
+                         PrefabFolder, DetailPrefabFolder, "Assets/Resources", "Assets/Scripts", "Assets/Editor",
                          "Assets/Data/Images", "Assets/Data"
                      })
             {
@@ -202,6 +227,7 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "tab_browse", "Справочник", "Browse");
             AddUiEntry(collection, "tab_settings", "Настройки", "Settings");
             AddUiEntry(collection, "btn_back", "Назад", "Back");
+            AddUiEntry(collection, "btn_next", "Далее", "Next");
             AddUiEntry(collection, "settings_language", "Язык интерфейса", "Interface language");
             AddUiEntry(collection, "btn_russian", "Русский", "Russian");
             AddUiEntry(collection, "btn_english", "English", "English");
@@ -325,7 +351,7 @@ namespace PeopleOfMath.Editor
             rt.anchoredPosition = anchoredPos;
             rt.sizeDelta = new Vector2(-20, 24);
             var tmp = go.AddComponent<TextMeshProUGUI>();
-            tmp.fontSize = size;
+            tmp.fontSize = UiLayoutMetrics.ScaleFont(size);
             tmp.fontStyle = style;
             tmp.color = Color.white;
             tmp.textWrappingMode = TextWrappingModes.Normal;
@@ -353,7 +379,6 @@ namespace PeopleOfMath.Editor
             var bootstrap = app.AddComponent<AppBootstrap>();
             var navigation = app.AddComponent<NavigationController>();
             var repository = app.AddComponent<MathematicianRepository>();
-            AssignMathematicians(repository, mathematicians);
             app.AddComponent<BackButtonHandler>();
 
             var camGo = new GameObject("Main Camera");
@@ -374,15 +399,17 @@ namespace PeopleOfMath.Editor
             var content = CreateContentArea(canvasGo.transform);
             var home = CreateHomePanel(content.transform, navigation, loc);
             var list = CreateListPanel(content.transform, navigation, repository, listItemPrefab, loc);
-            var detail = CreateDetailPanel(content.transform, repository);
+            var headerBinder = header.root.GetComponent<HeaderTitleBinder>();
+            var detail = CreateDetailPanel(content.transform, repository, navigation, headerBinder, loc);
             var settings = CreateSettingsPanel(content.transform, loc);
             var bottom = CreateBottomBar(canvasGo.transform, navigation, loc);
 
-            var headerBinder = header.root.GetComponent<HeaderTitleBinder>();
             WireNavigation(navigation, home, list, detail, settings, header.backButton, headerBinder);
             WireBootstrap(bootstrap, navigation);
             WireBackHandler(app.GetComponent<BackButtonHandler>(), navigation);
 
+            AssignMathematicians(repository, mathematicians);
+            EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, ScenePath);
         }
 
@@ -407,8 +434,6 @@ namespace PeopleOfMath.Editor
         static HeaderResult CreateHeader(Transform canvas, LocalizationRefs loc)
         {
             var header = CreatePanel(canvas, "Header", new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -120), new Vector2(0, 0));
-            var back = CreateButton(header.transform, "BackButton", new Vector2(20, -60), new Vector2(160, 56), loc.UiCollection, "btn_back");
-            back.SetActive(false);
 
             var homeTitle = CreateLocalizedTitle(header.transform, "HomeTitle", loc.HomeTitle);
             var settingsTitle = CreateLocalizedTitle(header.transform, "SettingsTitle", loc.SettingsTitle);
@@ -416,7 +441,12 @@ namespace PeopleOfMath.Editor
 
             var plainTitle = CreateTmpChild(header.transform, "PlainTitle", 22, FontStyles.Bold, new Vector2(180, -50));
             plainTitle.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, 40);
+            plainTitle.GetComponent<TextMeshProUGUI>().raycastTarget = false;
             plainTitle.SetActive(false);
+
+            var back = CreateButton(header.transform, "BackButton", new Vector2(20, -60), new Vector2(160, 56), loc.UiCollection, "btn_back");
+            back.SetActive(false);
+            back.transform.SetAsLastSibling();
 
             var binder = header.AddComponent<HeaderTitleBinder>();
             var so = new SerializedObject(binder);
@@ -447,6 +477,7 @@ namespace PeopleOfMath.Editor
         {
             var go = CreateTmpChild(parent, name, 22, FontStyles.Bold, new Vector2(180, -50));
             go.GetComponent<RectTransform>().sizeDelta = new Vector2(-40, 40);
+            go.GetComponent<TextMeshProUGUI>().raycastTarget = false;
             var lse = go.AddComponent<LocalizeStringEvent>();
             var so = new SerializedObject(lse);
             AssignLocalized(so.FindProperty("m_StringReference"), localized);
@@ -485,16 +516,33 @@ namespace PeopleOfMath.Editor
             return panel;
         }
 
+        public static void ConfigureFilterButton(GameObject go)
+        {
+            var rt = go.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.sizeDelta = new Vector2(UiLayoutMetrics.FilterButtonWidth, UiLayoutMetrics.FilterButtonHeight);
+
+            var le = go.GetComponent<LayoutElement>();
+            if (le != null)
+            {
+                le.preferredWidth = UiLayoutMetrics.FilterButtonWidth;
+                le.preferredHeight = UiLayoutMetrics.FilterButtonHeight;
+            }
+        }
+
         static Button CreateFilterButtonPrefab()
         {
             var path = $"{PrefabFolder}/FilterButton.prefab";
             var existing = AssetDatabase.LoadAssetAtPath<Button>(path);
             if (existing != null)
+            {
+                ConfigureFilterButton(existing.gameObject);
+                EditorUtility.SetDirty(existing);
                 return existing;
+            }
 
             var go = new GameObject("FilterButton", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
-            var le = go.GetComponent<LayoutElement>();
-            le.preferredHeight = 52;
+            ConfigureFilterButton(go);
             var img = go.GetComponent<Image>();
             img.color = new Color(0.28f, 0.35f, 0.48f);
             var label = CreateTmpChild(go.transform, "Label", 18, FontStyles.Normal, new Vector2(16, -14));
@@ -509,9 +557,9 @@ namespace PeopleOfMath.Editor
         {
             var label = CreateTmpChild(parent, key, 18, FontStyles.Bold, Vector2.zero);
             var rt = label.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(0, 36);
+            rt.sizeDelta = new Vector2(0, UiLayoutMetrics.ScaleFont(36));
             var le = label.AddComponent<LayoutElement>();
-            le.preferredHeight = 36;
+            le.preferredHeight = UiLayoutMetrics.ScaleFont(36);
             var lse = label.AddComponent<LocalizeStringEvent>();
             var ls = MakeLocalized(collection, key);
             var so = new SerializedObject(lse);
@@ -564,6 +612,240 @@ namespace PeopleOfMath.Editor
             return scroll;
         }
 
+        struct SectionNavBarResult
+        {
+            public GameObject backButton;
+            public GameObject nextButton;
+            public TMP_Text pageIndicator;
+        }
+
+        static GameObject CreateDetailPanel(
+            Transform parent,
+            MathematicianRepository repo,
+            NavigationController nav,
+            HeaderTitleBinder header,
+            LocalizationRefs loc)
+        {
+            var panel = CreatePanel(parent, "DetailPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            panel.SetActive(false);
+
+            var container = CreatePanel(
+                panel.transform,
+                "SectionContainer",
+                Vector2.zero,
+                Vector2.one,
+                new Vector2(0, 90),
+                Vector2.zero);
+            container.GetComponent<Image>().color = Color.clear;
+
+            var sectionPrefabs = EnsureDetailSectionPrefabs();
+            var sections = new List<MathematicianDetailSection>();
+            foreach (var prefab in sectionPrefabs)
+            {
+                var instance = (MathematicianDetailSection)PrefabUtility.InstantiatePrefab(prefab, container.transform);
+                StretchToParent(instance.GetComponent<RectTransform>());
+                instance.gameObject.SetActive(false);
+                sections.Add(instance);
+            }
+
+            var navBar = CreateSectionNavBar(panel.transform, loc.UiCollection);
+
+            var detail = panel.AddComponent<DetailPanel>();
+            var so = new SerializedObject(detail);
+            so.FindProperty("repository").objectReferenceValue = repo;
+            so.FindProperty("headerTitle").objectReferenceValue = header;
+            var sectionsProp = so.FindProperty("sections");
+            sectionsProp.arraySize = sections.Count;
+            for (var i = 0; i < sections.Count; i++)
+                sectionsProp.GetArrayElementAtIndex(i).objectReferenceValue = sections[i];
+            so.FindProperty("sectionNextButton").objectReferenceValue = navBar.nextButton.GetComponent<Button>();
+            so.FindProperty("pageIndicator").objectReferenceValue = navBar.pageIndicator;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            WireButtonClick(navBar.backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
+            WireButtonClick(navBar.nextButton.GetComponent<Button>(), detail.GoNext);
+            return panel;
+        }
+
+        static SectionNavBarResult CreateSectionNavBar(
+            Transform parent,
+            StringTableCollection collection)
+        {
+            var bar = CreatePanel(parent, "SectionNavBar", new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, new Vector2(0, 90));
+            bar.GetComponent<Image>().color = new Color(0.12f, 0.13f, 0.16f, 0.98f);
+
+            var back = CreateButton(bar.transform, "BackButton", new Vector2(24, 12), new Vector2(220, 66), collection, "btn_back");
+            var next = CreateButton(bar.transform, "NextButton", new Vector2(836, 12), new Vector2(220, 66), collection, "btn_next");
+            var indicatorGo = CreateTmpChild(bar.transform, "PageIndicator", 16, FontStyles.Normal, new Vector2(0, -28));
+            var indicatorRt = indicatorGo.GetComponent<RectTransform>();
+            indicatorRt.anchorMin = new Vector2(0.5f, 1);
+            indicatorRt.anchorMax = new Vector2(0.5f, 1);
+            indicatorRt.pivot = new Vector2(0.5f, 1);
+            indicatorRt.sizeDelta = new Vector2(200, 32);
+            indicatorGo.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+            return new SectionNavBarResult
+            {
+                backButton = back,
+                nextButton = next,
+                pageIndicator = indicatorGo.GetComponent<TMP_Text>()
+            };
+        }
+
+        static MathematicianDetailSection[] EnsureDetailSectionPrefabs()
+        {
+            if (!Directory.Exists(DetailPrefabFolder))
+                Directory.CreateDirectory(DetailPrefabFolder);
+
+            return new[]
+            {
+                SaveDetailSectionPrefab(BuildPortraitSectionPrefab(), $"{DetailPrefabFolder}/DetailSection_Portraits.prefab"),
+                SaveDetailSectionPrefab(BuildIdentitySectionPrefab(), $"{DetailPrefabFolder}/DetailSection_Identity.prefab"),
+                SaveDetailSectionPrefab(
+                    BuildLabeledTextSectionPrefab(LabeledDetailSectionKind.Countries),
+                    $"{DetailPrefabFolder}/DetailSection_Countries.prefab"),
+                SaveDetailSectionPrefab(
+                    BuildLabeledTextSectionPrefab(LabeledDetailSectionKind.Centuries),
+                    $"{DetailPrefabFolder}/DetailSection_Centuries.prefab"),
+                SaveDetailSectionPrefab(
+                    BuildLabeledTextSectionPrefab(LabeledDetailSectionKind.Fields),
+                    $"{DetailPrefabFolder}/DetailSection_Fields.prefab"),
+                SaveDetailSectionPrefab(
+                    BuildScrollTextSectionPrefab(ScrollDetailSectionKind.Achievements),
+                    $"{DetailPrefabFolder}/DetailSection_Achievements.prefab"),
+                SaveDetailSectionPrefab(
+                    BuildScrollTextSectionPrefab(ScrollDetailSectionKind.PersonalLife),
+                    $"{DetailPrefabFolder}/DetailSection_PersonalLife.prefab")
+            };
+        }
+
+        static MathematicianDetailSection SaveDetailSectionPrefab(GameObject root, string path)
+        {
+            var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+            Object.DestroyImmediate(root);
+            return prefab.GetComponent<MathematicianDetailSection>();
+        }
+
+        static GameObject CreateStretchSectionRoot(string name)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+            var rt = go.GetComponent<RectTransform>();
+            StretchToParent(rt);
+            go.GetComponent<Image>().color = Color.clear;
+            return go;
+        }
+
+        static void StretchToParent(RectTransform rt)
+        {
+            if (rt == null)
+                return;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+        }
+
+        static void AddSectionVerticalLayout(GameObject root)
+        {
+            var vlg = root.AddComponent<VerticalLayoutGroup>();
+            vlg.padding = new RectOffset(24, 24, 24, 24);
+            vlg.spacing = 16;
+            vlg.childAlignment = TextAnchor.UpperLeft;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+        }
+
+        static GameObject BuildPortraitSectionPrefab()
+        {
+            var root = CreateStretchSectionRoot("DetailSection_Portraits");
+            var gallery = CreatePortraitGallery(root.transform, fillParent: true);
+            var section = root.AddComponent<PortraitDetailSection>();
+            var so = new SerializedObject(section);
+            so.FindProperty("gallery").objectReferenceValue = gallery;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return root;
+        }
+
+        static GameObject BuildIdentitySectionPrefab()
+        {
+            var root = CreateStretchSectionRoot("DetailSection_Identity");
+            AddSectionVerticalLayout(root);
+            var name = AddDetailField(root.transform, "Name", 26, FontStyles.Bold, height: 48);
+            var dates = AddDetailField(root.transform, "Dates", 16, FontStyles.Normal, height: 40);
+            var section = root.AddComponent<IdentityDetailSection>();
+            var so = new SerializedObject(section);
+            so.FindProperty("nameText").objectReferenceValue = name;
+            so.FindProperty("datesText").objectReferenceValue = dates;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return root;
+        }
+
+        static GameObject BuildLabeledTextSectionPrefab(LabeledDetailSectionKind kind)
+        {
+            var root = CreateStretchSectionRoot($"DetailSection_{kind}");
+            AddSectionVerticalLayout(root);
+            var label = AddDetailField(root.transform, "Label", 15, FontStyles.Bold, height: 36);
+            var body = AddDetailField(root.transform, "Body", 15, FontStyles.Normal, height: 120);
+            var section = root.AddComponent<LabeledTextDetailSection>();
+            var so = new SerializedObject(section);
+            so.FindProperty("sectionKind").enumValueIndex = (int)kind;
+            so.FindProperty("labelText").objectReferenceValue = label;
+            so.FindProperty("bodyText").objectReferenceValue = body;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return root;
+        }
+
+        static GameObject BuildScrollTextSectionPrefab(ScrollDetailSectionKind kind)
+        {
+            var root = CreateStretchSectionRoot($"DetailSection_{kind}");
+            AddSectionVerticalLayout(root);
+            var label = AddDetailField(root.transform, "Label", 15, FontStyles.Bold, height: 36);
+
+            var scrollRoot = new GameObject("Scroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
+            scrollRoot.transform.SetParent(root.transform, false);
+            var scrollLe = scrollRoot.AddComponent<LayoutElement>();
+            scrollLe.flexibleHeight = 1;
+            scrollLe.minHeight = 240;
+            StretchToParent(scrollRoot.GetComponent<RectTransform>());
+            scrollRoot.GetComponent<Image>().color = new Color(0.1f, 0.11f, 0.14f, 0.35f);
+
+            var viewport = CreatePanel(scrollRoot.transform, "Viewport", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var mask = viewport.AddComponent<Mask>();
+            mask.showMaskGraphic = false;
+            viewport.GetComponent<Image>().color = new Color(0, 0, 0, 0.01f);
+
+            var content = CreatePanel(viewport.transform, "Content", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
+            var contentRt = content.GetComponent<RectTransform>();
+            contentRt.pivot = new Vector2(0.5f, 1);
+            contentRt.anchorMin = new Vector2(0, 1);
+            contentRt.anchorMax = new Vector2(1, 1);
+            var vlg = content.AddComponent<VerticalLayoutGroup>();
+            vlg.padding = new RectOffset(16, 16, 8, 16);
+            vlg.spacing = 8;
+            vlg.childControlWidth = true;
+            vlg.childForceExpandWidth = true;
+            var fitter = content.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var scroll = scrollRoot.GetComponent<ScrollRect>();
+            scroll.viewport = viewport.GetComponent<RectTransform>();
+            scroll.content = contentRt;
+            scroll.horizontal = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+
+            var body = AddDetailField(content.transform, "Body", 15, FontStyles.Normal, autoHeight: true);
+
+            var section = root.AddComponent<ScrollTextDetailSection>();
+            var so = new SerializedObject(section);
+            so.FindProperty("sectionKind").enumValueIndex = (int)kind;
+            so.FindProperty("labelText").objectReferenceValue = label;
+            so.FindProperty("bodyText").objectReferenceValue = body;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return root;
+        }
+
         static GameObject CreateListPanel(
             Transform parent,
             NavigationController nav,
@@ -594,55 +876,21 @@ namespace PeopleOfMath.Editor
             return panel;
         }
 
-        static GameObject CreateDetailPanel(Transform parent, MathematicianRepository repo)
-        {
-            var panel = CreatePanel(parent, "DetailPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            panel.SetActive(false);
-            var scroll = CreateScrollView(panel.transform, "DetailScroll");
-            var content = scroll.content;
-
-            var gallery = CreatePortraitGallery(content);
-            var name = AddDetailField(content, "Name", 26, FontStyles.Bold);
-            var dates = AddDetailField(content, "Dates", 16, FontStyles.Normal);
-            var countriesLabel = AddDetailField(content, "CountriesLabel", 15, FontStyles.Bold);
-            var countries = AddDetailField(content, "Countries", 15, FontStyles.Normal);
-            var centuriesLabel = AddDetailField(content, "CenturiesLabel", 15, FontStyles.Bold);
-            var centuries = AddDetailField(content, "Centuries", 15, FontStyles.Normal);
-            var branchesLabel = AddDetailField(content, "BranchesLabel", 15, FontStyles.Bold);
-            var branches = AddDetailField(content, "Branches", 15, FontStyles.Normal);
-            var achievementsLabel = AddDetailField(content, "AchievementsLabel", 15, FontStyles.Bold);
-            var achievements = AddDetailField(content, "Achievements", 15, FontStyles.Normal, 200);
-            var personalLabel = AddDetailField(content, "PersonalLabel", 15, FontStyles.Bold);
-            var personal = AddDetailField(content, "Personal", 15, FontStyles.Normal, 200);
-
-            var detail = panel.AddComponent<DetailPanel>();
-            var so = new SerializedObject(detail);
-            so.FindProperty("repository").objectReferenceValue = repo;
-            so.FindProperty("nameText").objectReferenceValue = name;
-            so.FindProperty("datesText").objectReferenceValue = dates;
-            so.FindProperty("countriesLabel").objectReferenceValue = countriesLabel;
-            so.FindProperty("countriesText").objectReferenceValue = countries;
-            so.FindProperty("centuriesLabel").objectReferenceValue = centuriesLabel;
-            so.FindProperty("centuriesText").objectReferenceValue = centuries;
-            so.FindProperty("branchesLabel").objectReferenceValue = branchesLabel;
-            so.FindProperty("branchesText").objectReferenceValue = branches;
-            so.FindProperty("achievementsLabel").objectReferenceValue = achievementsLabel;
-            so.FindProperty("achievementsText").objectReferenceValue = achievements;
-            so.FindProperty("personalLifeLabel").objectReferenceValue = personalLabel;
-            so.FindProperty("personalLifeText").objectReferenceValue = personal;
-            so.FindProperty("gallery").objectReferenceValue = gallery;
-            so.ApplyModifiedPropertiesWithoutUndo();
-            return panel;
-        }
-
-        static PortraitGalleryView CreatePortraitGallery(Transform contentParent)
+        static PortraitGalleryView CreatePortraitGallery(Transform contentParent, bool fillParent = false)
         {
             var block = new GameObject("PortraitGallery", typeof(RectTransform));
             block.transform.SetParent(contentParent, false);
             var blockRt = block.GetComponent<RectTransform>();
-            var le = block.AddComponent<LayoutElement>();
-            le.preferredHeight = 340;
-            le.flexibleWidth = 1;
+            if (fillParent)
+            {
+                StretchToParent(blockRt);
+            }
+            else
+            {
+                var le = block.AddComponent<LayoutElement>();
+                le.preferredHeight = 340;
+                le.flexibleWidth = 1;
+            }
 
             var scrollGo = new GameObject("GalleryScroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
             scrollGo.transform.SetParent(block.transform, false);
@@ -725,15 +973,46 @@ namespace PeopleOfMath.Editor
             return gallery;
         }
 
-        static TMP_Text AddDetailField(Transform parent, string name, float size, FontStyles style, float height = 36)
+        static TMP_Text AddDetailField(
+            Transform parent,
+            string name,
+            float size,
+            FontStyles style,
+            float height = 36,
+            bool autoHeight = false)
         {
             var go = CreateTmpChild(parent, name, size, style, Vector2.zero);
-            var rt = go.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(0, height);
+            var tmp = go.GetComponent<TextMeshProUGUI>();
+            tmp.textWrappingMode = TextWrappingModes.Normal;
+
             var le = go.AddComponent<LayoutElement>();
-            le.preferredHeight = height;
             le.flexibleWidth = 1;
-            return go.GetComponent<TMP_Text>();
+
+            if (autoHeight)
+            {
+                var fitter = go.AddComponent<ContentSizeFitter>();
+                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+                le.preferredHeight = -1;
+                le.minHeight = UiLayoutMetrics.ScaleFont(80);
+
+                var layoutHeight = go.AddComponent<TmpLayoutHeight>();
+                var lhSo = new SerializedObject(layoutHeight);
+                lhSo.FindProperty("minHeight").floatValue = UiLayoutMetrics.ScaleFont(48);
+                lhSo.FindProperty("padding").floatValue = 10f;
+                lhSo.ApplyModifiedPropertiesWithoutUndo();
+
+                var rt = go.GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(0, le.minHeight);
+                return tmp;
+            }
+
+            var scaledHeight = UiLayoutMetrics.ScaleFont(height);
+            var rect = go.GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(0, scaledHeight);
+            le.preferredHeight = scaledHeight;
+            return tmp;
         }
 
         static GameObject CreateSettingsPanel(Transform parent, LocalizationRefs loc)
@@ -769,8 +1048,8 @@ namespace PeopleOfMath.Editor
             var bar = CreatePanel(canvas, "BottomBar", new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 0), new Vector2(0, 140));
             var browse = CreateButton(bar.transform, "BrowseTab", new Vector2(40, 40), new Vector2(440, 72), loc.UiCollection, "tab_browse");
             var settings = CreateButton(bar.transform, "SettingsTab", new Vector2(520, 40), new Vector2(440, 72), loc.UiCollection, "tab_settings");
-            browse.GetComponent<Button>().onClick.AddListener(nav.OnBrowseTabClicked);
-            settings.GetComponent<Button>().onClick.AddListener(nav.OnSettingsTabClicked);
+            WireButtonClick(browse.GetComponent<Button>(), nav.OnBrowseTabClicked);
+            WireButtonClick(settings.GetComponent<Button>(), nav.OnSettingsTabClicked);
             return bar;
         }
 
@@ -836,7 +1115,15 @@ namespace PeopleOfMath.Editor
             so.FindProperty("headerBackButton").objectReferenceValue = backButton;
             so.FindProperty("headerTitle").objectReferenceValue = header;
             so.ApplyModifiedPropertiesWithoutUndo();
-            backButton.GetComponent<Button>().onClick.AddListener(nav.OnBackButtonClicked);
+            WireButtonClick(backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
+        }
+
+        static void WireButtonClick(Button button, UnityAction action)
+        {
+            if (button == null || action == null)
+                return;
+
+            UnityEventTools.AddPersistentListener(button.onClick, action);
         }
 
         static void WireBootstrap(AppBootstrap bootstrap, NavigationController nav)

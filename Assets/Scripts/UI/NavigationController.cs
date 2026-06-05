@@ -1,6 +1,7 @@
 using PeopleOfMath.Data;
 using PeopleOfMath.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace PeopleOfMath.Core
 {
@@ -31,6 +32,20 @@ namespace PeopleOfMath.Core
         void Awake()
         {
             HideAllPanels();
+            WireHeaderBackButton();
+        }
+
+        void WireHeaderBackButton()
+        {
+            if (headerBackButton == null)
+                return;
+
+            var button = headerBackButton.GetComponent<Button>();
+            if (button == null)
+                return;
+
+            button.onClick.RemoveListener(OnBackButtonClicked);
+            button.onClick.AddListener(OnBackButtonClicked);
         }
 
         void HideAllPanels()
@@ -70,7 +85,6 @@ namespace PeopleOfMath.Core
             detailPanel.gameObject.SetActive(true);
             detailPanel.Bind(mathematicianId);
             headerBackButton.SetActive(true);
-            headerTitle?.SetDetailTitle();
         }
 
         public void ShowSettings()
@@ -90,6 +104,8 @@ namespace PeopleOfMath.Core
                     ShowHome();
                     break;
                 case AppScreen.Detail:
+                    if (detailPanel != null && detailPanel.TryGoBack())
+                        break;
                     ShowList(_filterKind, _filterKey);
                     break;
             }

@@ -24,14 +24,21 @@
 | Меню | Действие |
 |------|----------|
 | **PeopleOfMath → Import Catalog (RU texts)** | Создаёт/обновляет SO в `Assets/Data/Mathematicians/` из ru.wikipedia. EN у 10 исходных карточек сохраняется. |
-| **PeopleOfMath → Import Portraits (Wikimedia)** | До 4 JPEG (мин. 2) в `Assets/Data/Images/{id}/`, лицензии PD / CC BY / CC BY-SA. Отчёт: `Assets/Data/import_report.txt`. |
+| **PeopleOfMath → Import Real Portraits (replace placeholders)** | Удаляет заглушки, скачивает реальные портреты в `Assets/Resources/Portraits/{id}/`, привязка к SO. **Основной шаг для продакшена.** |
+| **PeopleOfMath → Import Portraits (Wikimedia)** | Дозагрузка без удаления уже существующих реальных файлов. |
+| **PeopleOfMath → Import Portraits (empty folders only)** | Только папки без ≥2 реальных JPEG; паузы 2 s + retry при 429. |
+| **PeopleOfMath → Resume Failed Portraits From Report** | Повторить id из `FAIL` / `WARN` в `import_report.txt`. |
+| **PeopleOfMath → Link Portraits From Folders** | Привязать JPEG из `Resources/Portraits` к SO (пропускает заглушки). |
+| **PeopleOfMath → Clear Placeholder Portraits In Resources** | Удалить только файлы-заглушки (&lt;25 KB / с маркером `.placeholder`). |
 | **PeopleOfMath → Refresh Repository List** | Собирает все SO в `MathematicianRepository` на открытой сцене. |
-| **PeopleOfMath → Import All (...)** | Каталог + портреты + refresh подряд. |
+| **PeopleOfMath → Import All (...)** | Каталог + **реальные** портреты + refresh. |
 | **PeopleOfMath → Regenerate Main Scene** | Пересобрать UI (галерея на карточке, список на 100 записей). |
 
-Повторный импорт идемпотентен (пауза между запросами ~800 ms, повтор при HTTP 429). Без Unity можно создать пустые SO из каталога: `python Tools/generate_skeleton_assets.py` (или **PeopleOfMath → Create Catalog Assets (skeleton)**).
+Повторный импорт идемпотентен: минимум **2 s** между HTTP-запросами, до **8** повторов с `Retry-After` и circuit breaker **90 s** при серии 429. Без Unity можно создать пустые SO из каталога: `python Tools/generate_skeleton_assets.py` (или **PeopleOfMath → Create Catalog Assets (skeleton)**).
 
-Если у математика меньше 2 фото на Commons — см. отчёт; можно положить файлы вручную в `Assets/Data/Images/{id}/01.jpg` … и **Reimport**, затем привязать спрайты в SO.
+Если у математика меньше 2 фото на Commons — см. отчёт; можно положить файлы вручную в `Assets/Resources/Portraits/{id}/01.jpg` … и **Link Portraits From Folders**.
+
+**Заглушки (dev):** меню **Generate Placeholder Portraits (dev)** пишет в `Assets/Data/Placeholders/` (не в игру). Цветные полосы в `Resources/Portraits` — удалите через **Clear Placeholder Portraits** и запустите **Import Real Portraits**.
 
 ### EN переводы
 
@@ -41,13 +48,19 @@
 
 Импорт принимает только **Public domain**, **CC BY**, **CC BY-SA** (без NC/ND). Подпись лицензии и источника показывается под галереей на карточке.
 
-### Не видно изображений на карточке
+### Не видно изображений / видны цветные заглушки
 
-1. Убедитесь, что портреты есть в `Assets/Resources/Portraits/{id}/01.jpg` (и `02.jpg`), либо в SO заполнен список `portraits`.
-2. Запустите **PeopleOfMath → Import Portraits (Wikimedia)** (исправленный поиск по namespace File + Wikidata P18), затем **Link Portraits From Folders**.
-3. Для быстрой проверки UI: **PeopleOfMath → Generate Placeholder Portraits (dev)** — цветные заглушки для всех 100 карточек.
-4. Альтернатива без Unity: `python Tools/download_portraits_priority.py` (при 429 подождите и повторите), затем в Unity — **Link Portraits From Folders**.
-5. Галерея подгружает спрайты из `Resources/Portraits/{id}`, если в SO поле `portraits` пустое.
+1. **PeopleOfMath → Import Real Portraits (replace placeholders)** — основное решение.
+2. Или: **Clear Placeholder Portraits In Resources** → **Import Real Portraits**.
+3. Без Unity (медленно, с паузами): `python Tools/download_portraits_batch.py --empty-only` (или `python Tools/download_portraits_empty.py`), затем **Link Portraits From Folders** + **Fix Portrait Texture Import (Sprite)**.
+4. Отчёты: Unity — `Assets/Data/import_report.txt`, Python — `Assets/Data/import_report_python.txt`.
+
+### HTTP 429 (слишком много запросов)
+
+1. **PeopleOfMath → Import Portraits (empty folders only)** — дозаполняет только пустые/неполные папки, не трогая уже готовые.
+2. Или: `python Tools/download_portraits_batch.py --empty-only` (опционально `--ids newton,euler`).
+3. Затем **Link Portraits From Folders**.
+4. При обрыве: **Resume Failed Portraits From Report** или повторите шаг 1–2 (запуск идемпотентен).
 
 ## Сборка Android
 

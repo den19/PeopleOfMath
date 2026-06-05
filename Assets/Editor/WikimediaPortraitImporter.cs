@@ -7,21 +7,20 @@ using System.Text.RegularExpressions;
 using PeopleOfMath.Data;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Networking;
-
 namespace PeopleOfMath.Editor
 {
     public static class WikimediaPortraitImporter
     {
         const string DataFolder = "Assets/Data/Mathematicians";
-        const string ImagesRoot = "Assets/Data/Images";
-        const string ResourcesPortraitsRoot = "Assets/Resources/Portraits";
         const string ReportPath = "Assets/Data/import_report.txt";
         const int MaxImages = 4;
         const int MinImages = 2;
         const int MaxSide = 512;
         const int JpegQuality = 85;
-        const int RequestDelayMs = 400;
+        const int RequestDelayMs = 2500;
+
+        static readonly Dictionary<string, List<CommonsFile>> CommonsCache =
+            new(StringComparer.OrdinalIgnoreCase);
 
         static readonly string[] AllowedLicenseFragments =
         {
@@ -32,7 +31,13 @@ namespace PeopleOfMath.Editor
         static readonly string[] SkipTitleFragments =
         {
             "signature", "diagram", "graph", "plot", "theorem", "formula", "commemorative",
-            "stamp", "coin", "map", "facsimile", "manuscript"
+            "stamp", "coin", "map", "facsimile", "manuscript", "banner", "memphis",
+            "tasman", "madonna", "concert", "screw", "column closeup"
+        };
+
+        static readonly string[] BadNameFragments =
+        {
+            "tasman", "memphis", "madonna", "banner", "screw", "column", "rebel heart"
         };
 
         [MenuItem("PeopleOfMath/Import Portraits (Wikimedia)")]
@@ -40,12 +45,58 @@ namespace PeopleOfMath.Editor
         {
             if (!EditorUtility.DisplayDialog(
                     "Wikimedia",
-                    "Скачать портреты с Commons для всех SO? Требуется сеть.",
+                    "Скачать портреты с Commons? Существующие реальные файлы сохраняются.",
                     "Import",
                     "Cancel"))
                 return;
 
-            ImportAllPortraits();
+            ImportAllPortraits(forceReplace: false);
+        }
+
+        [MenuItem("PeopleOfMath/Import Real Portraits (replace placeholders)")]
+        public static void ImportRealPortraitsMenu()
+        {
+            if (!EditorUtility.DisplayDialog(
+                    "Wikimedia",
+                    "Удалить заглушки и скачать реальные портреты для всех карточек? ~15–20 мин.",
+                    "Import",
+                    "Cancel"))
+                return;
+
+            ImportAllPortraits(forceReplace: true, finalize: true);
+        }
+
+        [MenuItem("PeopleOfMath/Import Portraits (empty folders only)")]
+        public static void ImportEmptyFoldersMenu()
+        {
+            if (!EditorUtility.DisplayDialog(
+                    "Wikimedia",
+                    "Скачать портреты только для папок без ≥2 реальных JPEG? Медленно, с паузами при 429.",
+                    "Import",
+                    "Cancel"))
+                return;
+
+            ImportAllPortraits(forceReplace: false, onlyEmpty: true);
+        }
+
+        [MenuItem("PeopleOfMath/Resume Failed Portraits From Report")]
+        public static void ResumeFailedFromReportMenu()
+        {
+            var ids = ParseFailedIdsFromReport();
+            if (ids.Count == 0)
+            {
+                EditorUtility.DisplayDialog("Wikimedia", "В import_report.txt нет строк FAIL/WARN.", "OK");
+                return;
+            }
+
+            if (!EditorUtility.DisplayDialog(
+                    "Wikimedia",
+                    $"Повторить импорт для {ids.Count} id из отчёта?",
+                    "Resume",
+                    "Cancel"))
+                return;
+
+            ImportAllPortraits(forceReplace: false, onlyIds: ids);
         }
 
         [MenuItem("PeopleOfMath/Link Portraits From Folders")]
@@ -53,14 +104,22 @@ namespace PeopleOfMath.Editor
         {
             var n = LinkAllFromFolders();
             AssetDatabase.SaveAssets();
-            Debug.Log($"Linked portraits on disk for {n} mathematicians.");
+            Debug.Log($"Linked real portraits for {n} mathematicians.");
         }
 
-        public static void ImportAllPortraits()
+        public static void ImportAllPortraits(
+            bool forceReplace = false,
+            bool finalize = false,
+            bool onlyEmpty = false,
+            IReadOnlyList<string> onlyIds = null)
         {
+            WikimediaHttpClient.ResetSession();
+            CommonsCache.Clear();
+
             var guids = AssetDatabase.FindAssets("t:MathematicianData", new[] { DataFolder });
             var report = new StringBuilder();
-            report.AppendLine($"Portrait import {DateTime.Now:yyyy-MM-dd HH:mm}");
+            report.AppendLine(
+                $"Portrait import {DateTime.Now:yyyy-MM-dd HH:mm} forceReplace={forceReplace} onlyEmpty={onlyEmpty}");
             var totalBytes = 0L;
             var ok = 0;
             var partial = 0;
@@ -73,10 +132,21 @@ namespace PeopleOfMath.Editor
                 if (data == null)
                     continue;
 
+                if (onlyIds != null && onlyIds.Count > 0 &&
+                    !onlyIds.Contains(data.id, StringComparer.OrdinalIgnoreCase))
+                    continue;
+
+                if (onlyEmpty && PortraitPlaceholderDetection.HasEnoughRealPortraits(data.id, MinImages))
+                {
+                    skip++;
+                    report.AppendLine($"SKIP has_images {data.id}");
+                    continue;
+                }
+
                 EditorUtility.DisplayProgressBar("Wikimedia", data.id, (float)i / guids.Length);
                 try
                 {
-                    var count = ImportForMathematician(data, report, ref totalBytes);
+                    var count = ImportForMathematician(data, report, ref totalBytes, forceReplace);
                     if (count >= MinImages)
                         ok++;
                     else if (count > 0)
@@ -87,7 +157,12 @@ namespace PeopleOfMath.Editor
                 catch (Exception ex)
                 {
                     skip++;
-                    report.AppendLine($"FAIL {data.id}: {ex.Message}");
+                    var msg = ex.Message;
+                    if (msg.Contains("429", StringComparison.OrdinalIgnoreCase) ||
+                        msg.Contains("Rate limit", StringComparison.OrdinalIgnoreCase))
+                        report.AppendLine($"FAIL after retries {data.id}: RATE_LIMIT {msg}");
+                    else
+                        report.AppendLine($"FAIL {data.id}: {msg}");
                 }
 
                 System.Threading.Thread.Sleep(RequestDelayMs);
@@ -95,11 +170,21 @@ namespace PeopleOfMath.Editor
 
             EditorUtility.ClearProgressBar();
             report.AppendLine($"OK (>={MinImages}): {ok}, partial: {partial}, skip/fail: {skip}");
-            report.AppendLine($"Total image bytes on disk (approx): {totalBytes / 1024} KB");
+            report.AppendLine($"Total new image bytes (approx): {totalBytes / 1024} KB");
             File.WriteAllText(ReportPath, report.ToString(), Encoding.UTF8);
+
+            if (finalize)
+                FinalizePortraitImport();
+
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log(report.ToString());
+        }
+
+        public static void FinalizePortraitImport()
+        {
+            LinkAllFromFolders();
+            PortraitTextureImportFix.FixAll();
         }
 
         public static int LinkAllFromFolders()
@@ -116,34 +201,15 @@ namespace PeopleOfMath.Editor
             return count;
         }
 
-        static void CopyToResourcesPortrait(string id, string sourceAssetPath, int index)
-        {
-            var resDir = $"{ResourcesPortraitsRoot}/{id}";
-            if (!Directory.Exists(resDir))
-                Directory.CreateDirectory(resDir);
-
-            var dest = $"{resDir}/{index:D2}.jpg";
-            if (File.Exists(dest))
-                return;
-
-            var srcFull = Path.GetFullPath(sourceAssetPath);
-            var destFull = Path.GetFullPath(dest);
-            if (srcFull != destFull && File.Exists(srcFull))
-                File.Copy(srcFull, destFull, overwrite: true);
-            ConfigureTextureImporter(dest);
-        }
-
         static int LinkFromFolder(MathematicianData data)
         {
-            SyncImagesToResources(data.id);
-            var dir = $"{ResourcesPortraitsRoot}/{data.id}";
-            if (!Directory.Exists(dir))
-                dir = $"{ImagesRoot}/{data.id}";
+            var dir = $"{PortraitPlaceholderDetection.ResourcesPortraitsRoot}/{data.id}";
             if (!Directory.Exists(dir))
                 return 0;
 
             var files = Directory.GetFiles(dir)
                 .Where(f => !f.EndsWith(".meta", StringComparison.OrdinalIgnoreCase))
+                .Where(f => !PortraitPlaceholderDetection.IsPlaceholderFile(f))
                 .Where(f =>
                 {
                     var ext = Path.GetExtension(f).ToLowerInvariant();
@@ -164,6 +230,7 @@ namespace PeopleOfMath.Editor
                 var assetPath = file.Replace('\\', '/');
                 if (!assetPath.StartsWith("Assets/", StringComparison.Ordinal))
                     assetPath = ToAssetsPath(file);
+
                 ConfigureTextureImporter(assetPath);
                 var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
                 if (sprite == null)
@@ -183,36 +250,18 @@ namespace PeopleOfMath.Editor
             return data.portraits.Count;
         }
 
-        static void SyncImagesToResources(string id)
+        static int ImportForMathematician(
+            MathematicianData data,
+            StringBuilder report,
+            ref long totalBytes,
+            bool forceReplace)
         {
-            var srcDir = $"{ImagesRoot}/{id}";
-            if (!Directory.Exists(srcDir))
-                return;
-            foreach (var file in Directory.GetFiles(srcDir))
-            {
-                var name = Path.GetFileName(file);
-                if (name.EndsWith(".meta", StringComparison.OrdinalIgnoreCase))
-                    continue;
-                var ext = Path.GetExtension(file).ToLowerInvariant();
-                if (ext is not (".jpg" or ".jpeg" or ".png" or ".webp"))
-                    continue;
-                var assetPath = $"{srcDir}/{name}".Replace('\\', '/');
-                if (int.TryParse(Path.GetFileNameWithoutExtension(name), out var idx))
-                    CopyToResourcesPortrait(id, assetPath, idx);
-            }
-        }
+            if (forceReplace)
+                PortraitPlaceholderDetection.ClearAllPortraitSlots(data.id);
+            else
+                PortraitPlaceholderDetection.ClearPlaceholderFiles(data.id);
 
-        static string ToAssetsPath(string fullPath)
-        {
-            var project = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            return fullPath.Replace('\\', '/')
-                .Replace(project.Replace('\\', '/'), "")
-                .TrimStart('/');
-        }
-
-        static int ImportForMathematician(MathematicianData data, StringBuilder report, ref long totalBytes)
-        {
-            var dir = $"{ImagesRoot}/{data.id}";
+            var dir = $"{PortraitPlaceholderDetection.ResourcesPortraitsRoot}/{data.id}";
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
@@ -232,37 +281,18 @@ namespace PeopleOfMath.Editor
 
                 var index = imported + 1;
                 var dest = $"{dir}/{index:D2}.jpg";
-                if (!File.Exists(dest))
-                {
-                    if (!DownloadAndResize(file.url, dest))
-                        continue;
-                    ConfigureTextureImporter(dest);
-                    CopyToResourcesPortrait(data.id, dest, index);
-                }
-                else
-                    CopyToResourcesPortrait(data.id, dest, index);
 
-                var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(dest);
-                if (sprite == null)
+                if (PortraitPlaceholderDetection.IsRealPortraitAssetPath(dest) && !forceReplace)
                 {
-                    AssetDatabase.ImportAsset(dest, ImportAssetOptions.ForceUpdate);
-                    sprite = AssetDatabase.LoadAssetAtPath<Sprite>(dest);
+                    BindExistingSprite(data, dest, file, ref imported, ref totalBytes, report);
+                    continue;
                 }
-                if (sprite == null)
+
+                if (!DownloadAndResize(file.url, dest))
                     continue;
 
-                data.portraits.Add(new PortraitEntry
-                {
-                    sprite = sprite,
-                    sourceUrl = file.pageUrl,
-                    licenseShort = file.license,
-                    attributionRu = file.attribution,
-                    attributionEn = file.attribution
-                });
-
-                imported++;
-                totalBytes += new FileInfo(dest).Length;
-                report.AppendLine($"OK {data.id} #{index}: {file.title} ({file.license})");
+                ConfigureTextureImporter(dest);
+                BindExistingSprite(data, dest, file, ref imported, ref totalBytes, report);
             }
 
             if (imported < MinImages)
@@ -272,32 +302,105 @@ namespace PeopleOfMath.Editor
             return imported;
         }
 
+        static void BindExistingSprite(
+            MathematicianData data,
+            string dest,
+            CommonsFile file,
+            ref int imported,
+            ref long totalBytes,
+            StringBuilder report)
+        {
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(dest);
+            if (sprite == null)
+            {
+                AssetDatabase.ImportAsset(dest, ImportAssetOptions.ForceUpdate);
+                sprite = AssetDatabase.LoadAssetAtPath<Sprite>(dest);
+            }
+            if (sprite == null)
+                return;
+
+            data.portraits.Add(new PortraitEntry
+            {
+                sprite = sprite,
+                sourceUrl = file.pageUrl,
+                licenseShort = file.license,
+                attributionRu = file.attribution,
+                attributionEn = file.attribution
+            });
+
+            imported++;
+            if (File.Exists(dest))
+                totalBytes += new FileInfo(dest).Length;
+            report.AppendLine($"OK {data.id} #{imported}: {file.title} ({file.license})");
+        }
+
+        static List<string> ParseFailedIdsFromReport()
+        {
+            if (!File.Exists(ReportPath))
+                return new List<string>();
+
+            var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var line in File.ReadAllLines(ReportPath))
+            {
+                var m = Regex.Match(
+                    line,
+                    @"^(?:FAIL(?:\s+after\s+retries)?|WARN)\s+([a-z0-9_]+)\s*:",
+                    RegexOptions.IgnoreCase);
+                if (m.Success)
+                    ids.Add(m.Groups[1].Value);
+            }
+
+            return ids.ToList();
+        }
+
         static List<CommonsFile> FindCommonsImages(MathematicianData data)
         {
-            var results = new List<CommonsFile>();
+            var context = PortraitRelevance.BuildContext(data, fetchWikidataLabel: false);
+            var p18 = new List<CommonsFile>();
 
             if (!string.IsNullOrWhiteSpace(data.wikidataId))
-                results.AddRange(FetchWikidataPortraits(data.wikidataId));
+                p18 = FetchWikidataP18Portraits(data.wikidataId, context);
 
-            var query = data.wikiTitleRu ?? data.fullNameRu;
-            if (!string.IsNullOrWhiteSpace(query))
+            var licensedP18 = p18
+                .Where(f => IsLicenseAllowed(f.license))
+                .Where(f => PortraitRelevance.Score(f, context) >= 0)
+                .OrderByDescending(f => PortraitRelevance.Score(f, context))
+                .ToList();
+
+            if (licensedP18.Count >= MinImages)
+                return licensedP18.Take(MaxImages * 2).ToList();
+
+            if (licensedP18.Count < MinImages && !string.IsNullOrWhiteSpace(data.wikidataId))
+                PortraitRelevance.EnrichWithWikidataLabel(context, data.wikidataId);
+
+            var results = new List<CommonsFile>(licensedP18);
+            var wikiImage = FetchWikipediaPageImage(data.wikiTitleRu);
+            if (wikiImage != null)
+                results.Add(wikiImage);
+
+            if (results.Count(f => IsLicenseAllowed(f.license) && PortraitRelevance.Score(f, context) > 0) < MinImages)
             {
-                var family = query.Contains(',')
-                    ? query.Split(',')[0].Trim()
-                    : query.Trim();
-                results.AddRange(SearchCommonsFiles($"{family} portrait"));
-                results.AddRange(SearchCommonsFiles(family));
+                var query = data.wikiTitleRu ?? data.fullNameRu;
+                if (!string.IsNullOrWhiteSpace(query))
+                {
+                    var family = query.Contains(',')
+                        ? query.Split(',')[0].Trim()
+                        : query.Trim();
+                    results.AddRange(SearchCommonsFiles($"{family} portrait", context));
+                }
             }
 
             return results
                 .GroupBy(f => f.title, StringComparer.OrdinalIgnoreCase)
                 .Select(g => g.First())
-                .Where(f => LooksLikePortrait(f.title))
+                .Where(f => IsLicenseAllowed(f.license))
+                .Where(f => PortraitRelevance.Score(f, context) > 0)
+                .OrderByDescending(f => PortraitRelevance.Score(f, context))
                 .Take(16)
                 .ToList();
         }
 
-        static List<CommonsFile> FetchWikidataPortraits(string wikidataId)
+        static List<CommonsFile> FetchWikidataP18Portraits(string wikidataId, PortraitRelevance.Context context)
         {
             var wd = wikidataId.Trim();
             if (!wd.StartsWith("Q", StringComparison.OrdinalIgnoreCase))
@@ -305,9 +408,10 @@ namespace PeopleOfMath.Editor
 
             var url =
                 $"https://www.wikidata.org/w/api.php?action=wbgetentities&ids={wd}&props=claims&format=json";
-            var json = Get(url);
+            var json = WikimediaHttpClient.GetText(url);
             var files = new List<CommonsFile>();
-            foreach (Match m in Regex.Matches(json, "\"value\":\"([^\"]+\\.(?:jpg|jpeg|png|webp))\""))
+
+            foreach (Match m in Regex.Matches(json, "\"P18\"[\\s\\S]*?\"value\"\\s*:\\s*\"([^\"]+\\.(?:jpg|jpeg|png|webp))\""))
             {
                 var fileName = m.Groups[1].Value;
                 if (fileName.Contains("Commons-logo", StringComparison.OrdinalIgnoreCase))
@@ -316,42 +420,69 @@ namespace PeopleOfMath.Editor
                 if (info != null)
                     files.Add(info);
             }
+
             return files;
         }
 
-        static CommonsFile FetchCommonsFileInfo(string fileTitle)
+        static CommonsFile FetchWikipediaPageImage(string wikiTitleRu)
         {
-            var enc = Uri.EscapeDataString(fileTitle);
+            if (string.IsNullOrWhiteSpace(wikiTitleRu))
+                return null;
+
+            var title = Uri.EscapeDataString(wikiTitleRu.Replace(' ', '_'));
             var url =
-                "https://commons.wikimedia.org/w/api.php?action=query&titles=" + enc +
-                "&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=800&format=json";
-            var json = Get(url);
-            var list = ParseCommonsSearch(json);
-            return list.FirstOrDefault();
+                "https://ru.wikipedia.org/w/api.php?action=query&prop=pageimages" +
+                $"&piprop=thumbnail&pithumbsize=800&titles={title}&format=json";
+            var json = WikimediaHttpClient.GetText(url);
+            var thumb = Regex.Match(json, "\"thumbnail\":\\{\"source\":\"(https://[^\"]+)\"");
+            if (!thumb.Success)
+                return null;
+
+            var imageUrl = thumb.Groups[1].Value.Replace("\\/", "/");
+            return new CommonsFile
+            {
+                title = "File:Wikipedia_thumbnail",
+                url = imageUrl,
+                pageUrl = $"https://ru.wikipedia.org/wiki/{title}",
+                license = "See Wikipedia",
+                attribution = "Wikipedia"
+            };
         }
 
-        static List<CommonsFile> SearchCommonsFiles(string term)
+        static List<CommonsFile> SearchCommonsFiles(string term, PortraitRelevance.Context context)
         {
             var enc = Uri.EscapeDataString(term);
             var url =
                 "https://commons.wikimedia.org/w/api.php?action=query&generator=search" +
-                $"&gsrnamespace=6&gsrsearch={enc}&gsrlimit=10&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=800&format=json";
-            var json = Get(url);
-            return ParseCommonsSearch(json);
+                $"&gsrnamespace=6&gsrsearch={enc}&gsrlimit=12&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=800&format=json";
+            if (CommonsCache.TryGetValue("search:" + term, out var cachedSearch))
+                return cachedSearch
+                    .Where(f => PortraitRelevance.Score(f, context) > 0)
+                    .ToList();
+
+            var json = WikimediaHttpClient.GetText(url);
+            var parsed = ParseCommonsSearch(json)
+                .Where(f => PortraitRelevance.Score(f, context) > 0)
+                .ToList();
+            CommonsCache["search:" + term] = parsed;
+            return parsed;
         }
 
-        static bool LooksLikePortrait(string title)
+        static CommonsFile FetchCommonsFileInfo(string fileTitle)
         {
-            var t = title.ToLowerInvariant();
-            if (!t.StartsWith("file:"))
-                return false;
-            foreach (var skip in SkipTitleFragments)
-            {
-                if (t.Contains(skip))
-                    return false;
-            }
-            return t.EndsWith(".jpg") || t.EndsWith(".jpeg") || t.EndsWith(".png") ||
-                   t.EndsWith(".webp") || t.Contains("portrait") || t.Contains("photo");
+            if (CommonsCache.TryGetValue("file:" + fileTitle, out var cached) && cached.Count > 0)
+                return cached[0];
+
+            var enc = Uri.EscapeDataString(fileTitle);
+            var url =
+                "https://commons.wikimedia.org/w/api.php?action=query&titles=" + enc +
+                "&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=800&format=json";
+            var json = WikimediaHttpClient.GetText(url);
+            var file = ParseCommonsSearch(json).FirstOrDefault();
+            CommonsCache["file:" + fileTitle] = file != null
+                ? new List<CommonsFile> { file }
+                : new List<CommonsFile>();
+            return file;
         }
 
         static List<CommonsFile> ParseCommonsSearch(string json)
@@ -397,17 +528,16 @@ namespace PeopleOfMath.Editor
                 block,
                 $"\"{key}\"\\s*:\\s*\\{{\\s*\"value\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"",
                 RegexOptions.Singleline);
-            return m.Success ? Unescape(m.Groups[1].Value) : "";
+            return m.Success ? Regex.Unescape(m.Groups[1].Value.Replace("\\n", "\n")) : "";
         }
-
-        static string Unescape(string s) =>
-            Regex.Unescape(s.Replace("\\n", "\n"));
 
         static bool IsLicenseAllowed(string license)
         {
             if (string.IsNullOrWhiteSpace(license))
                 return false;
             var l = license.ToLowerInvariant();
+            if (l.Contains("see wikipedia"))
+                return true;
             if (l.Contains("nc") || l.Contains("nd") || l.Contains("non-commercial") ||
                 l.Contains("no derivatives"))
                 return false;
@@ -416,17 +546,19 @@ namespace PeopleOfMath.Editor
 
         static bool DownloadAndResize(string url, string destPath)
         {
-            using var req = UnityWebRequest.Get(url);
-            req.SetRequestHeader("User-Agent", "PeopleOfMath/1.0 (Unity Editor; educational app)");
-            var op = req.SendWebRequest();
-            while (!op.isDone)
-                System.Threading.Thread.Sleep(20);
-
-            if (req.result != UnityWebRequest.Result.Success)
+            byte[] raw;
+            try
+            {
+                raw = WikimediaHttpClient.DownloadBytes(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Download failed: {url} — {ex.Message}");
                 return false;
+            }
 
             var tex = new Texture2D(2, 2);
-            if (!tex.LoadImage(req.downloadHandler.data))
+            if (!tex.LoadImage(raw))
             {
                 UnityEngine.Object.DestroyImmediate(tex);
                 return false;
@@ -470,14 +602,12 @@ namespace PeopleOfMath.Editor
             importer.SaveAndReimport();
         }
 
-        static string Get(string url)
+        static string ToAssetsPath(string fullPath)
         {
-            using var req = UnityWebRequest.Get(url);
-            req.SetRequestHeader("User-Agent", "PeopleOfMath/1.0 (Unity Editor; educational app)");
-            var op = req.SendWebRequest();
-            while (!op.isDone)
-                System.Threading.Thread.Sleep(20);
-            return req.result == UnityWebRequest.Result.Success ? req.downloadHandler.text : "";
+            var project = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            return fullPath.Replace('\\', '/')
+                .Replace(project.Replace('\\', '/'), "")
+                .TrimStart('/');
         }
 
         class CommonsFile
@@ -487,6 +617,115 @@ namespace PeopleOfMath.Editor
             public string pageUrl;
             public string license;
             public string attribution;
+        }
+
+        static class PortraitRelevance
+        {
+            public class Context
+            {
+                public string id;
+                public List<string> tokens = new();
+            }
+
+            public static Context BuildContext(MathematicianData data, bool fetchWikidataLabel = true)
+            {
+                var ctx = new Context { id = data.id ?? "" };
+                AddTokens(ctx, data.id);
+                AddTokens(ctx, data.wikiTitleRu);
+                AddTokens(ctx, data.fullNameRu);
+
+                if (fetchWikidataLabel && !string.IsNullOrWhiteSpace(data.wikidataId))
+                    EnrichWithWikidataLabel(ctx, data.wikidataId);
+
+                return ctx;
+            }
+
+            public static void EnrichWithWikidataLabel(Context ctx, string wikidataId)
+            {
+                AddTokens(ctx, FetchWikidataLabelEn(wikidataId));
+            }
+
+            static string FetchWikidataLabelEn(string wikidataId)
+            {
+                var wd = wikidataId.Trim();
+                if (!wd.StartsWith("Q", StringComparison.OrdinalIgnoreCase))
+                    wd = "Q" + wd;
+                var url =
+                    $"https://www.wikidata.org/w/api.php?action=wbgetentities&ids={wd}&props=labels&languages=en&format=json";
+                try
+                {
+                    var json = WikimediaHttpClient.GetText(url);
+                    var m = Regex.Match(json, "\"en\"\\s*:\\s*\\{\\s*\"value\"\\s*:\\s*\"([^\"]+)\"");
+                    return m.Success ? m.Groups[1].Value : "";
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+
+            static void AddTokens(Context ctx, string text)
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return;
+
+                foreach (var part in text.ToLowerInvariant().Split(',', ' ', '-', '_'))
+                {
+                    var t = part.Trim();
+                    if (t.Length < 3)
+                        continue;
+                    if (!ctx.tokens.Contains(t))
+                        ctx.tokens.Add(t);
+                }
+            }
+
+            public static int Score(CommonsFile file, Context ctx)
+            {
+                if (file == null || string.IsNullOrEmpty(file.title))
+                    return -100;
+
+                var t = file.title.ToLowerInvariant();
+                foreach (var skip in SkipTitleFragments)
+                {
+                    if (t.Contains(skip))
+                        return -100;
+                }
+
+                foreach (var bad in BadNameFragments)
+                {
+                    if (t.Contains(bad))
+                        return -100;
+                }
+
+                if (!t.StartsWith("file:"))
+                    return -100;
+
+                var hasImageExt = t.EndsWith(".jpg") || t.EndsWith(".jpeg") || t.EndsWith(".png") ||
+                                  t.EndsWith(".webp");
+                var hasPortraitWord = t.Contains("portrait") || t.Contains("photo");
+                if (!hasImageExt && !hasPortraitWord)
+                    return -100;
+
+                var score = 0;
+                foreach (var token in ctx.tokens)
+                {
+                    if (t.Contains(token))
+                        score += 12;
+                }
+
+                if (!string.IsNullOrEmpty(ctx.id) && t.Contains(ctx.id.Replace('_', ' ')))
+                    score += 8;
+                if (!string.IsNullOrEmpty(ctx.id) && t.Contains(ctx.id.Replace('_', '-')))
+                    score += 8;
+
+                if (hasPortraitWord)
+                    score += 4;
+
+                if (file.title == "File:Wikipedia_thumbnail")
+                    score += 15;
+
+                return score >= 8 ? score : 0;
+            }
         }
     }
 }

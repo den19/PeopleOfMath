@@ -7,7 +7,7 @@ namespace PeopleOfMath.Editor
 {
     public static class PlaceholderPortraitGenerator
     {
-        const string ResourcesRoot = "Assets/Resources/Portraits";
+        const string DevRoot = PortraitPlaceholderDetection.DevPlaceholdersRoot;
 
         [MenuItem("PeopleOfMath/Generate Placeholder Portraits (dev)")]
         public static void GenerateAll()
@@ -17,30 +17,28 @@ namespace PeopleOfMath.Editor
             if (root?.mathematicians == null)
                 return;
 
-            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
-                AssetDatabase.CreateFolder("Assets", "Resources");
-            if (!AssetDatabase.IsValidFolder(ResourcesRoot))
-                AssetDatabase.CreateFolder("Assets/Resources", "Portraits");
+            if (!AssetDatabase.IsValidFolder("Assets/Data"))
+                AssetDatabase.CreateFolder("Assets", "Data");
+            if (!AssetDatabase.IsValidFolder(DevRoot))
+                AssetDatabase.CreateFolder("Assets/Data", "Placeholders");
 
             var hue = 0f;
             foreach (var entry in root.mathematicians)
             {
-                var dir = $"{ResourcesRoot}/{entry.id}";
+                var dir = $"{DevRoot}/{entry.id}";
                 if (!AssetDatabase.IsValidFolder(dir))
-                {
-                    var parent = ResourcesRoot;
-                    AssetDatabase.CreateFolder(parent, entry.id);
-                }
+                    AssetDatabase.CreateFolder(DevRoot, entry.id);
 
                 for (var i = 1; i <= 2; i++)
                 {
                     var path = $"{dir}/{i:D2}.jpg";
-                    if (File.Exists(path))
+                    if (File.Exists(path) && !PortraitPlaceholderDetection.IsPlaceholderFile(path))
                         continue;
 
                     var tex = MakeTexture(entry.wikiTitleRu ?? entry.id, hue + i * 0.07f);
                     File.WriteAllBytes(path, tex.EncodeToJPG(80));
                     Object.DestroyImmediate(tex);
+                    PortraitPlaceholderDetection.MarkAsPlaceholder(path);
                     ConfigureSprite(path);
                 }
 
@@ -49,8 +47,7 @@ namespace PeopleOfMath.Editor
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            WikimediaPortraitImporter.LinkAllFromFolders();
-            Debug.Log("Placeholder portraits generated under Assets/Resources/Portraits.");
+            Debug.Log($"Dev placeholders written to {DevRoot} (not loaded in game).");
         }
 
         static Texture2D MakeTexture(string label, float hue)
@@ -75,6 +72,7 @@ namespace PeopleOfMath.Editor
 
         static void ConfigureSprite(string assetPath)
         {
+            AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
             var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
             if (importer == null)
                 return;
