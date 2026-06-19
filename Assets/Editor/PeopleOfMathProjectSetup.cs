@@ -293,7 +293,7 @@ namespace PeopleOfMath.Editor
             var ls = new LocalizedString
             {
                 TableReference = collection.TableCollectionNameReference,
-                TableEntryReference = entry.Key
+                TableEntryReference = entry.Id
             };
             return ls;
         }
@@ -570,6 +570,12 @@ namespace PeopleOfMath.Editor
             tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
             tmp.verticalAlignment = VerticalAlignmentOptions.Top;
             WireLocalizeStringToTmp(go);
+
+            var lse = go.GetComponent<LocalizeStringEvent>();
+            var lseSo = new SerializedObject(lse);
+            lseSo.FindProperty("m_WaitForCompletion").boolValue = true;
+            lseSo.ApplyModifiedPropertiesWithoutUndo();
+            lse.enabled = false;
         }
 
         static GameObject CreateContentArea(Transform canvas)

@@ -66,7 +66,9 @@
 
 1. **File → Build Settings** — платформа **Android**.
 2. Сцена `Assets/Scenes/Main.unity` (index 0).
-3. **Build** или **Build And Run**.
+3. **Build** или **Build And Run** (Addressables пересобираются автоматически перед билдом).
+
+Если меняли только строки локализации и APK собираете вручную: **Window → Asset Management → Addressables → Groups → Build → New Build**, затем снова **Build** APK. Старую версию приложения на устройстве удалите перед установкой.
 
 Пакетный setup сцены (редактор закрыт):
 

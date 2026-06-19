@@ -46,7 +46,11 @@ namespace PeopleOfMath.UI
             settingsTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
-            homeTitleEvent?.RefreshString();
+            if (homeTitleEvent != null)
+            {
+                homeTitleEvent.enabled = true;
+                homeTitleEvent.RefreshString();
+            }
         }
 
         public void SetSettingsTitle()
