@@ -29,6 +29,15 @@ namespace PeopleOfMath.Editor
             AssetDatabase.SaveAssets();
         }
 
+        [MenuItem("PeopleOfMath/Fix Home Title Layout")]
+        public static void FixHomeTitleLayoutFromMenu()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            FixHomeTitleLayout(scene);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+        }
+
         public static void Apply()
         {
             foreach (var path in PrefabPaths)
@@ -42,11 +51,15 @@ namespace PeopleOfMath.Editor
                 if (tmp.gameObject.scene != scene)
                     continue;
 
+                if (IsHeaderTitle(tmp.gameObject))
+                    continue;
+
                 ScaleTextAdditional(tmp);
                 scaled++;
             }
 
             FixDetailTextLayout(scene);
+            FixHomeTitleLayout(scene);
 
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
@@ -70,6 +83,24 @@ namespace PeopleOfMath.Editor
                 ConfigureAutoHeightField(tmp.gameObject);
             }
         }
+
+        public static void FixHomeTitleLayout(UnityEngine.SceneManagement.Scene scene)
+        {
+            foreach (var tmp in Object.FindObjectsByType<TextMeshProUGUI>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (tmp.gameObject.scene != scene)
+                    continue;
+                if (tmp.gameObject.name != "HomeTitle")
+                    continue;
+
+                PeopleOfMathProjectSetup.ConfigureHomeTitle(tmp.gameObject);
+                EditorUtility.SetDirty(tmp.gameObject);
+            }
+        }
+
+        static bool IsHeaderTitle(GameObject go) =>
+            go.name is "HomeTitle" or "SettingsTitle";
 
         static void ConfigureDetailContentVlg(UnityEngine.SceneManagement.Scene scene)
         {

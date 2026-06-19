@@ -215,7 +215,9 @@ namespace PeopleOfMath.Editor
             if (collection == null)
                 collection = LocalizationEditorSettings.CreateStringTableCollection("UI", collectionPath);
 
-            AddUiEntry(collection, "title_home", "Люди математики", "Mathematicians");
+            AddUiEntry(collection, "title_home",
+                "Математики: века, страны, разделы математики",
+                "Mathematicians: centuries, countries, branches of mathematics");
             AddUiEntry(collection, "title_settings", "Настройки", "Settings");
             AddUiEntry(collection, "title_detail", "Карточка", "Profile");
             AddUiEntry(collection, "section_century", "По веку", "By century");
@@ -481,6 +483,7 @@ namespace PeopleOfMath.Editor
             var header = CreatePanel(canvas, "Header", new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -120), new Vector2(0, 0));
 
             var homeTitle = CreateLocalizedTitle(header.transform, "HomeTitle", loc.HomeTitle);
+            ConfigureHomeTitle(homeTitle);
             var settingsTitle = CreateLocalizedTitle(header.transform, "SettingsTitle", loc.SettingsTitle);
             settingsTitle.SetActive(false);
 
@@ -527,7 +530,46 @@ namespace PeopleOfMath.Editor
             var so = new SerializedObject(lse);
             AssignLocalized(so.FindProperty("m_StringReference"), localized);
             so.ApplyModifiedPropertiesWithoutUndo();
+            WireLocalizeStringToTmp(go);
             return go;
+        }
+
+        public static void WireLocalizeStringToTmp(GameObject go)
+        {
+            var lse = go.GetComponent<LocalizeStringEvent>();
+            var tmp = go.GetComponent<TMP_Text>();
+            if (lse == null || tmp == null)
+                return;
+
+            while (lse.OnUpdateString.GetPersistentEventCount() > 0)
+                UnityEventTools.RemovePersistentListener(lse.OnUpdateString, 0);
+
+            var setStringMethod = typeof(TMP_Text).GetProperty("text")!.GetSetMethod();
+            var methodDelegate = (UnityAction<string>)System.Delegate.CreateDelegate(
+                typeof(UnityAction<string>), tmp, setStringMethod);
+            UnityEventTools.AddPersistentListener(lse.OnUpdateString, methodDelegate);
+            lse.OnUpdateString.SetPersistentListenerState(0, UnityEventCallState.EditorAndRuntime);
+            EditorUtility.SetDirty(lse);
+        }
+
+        public static void ConfigureHomeTitle(GameObject go)
+        {
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 1);
+            rt.anchorMax = new Vector2(1, 1);
+            rt.pivot = new Vector2(0.5f, 1);
+            rt.anchoredPosition = new Vector2(0, -16);
+            rt.sizeDelta = new Vector2(-48, 120);
+
+            var tmp = go.GetComponent<TextMeshProUGUI>();
+            tmp.enableAutoSizing = true;
+            tmp.fontSizeMin = 18;
+            tmp.fontSizeMax = 40;
+            tmp.fontSize = 36;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            tmp.verticalAlignment = VerticalAlignmentOptions.Top;
+            WireLocalizeStringToTmp(go);
         }
 
         static GameObject CreateContentArea(Transform canvas)
