@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using PeopleOfMath.Data;
@@ -267,6 +268,7 @@ namespace PeopleOfMath.Editor
 
             var candidates = FindCommonsImages(data);
             var imported = 0;
+            var seenContentHashes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             data.portraits ??= new List<PortraitEntry>();
             data.portraits.Clear();
 
@@ -284,7 +286,8 @@ namespace PeopleOfMath.Editor
 
                 if (PortraitPlaceholderDetection.IsRealPortraitAssetPath(dest) && !forceReplace)
                 {
-                    BindExistingSprite(data, dest, file, ref imported, ref totalBytes, report);
+                    TryBindExistingSprite(
+                        data, dest, file, seenContentHashes, ref imported, ref totalBytes, report);
                     continue;
                 }
 
@@ -292,7 +295,15 @@ namespace PeopleOfMath.Editor
                     continue;
 
                 ConfigureTextureImporter(dest);
-                BindExistingSprite(data, dest, file, ref imported, ref totalBytes, report);
+                TryBindExistingSprite(
+                    data,
+                    dest,
+                    file,
+                    seenContentHashes,
+                    ref imported,
+                    ref totalBytes,
+                    report,
+                    deleteOnDuplicate: true);
             }
 
             if (imported < MinImages)
@@ -302,14 +313,38 @@ namespace PeopleOfMath.Editor
             return imported;
         }
 
-        static void BindExistingSprite(
+        static bool TryBindExistingSprite(
             MathematicianData data,
             string dest,
             CommonsFile file,
+            HashSet<string> seenContentHashes,
             ref int imported,
             ref long totalBytes,
-            StringBuilder report)
+            StringBuilder report,
+            bool deleteOnDuplicate = false)
         {
+            var fullPath = Path.GetFullPath(dest);
+            if (!File.Exists(fullPath))
+                return false;
+
+            var hash = ComputeFileContentHash(fullPath);
+            if (!seenContentHashes.Add(hash))
+            {
+                report.AppendLine(
+                    deleteOnDuplicate
+                        ? $"SKIP {data.id}: duplicate download ({file.title})"
+                        : $"SKIP {data.id}: duplicate content ({file.title})");
+                if (deleteOnDuplicate)
+                {
+                    File.Delete(fullPath);
+                    var metaPath = dest + ".meta";
+                    if (File.Exists(metaPath))
+                        File.Delete(metaPath);
+                }
+
+                return false;
+            }
+
             var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(dest);
             if (sprite == null)
             {
@@ -317,7 +352,7 @@ namespace PeopleOfMath.Editor
                 sprite = AssetDatabase.LoadAssetAtPath<Sprite>(dest);
             }
             if (sprite == null)
-                return;
+                return false;
 
             data.portraits.Add(new PortraitEntry
             {
@@ -329,9 +364,9 @@ namespace PeopleOfMath.Editor
             });
 
             imported++;
-            if (File.Exists(dest))
-                totalBytes += new FileInfo(dest).Length;
+            totalBytes += new FileInfo(fullPath).Length;
             report.AppendLine($"OK {data.id} #{imported}: {file.title} ({file.license})");
+            return true;
         }
 
         static List<string> ParseFailedIdsFromReport()
@@ -368,7 +403,7 @@ namespace PeopleOfMath.Editor
                 .ToList();
 
             if (licensedP18.Count >= MinImages)
-                return licensedP18.Take(MaxImages * 2).ToList();
+                return DedupeCommonsFiles(licensedP18).Take(MaxImages * 2).ToList();
 
             if (licensedP18.Count < MinImages && !string.IsNullOrWhiteSpace(data.wikidataId))
                 PortraitRelevance.EnrichWithWikidataLabel(context, data.wikidataId);
@@ -390,14 +425,55 @@ namespace PeopleOfMath.Editor
                 }
             }
 
-            return results
-                .GroupBy(f => f.title, StringComparer.OrdinalIgnoreCase)
-                .Select(g => g.First())
-                .Where(f => IsLicenseAllowed(f.license))
-                .Where(f => PortraitRelevance.Score(f, context) > 0)
-                .OrderByDescending(f => PortraitRelevance.Score(f, context))
+            return DedupeCommonsFiles(results
+                    .Where(f => IsLicenseAllowed(f.license))
+                    .Where(f => PortraitRelevance.Score(f, context) > 0)
+                    .OrderByDescending(f => PortraitRelevance.Score(f, context)))
                 .Take(16)
                 .ToList();
+        }
+
+        static IEnumerable<CommonsFile> DedupeCommonsFiles(IEnumerable<CommonsFile> files) =>
+            files.GroupBy(GetCommonsDedupeKey, StringComparer.OrdinalIgnoreCase)
+                .Select(g => g.First());
+
+        static string GetCommonsDedupeKey(CommonsFile file)
+        {
+            var key = NormalizeCommonsUrl(file.url);
+            return string.IsNullOrEmpty(key) ? file.title ?? "" : key;
+        }
+
+        static string NormalizeCommonsUrl(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return "";
+
+            url = url.Split('?')[0].Replace("\\/", "/");
+            if (url.IndexOf("upload.wikimedia.org", StringComparison.OrdinalIgnoreCase) < 0)
+                return url.ToLowerInvariant();
+
+            var segments = url.Split('/');
+            if (segments.Length == 0)
+                return url.ToLowerInvariant();
+
+            var last = segments[^1];
+            var thumbMatch = Regex.Match(last, @"^\d+px-(.+)$", RegexOptions.IgnoreCase);
+            if (thumbMatch.Success)
+            {
+                if (segments.Length >= 2)
+                    return segments[^2].ToLowerInvariant();
+                return thumbMatch.Groups[1].Value.ToLowerInvariant();
+            }
+
+            return last.ToLowerInvariant();
+        }
+
+        static string ComputeFileContentHash(string filePath)
+        {
+            using var md5 = MD5.Create();
+            using var stream = File.OpenRead(filePath);
+            var hash = md5.ComputeHash(stream);
+            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
         }
 
         static List<CommonsFile> FetchWikidataP18Portraits(string wikidataId, PortraitRelevance.Context context)

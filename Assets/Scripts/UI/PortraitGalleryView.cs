@@ -25,6 +25,7 @@ namespace PeopleOfMath.UI
         readonly List<Image> _pages = new();
         readonly List<Image> _dots = new();
         IReadOnlyList<PortraitEntry> _entries = new List<PortraitEntry>();
+        string _mathematicianId;
         int _layoutPageCount;
         bool _relayoutScheduled;
 
@@ -60,6 +61,7 @@ namespace PeopleOfMath.UI
 
         void BindEntries(string mathematicianId, IReadOnlyList<PortraitEntry> portraits)
         {
+            _mathematicianId = mathematicianId;
             _entries = portraits ?? new List<PortraitEntry>();
             var valid = CollectValidPortraits(_entries);
 
@@ -110,7 +112,7 @@ namespace PeopleOfMath.UI
                 {
                     var img = CreatePage();
                     img.sprite = entry.sprite;
-                    img.preserveAspect = true;
+                    img.preserveAspect = !ShouldStretchPortraitToWidth();
                     img.color = Color.white;
                     _pages.Add(img);
                 }
@@ -319,5 +321,10 @@ namespace PeopleOfMath.UI
 
         static bool HasPlaceholderMarker(string mathematicianId, string assetName) =>
             Resources.Load<TextAsset>($"Portraits/{mathematicianId}/{assetName}.placeholder") != null;
+
+        static bool ShouldStretchPortraitToWidth(string mathematicianId) =>
+            string.Equals(mathematicianId, "selberg", StringComparison.OrdinalIgnoreCase);
+
+        bool ShouldStretchPortraitToWidth() => ShouldStretchPortraitToWidth(_mathematicianId);
     }
 }
