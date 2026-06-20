@@ -17,6 +17,21 @@ namespace PeopleOfMath.UI
         string _id;
         Action<string> _onSelected;
 
+        void Awake() => ConfigureBioText();
+
+        void OnValidate() => ConfigureBioText();
+
+        static void ConfigureBioText(TMP_Text text)
+        {
+            if (text == null)
+                return;
+
+            text.textWrappingMode = TextWrappingModes.Normal;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+        }
+
+        void ConfigureBioText() => ConfigureBioText(bioText);
+
         public void Bind(MathematicianData data, Action<string> onSelected)
         {
             _id = data.id;

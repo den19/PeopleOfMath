@@ -350,12 +350,15 @@ namespace PeopleOfMath.Editor
             if (rt != null)
                 rt.sizeDelta = new Vector2(rt.sizeDelta.x, UiLayoutMetrics.ListItemRowHeight);
 
+            if (go.GetComponent<RectMask2D>() == null)
+                go.AddComponent<RectMask2D>();
+
             ConfigureListItemText(go, "Name", UiLayoutMetrics.ListItemNameFontSize, FontStyles.Bold,
-                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemTextLineHeight);
+                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemTextLineHeight, truncate: false);
             ConfigureListItemText(go, "Dates", UiLayoutMetrics.ListItemDatesFontSize, FontStyles.Normal,
-                UiLayoutMetrics.ListItemDatesPos, UiLayoutMetrics.ListItemTextLineHeight);
+                UiLayoutMetrics.ListItemDatesPos, UiLayoutMetrics.ListItemTextLineHeight, truncate: false);
             ConfigureListItemText(go, "Bio", UiLayoutMetrics.ListItemBioFontSize, FontStyles.Italic,
-                UiLayoutMetrics.ListItemBioPos, UiLayoutMetrics.ListItemBioHeight);
+                UiLayoutMetrics.ListItemBioPos, UiLayoutMetrics.ListItemBioHeight, truncate: true);
         }
 
         static void ConfigureListItemText(
@@ -364,7 +367,8 @@ namespace PeopleOfMath.Editor
             float fontSize,
             FontStyles style,
             Vector2 anchoredPos,
-            float height)
+            float height,
+            bool truncate)
         {
             var child = root.transform.Find(childName);
             if (child == null)
@@ -380,6 +384,8 @@ namespace PeopleOfMath.Editor
 
             tmp.fontSize = fontSize;
             tmp.fontStyle = style;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.overflowMode = truncate ? TextOverflowModes.Ellipsis : TextOverflowModes.Overflow;
             var so = new SerializedObject(tmp);
             var baseProp = so.FindProperty("m_fontSizeBase");
             if (baseProp != null)

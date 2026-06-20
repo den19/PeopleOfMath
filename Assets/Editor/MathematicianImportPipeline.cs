@@ -17,6 +17,7 @@ namespace PeopleOfMath.Editor
         const string CatalogPath = "Assets/Data/mathematicians_catalog.json";
         const string DataFolder = "Assets/Data/Mathematicians";
         const int MaxBlockChars = 2200;
+        const int MaxShortBioChars = 350;
         const int RequestDelayMs = 800;
         const int MaxRetries = 3;
         static readonly HashSet<string> PreserveEnIds = new(StringComparer.OrdinalIgnoreCase)
@@ -49,6 +50,57 @@ namespace PeopleOfMath.Editor
                 return;
 
             ImportCatalog();
+        }
+
+        [MenuItem("PeopleOfMath/Truncate Short Bios")]
+        public static void TruncateShortBiosMenu()
+        {
+            if (!EditorUtility.DisplayDialog(
+                    "Truncate Short Bios",
+                    $"Обрезать shortBioRu/shortBioEn до {MaxShortBioChars} символов во всех карточках?",
+                    "Truncate",
+                    "Cancel"))
+                return;
+
+            TruncateAllShortBios();
+        }
+
+        public static void TruncateAllShortBios()
+        {
+            var guids = AssetDatabase.FindAssets("t:MathematicianData", new[] { DataFolder });
+            var updated = 0;
+
+            foreach (var guid in guids)
+            {
+                var data = AssetDatabase.LoadAssetAtPath<MathematicianData>(
+                    AssetDatabase.GUIDToAssetPath(guid));
+                if (data == null)
+                    continue;
+
+                var changed = false;
+                if (TruncateField(ref data.shortBioRu))
+                    changed = true;
+                if (TruncateField(ref data.shortBioEn))
+                    changed = true;
+
+                if (!changed)
+                    continue;
+
+                EditorUtility.SetDirty(data);
+                updated++;
+            }
+
+            AssetDatabase.SaveAssets();
+            Debug.Log($"Short bios truncated on {updated} mathematician assets.");
+        }
+
+        static bool TruncateField(ref string field)
+        {
+            if (string.IsNullOrEmpty(field) || field.Length <= MaxShortBioChars)
+                return false;
+
+            field = Truncate(field, MaxShortBioChars);
+            return true;
         }
 
         public static void ImportCatalog()
@@ -122,7 +174,7 @@ namespace PeopleOfMath.Editor
                     : entry.wikiTitleRu;
                 data.wikipediaUrlRu = summary.content_urls?.desktop?.page ?? "";
                 if (!string.IsNullOrWhiteSpace(summary.extract))
-                    data.shortBioRu = Truncate(UnicodeText.Normalize(summary.extract.Trim()), MaxBlockChars);
+                    data.shortBioRu = Truncate(UnicodeText.Normalize(summary.extract.Trim()), MaxShortBioChars);
             }
             else
             {
@@ -138,7 +190,7 @@ namespace PeopleOfMath.Editor
                 if (!string.IsNullOrWhiteSpace(personal))
                     data.personalLifeRu = Truncate(personal, MaxBlockChars);
                 if (string.IsNullOrWhiteSpace(data.shortBioRu))
-                    data.shortBioRu = Truncate(extract, 600);
+                    data.shortBioRu = Truncate(extract, MaxShortBioChars);
             }
 
             TryParseDates(summary?.extract ?? extract ?? "", data);
