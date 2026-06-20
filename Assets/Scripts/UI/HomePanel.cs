@@ -72,7 +72,10 @@ namespace PeopleOfMath.UI
                 var btn = Instantiate(filterButtonPrefab, parent);
                 var text = btn.GetComponentInChildren<TMP_Text>();
                 if (text != null)
+                {
                     text.text = labels[key].Get(english);
+                    text.ForceMeshUpdate();
+                }
 
                 var capturedKey = key;
                 btn.onClick.AddListener(() => navigation.ShowList(kind, capturedKey));

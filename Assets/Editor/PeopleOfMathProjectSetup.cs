@@ -613,35 +613,61 @@ namespace PeopleOfMath.Editor
         {
             var rt = go.GetComponent<RectTransform>();
             if (rt != null)
-                rt.sizeDelta = new Vector2(UiLayoutMetrics.FilterButtonWidth, UiLayoutMetrics.FilterButtonHeight);
+                rt.sizeDelta = new Vector2(0f, UiLayoutMetrics.FilterButtonHeight);
 
-            var le = go.GetComponent<LayoutElement>();
-            if (le != null)
-            {
-                le.preferredWidth = UiLayoutMetrics.FilterButtonWidth;
-                le.preferredHeight = UiLayoutMetrics.FilterButtonHeight;
-            }
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.preferredWidth = -1f;
+            le.flexibleWidth = 1f;
+            le.preferredHeight = UiLayoutMetrics.FilterButtonHeight;
+            le.minHeight = UiLayoutMetrics.FilterButtonHeight;
+
+            var btnFitter = go.GetComponent<ContentSizeFitter>();
+            if (btnFitter != null)
+                Object.DestroyImmediate(btnFitter);
 
             var label = go.GetComponentInChildren<TextMeshProUGUI>(true);
             if (label != null)
             {
-                var fontSize = UiLayoutMetrics.FilterButtonFontSize;
-                label.fontSize = fontSize;
+                var fontSizeMax = UiLayoutMetrics.FilterButtonFontSize;
+                var fontSizeMin = UiLayoutMetrics.FilterButtonFontSizeMin;
+                label.fontSize = fontSizeMax;
+                label.enableAutoSizing = true;
+                label.fontSizeMin = fontSizeMin;
+                label.fontSizeMax = fontSizeMax;
+                label.textWrappingMode = TextWrappingModes.NoWrap;
+                label.overflowMode = TextOverflowModes.Ellipsis;
                 var so = new SerializedObject(label);
                 var baseProp = so.FindProperty("m_fontSizeBase");
                 if (baseProp != null)
-                    baseProp.floatValue = fontSize;
+                    baseProp.floatValue = fontSizeMax;
                 so.ApplyModifiedPropertiesWithoutUndo();
 
                 var labelRt = label.rectTransform;
                 if (labelRt != null)
                 {
+                    labelRt.anchorMin = new Vector2(0f, 1f);
+                    labelRt.anchorMax = new Vector2(1f, 1f);
+                    labelRt.pivot = new Vector2(0f, 1f);
                     labelRt.anchoredPosition = UiLayoutMetrics.FilterButtonLabelOffset;
                     labelRt.sizeDelta = new Vector2(
                         -UiLayoutMetrics.FilterButtonLabelHorizontalInset,
                         UiLayoutMetrics.FilterButtonLabelHeight);
                 }
+
+                var labelLe = label.GetComponent<LayoutElement>();
+                if (labelLe != null)
+                    Object.DestroyImmediate(labelLe);
+
+                var labelFitter = label.GetComponent<ContentSizeFitter>();
+                if (labelFitter != null)
+                    Object.DestroyImmediate(labelFitter);
+
+                var layoutHeight = label.GetComponent<TmpLayoutHeight>();
+                if (layoutHeight != null)
+                    Object.DestroyImmediate(layoutHeight);
             }
+
+            EditorUtility.SetDirty(go);
         }
 
         static Button CreateFilterButtonPrefab()
@@ -686,7 +712,9 @@ namespace PeopleOfMath.Editor
             go.transform.SetParent(parent, false);
             var vlg = go.GetComponent<VerticalLayoutGroup>();
             vlg.childControlHeight = true;
+            vlg.childControlWidth = true;
             vlg.childForceExpandHeight = false;
+            vlg.childForceExpandWidth = true;
             HomeListPanelLayout.ConfigureBrowseGroup(vlg);
             var fitter = go.GetComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;

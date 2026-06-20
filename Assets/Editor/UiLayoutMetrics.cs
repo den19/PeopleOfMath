@@ -1,3 +1,4 @@
+using PeopleOfMath.UI;
 using UnityEngine;
 
 namespace PeopleOfMath.Editor
@@ -13,8 +14,11 @@ namespace PeopleOfMath.Editor
         public const float FilterButtonLabelHorizontalInset = 40f;
 
         public static float FilterButtonFontSize => ScaleFont(FilterButtonBaseFontSize) * 4f;
-        public static float FilterButtonLabelHeight => ScaleFont(FilterButtonBaseFontSize) * 4f;
-        public static Vector2 FilterButtonLabelOffset => new Vector2(32f, -28f);
+        public static float FilterButtonFontSizeMin =>
+            FilterButtonMetrics.FontSizeMin(FilterButtonFontSize);
+        public static float FilterButtonLabelHeight =>
+            FilterButtonMetrics.Height - FilterButtonMetrics.VerticalPadding;
+        public static Vector2 FilterButtonLabelOffset => FilterButtonMetrics.LabelOffset;
 
         public const int BrowseScrollPaddingLeft = 48;
         public const int BrowseScrollPaddingRight = 48;

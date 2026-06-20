@@ -22,6 +22,8 @@ namespace PeopleOfMath.Editor
         {
             vlg.spacing = UiLayoutMetrics.GroupSpacing;
             vlg.padding = new RectOffset(0, 0, UiLayoutMetrics.GroupPaddingTop, UiLayoutMetrics.GroupPaddingBottom);
+            vlg.childControlWidth = true;
+            vlg.childForceExpandWidth = true;
             EditorUtility.SetDirty(vlg);
         }
 

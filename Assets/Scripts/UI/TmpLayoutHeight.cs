@@ -10,6 +10,7 @@ namespace PeopleOfMath.UI
     {
         [SerializeField] float padding = 10f;
         [SerializeField] float minHeight = 48f;
+        [SerializeField] float maxHeight;
 
         TextMeshProUGUI _text;
         LayoutElement _layout;
@@ -42,6 +43,8 @@ namespace PeopleOfMath.UI
             _text.ForceMeshUpdate();
             var preferred = _text.GetPreferredValues(width, Mathf.Infinity).y;
             var height = Mathf.Max(minHeight, preferred + padding);
+            if (maxHeight > 0f)
+                height = Mathf.Min(height, maxHeight);
 
             _layout.preferredHeight = height;
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
@@ -53,19 +56,24 @@ namespace PeopleOfMath.UI
         {
             Canvas.ForceUpdateCanvases();
 
+            var selfWidth = rect.rect.width;
+            if (selfWidth > 1f)
+                return selfWidth;
+
             var parent = rect.parent as RectTransform;
             if (parent != null)
             {
-                var preferred = LayoutUtility.GetPreferredWidth(parent);
-                if (preferred > 1f)
-                    return preferred;
+                var parentWidth = parent.rect.width;
+                if (parentWidth > 1f)
+                {
+                    if (Mathf.Approximately(rect.anchorMin.x, 0f) && Mathf.Approximately(rect.anchorMax.x, 1f))
+                        return parentWidth + rect.sizeDelta.x;
 
-                var rectWidth = parent.rect.width;
-                if (rectWidth > 1f)
-                    return rectWidth;
+                    return parentWidth;
+                }
             }
 
-            return rect.rect.width > 1f ? rect.rect.width : 900f;
+            return 900f;
         }
 
         static void RebuildLayoutChain(RectTransform start)
