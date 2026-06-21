@@ -65,8 +65,17 @@ namespace PeopleOfMath.UI
             _entries = portraits ?? new List<PortraitEntry>();
             var valid = CollectValidPortraits(_entries);
 
-            if (valid.Count == 0 && !string.IsNullOrEmpty(mathematicianId))
-                valid = LoadPortraitsFromResources(mathematicianId);
+            if (!string.IsNullOrEmpty(mathematicianId))
+            {
+                var fromResources = LoadPortraitsFromResources(mathematicianId);
+                if (valid.Count == 0)
+                    valid = fromResources;
+                else if (fromResources.Count > valid.Count)
+                {
+                    valid = MergeWithResourcePortraits(_entries, fromResources);
+                    _entries = valid;
+                }
+            }
 
             BuildPages(valid);
             snap?.Configure(valid.Count);
@@ -285,6 +294,40 @@ namespace PeopleOfMath.UI
                     valid.Add(p);
             }
             return valid;
+        }
+
+        static List<PortraitEntry> MergeWithResourcePortraits(
+            IReadOnlyList<PortraitEntry> assetEntries,
+            List<PortraitEntry> fromResources)
+        {
+            var metadataBySpriteName = new Dictionary<string, PortraitEntry>(StringComparer.OrdinalIgnoreCase);
+            if (assetEntries != null)
+            {
+                foreach (var entry in assetEntries)
+                {
+                    if (entry?.sprite != null)
+                        metadataBySpriteName[entry.sprite.name] = entry;
+                }
+            }
+
+            var merged = new List<PortraitEntry>(fromResources.Count);
+            foreach (var resource in fromResources)
+            {
+                if (metadataBySpriteName.TryGetValue(resource.sprite.name, out var asset))
+                {
+                    merged.Add(new PortraitEntry
+                    {
+                        sprite = resource.sprite,
+                        sourceUrl = asset.sourceUrl,
+                        licenseShort = asset.licenseShort,
+                        attributionRu = asset.attributionRu,
+                        attributionEn = asset.attributionEn
+                    });
+                }
+                else
+                    merged.Add(resource);
+            }
+            return merged;
         }
 
         static List<PortraitEntry> LoadPortraitsFromResources(string mathematicianId)

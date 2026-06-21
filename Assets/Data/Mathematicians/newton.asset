@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: newton
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianData
   id: newton
-  wikiTitleRu: "Ньютон, Исаак"
+  wikiTitleRu: "\u041D\u044C\u044E\u0442\u043E\u043D, \u0418\u0441\u0430\u0430\u043A"
   wikidataId: Q935
-  fullNameRu: "Исаак Ньютон"
+  fullNameRu: "\u0418\u0441\u0430\u0430\u043A \u041D\u044C\u044E\u0442\u043E\u043D"
   fullNameEn: Isaac Newton
-  birthDate: "4 января 1643"
-  deathDate: "31 марта 1727"
+  birthDate: "4 \u044F\u043D\u0432\u0430\u0440\u044F 1643"
+  deathDate: "31 \u043C\u0430\u0440\u0442\u0430 1727"
   countryKeys:
   - england
   centuryKeys:
@@ -26,40 +26,40 @@ MonoBehaviour:
   branchKeys:
   - analysis
   - mechanics
-  achievementsRu: "Сформулировал
-            три закона движения
-            и закон всемирного
-            тяготения. Развил
-            методы бесконечно
-            малых (исчисление
-            потоков). «Математические
-            начала натуральной
-            философии» стали
-            образцом научного
-            метода."
+  achievementsRu: "\u0421\u0444\u043E\u0440\u043C\u0443\u043B\u0438\u0440\u043E\u0432\u0430\u043B
+    \u0442\u0440\u0438 \u0437\u0430\u043A\u043E\u043D\u0430 \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F
+    \u0438 \u0437\u0430\u043A\u043E\u043D \u0432\u0441\u0435\u043C\u0438\u0440\u043D\u043E\u0433\u043E
+    \u0442\u044F\u0433\u043E\u0442\u0435\u043D\u0438\u044F. \u0420\u0430\u0437\u0432\u0438\u043B
+    \u043C\u0435\u0442\u043E\u0434\u044B \u0431\u0435\u0441\u043A\u043E\u043D\u0435\u0447\u043D\u043E
+    \u043C\u0430\u043B\u044B\u0445 (\u0438\u0441\u0447\u0438\u0441\u043B\u0435\u043D\u0438\u0435
+    \u043F\u043E\u0442\u043E\u043A\u043E\u0432). \xAB\u041C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0435
+    \u043D\u0430\u0447\u0430\u043B\u0430 \u043D\u0430\u0442\u0443\u0440\u0430\u043B\u044C\u043D\u043E\u0439
+    \u0444\u0438\u043B\u043E\u0441\u043E\u0444\u0438\u0438\xBB \u0441\u0442\u0430\u043B\u0438
+    \u043E\u0431\u0440\u0430\u0437\u0446\u043E\u043C \u043D\u0430\u0443\u0447\u043D\u043E\u0433\u043E
+    \u043C\u0435\u0442\u043E\u0434\u0430."
   achievementsEn: Formulated the three laws of motion and the law of universal gravitation.
     Developed methods of infinitesimals (fluxions). The Principia became a model
     of scientific method.
-  personalLifeRu: "Родился в Вулсторпе;
-            после смерти отца
-            воспитывался матерью
-            и бабушкой. Работал
-            в Кембридже и Лондоне,
-            был президентом
-            Лондонского королевского
-            общества. Известен
-            периодами уединённой
-            работы и острыми
-            научными спорами."
+  personalLifeRu: "\u0420\u043E\u0434\u0438\u043B\u0441\u044F \u0432 \u0412\u0443\u043B\u0441\u0442\u043E\u0440\u043F\u0435;
+    \u043F\u043E\u0441\u043B\u0435 \u0441\u043C\u0435\u0440\u0442\u0438 \u043E\u0442\u0446\u0430
+    \u0432\u043E\u0441\u043F\u0438\u0442\u044B\u0432\u0430\u043B\u0441\u044F \u043C\u0430\u0442\u0435\u0440\u044C\u044E
+    \u0438 \u0431\u0430\u0431\u0443\u0448\u043A\u043E\u0439. \u0420\u0430\u0431\u043E\u0442\u0430\u043B
+    \u0432 \u041A\u0435\u043C\u0431\u0440\u0438\u0434\u0436\u0435 \u0438 \u041B\u043E\u043D\u0434\u043E\u043D\u0435,
+    \u0431\u044B\u043B \u043F\u0440\u0435\u0437\u0438\u0434\u0435\u043D\u0442\u043E\u043C
+    \u041B\u043E\u043D\u0434\u043E\u043D\u0441\u043A\u043E\u0433\u043E \u043A\u043E\u0440\u043E\u043B\u0435\u0432\u0441\u043A\u043E\u0433\u043E
+    \u043E\u0431\u0449\u0435\u0441\u0442\u0432\u0430. \u0418\u0437\u0432\u0435\u0441\u0442\u0435\u043D
+    \u043F\u0435\u0440\u0438\u043E\u0434\u0430\u043C\u0438 \u0443\u0435\u0434\u0438\u043D\u0451\u043D\u043D\u043E\u0439
+    \u0440\u0430\u0431\u043E\u0442\u044B \u0438 \u043E\u0441\u0442\u0440\u044B\u043C\u0438
+    \u043D\u0430\u0443\u0447\u043D\u044B\u043C\u0438 \u0441\u043F\u043E\u0440\u0430\u043C\u0438."
   personalLifeEn: Born in Woolsthorpe; after his father's death he was raised by
     his mother and grandmother. Worked in Cambridge and London, presided over the
     Royal Society. Known for periods of solitary work and sharp scientific disputes.
-  shortBioRu: "Создатель классической
-            механики и соавтор
-            математического
-            анализа."
+  shortBioRu: "\u0421\u043E\u0437\u0434\u0430\u0442\u0435\u043B\u044C \u043A\u043B\u0430\u0441\u0441\u0438\u0447\u0435\u0441\u043A\u043E\u0439
+    \u043C\u0435\u0445\u0430\u043D\u0438\u043A\u0438 \u0438 \u0441\u043E\u0430\u0432\u0442\u043E\u0440
+    \u043C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0433\u043E
+    \u0430\u043D\u0430\u043B\u0438\u0437\u0430."
   shortBioEn: Creator of classical mechanics and co-inventor of calculus.
-  wikipediaUrlRu: "https://ru.wikipedia.org/wiki/Ньютон,_Исаак"
+  wikipediaUrlRu: "https://ru.wikipedia.org/wiki/\u041D\u044C\u044E\u0442\u043E\u043D,_\u0418\u0441\u0430\u0430\u043A"
   portraits:
   - sprite: {fileID: 21300000, guid: 4f9c815f8d7ef71489c85830fe3b13b5, type: 3}
     sourceUrl: 
