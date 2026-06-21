@@ -34,10 +34,12 @@ namespace PeopleOfMath.Editor
         public static float SectionLabelFontSize => ScaleFont(SectionLabelBaseFontSize) * 2f;
         public static float SectionLabelHeight => ScaleFont(72f);
 
-        public const float ListItemRowHeight = 240f;
+        public const float ListItemRowHeight = 480f;
         public const float ListItemHorizontalInset = 40f;
+        public const float ListItemTopPadding = 20f;
+        public const float ListItemVerticalGap = 8f;
         public const float ListItemTextLineHeight = 48f;
-        public const float ListItemBioHeight = 100f;
+        public const float ListItemBioHeight = 200f;
         public const float ListItemNameBaseFontSize = 20f;
         public const float ListItemDatesBaseFontSize = 14f;
         public const float ListItemBioBaseFontSize = 13f;
@@ -45,9 +47,14 @@ namespace PeopleOfMath.Editor
         public static float ListItemNameFontSize => ScaleFont(ListItemNameBaseFontSize) * 2f;
         public static float ListItemDatesFontSize => ScaleFont(ListItemDatesBaseFontSize) * 2f;
         public static float ListItemBioFontSize => ScaleFont(ListItemBioBaseFontSize) * 2f;
-        public static Vector2 ListItemNamePos => new Vector2(20f, -20f);
-        public static Vector2 ListItemDatesPos => new Vector2(20f, -76f);
-        public static Vector2 ListItemBioPos => new Vector2(20f, -116f);
+        public static float ListItemNameHeight => ListItemNameFontSize * 2f;
+        public static Vector2 ListItemNamePos => new Vector2(20f, -ListItemTopPadding);
+        public static Vector2 ListItemDatesPos => new Vector2(
+            20f, -(ListItemTopPadding + ListItemNameHeight + ListItemVerticalGap));
+        public static Vector2 ListItemBioPos => new Vector2(
+            20f,
+            -(ListItemTopPadding + ListItemNameHeight + ListItemVerticalGap
+              + ListItemTextLineHeight + ListItemVerticalGap));
 
         public const float EmptyStateBaseFontSize = 16f;
         public static float EmptyStateFontSize => ScaleFont(EmptyStateBaseFontSize) * 2f;

@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: 5351171379558366187}
   - component: {fileID: 2716552535602927844}
   - component: {fileID: 3579422341441573658}
+  - component: {fileID: 4182746193847562811}
   m_Layer: 0
   m_Name: Name
   m_TagString: Untagged
@@ -429,9 +430,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: -1
+  m_MinHeight: 69
   m_PreferredWidth: -1
-  m_PreferredHeight: 69
+  m_PreferredHeight: -1
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &4182746193847562811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5145049495124873064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4d7d812db621324b8a87d731b56f1f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.TmpLayoutHeight
+  padding: 10
+  minHeight: 69
+  maxHeight: 0

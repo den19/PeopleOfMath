@@ -42,7 +42,10 @@ namespace PeopleOfMath.UI
             var width = ResolveTextWidth(_rect);
             _text.ForceMeshUpdate();
             var preferred = _text.GetPreferredValues(width, Mathf.Infinity).y;
-            var height = Mathf.Max(minHeight, preferred + padding);
+            var scaleY = Mathf.Max(_rect.lossyScale.y, 0.01f);
+            var layoutMin = _layout.minHeight > 0f ? _layout.minHeight : 0f;
+            var effectiveMin = Mathf.Max(minHeight, layoutMin);
+            var height = Mathf.Max(effectiveMin, preferred + padding) * scaleY;
             if (maxHeight > 0f)
                 height = Mathf.Min(height, maxHeight);
 

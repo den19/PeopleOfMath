@@ -350,11 +350,15 @@ namespace PeopleOfMath.Editor
             if (rt != null)
                 rt.sizeDelta = new Vector2(rt.sizeDelta.x, UiLayoutMetrics.ListItemRowHeight);
 
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.preferredHeight = UiLayoutMetrics.ListItemRowHeight;
+            le.flexibleWidth = 1f;
+
             if (go.GetComponent<RectMask2D>() == null)
                 go.AddComponent<RectMask2D>();
 
             ConfigureListItemText(go, "Name", UiLayoutMetrics.ListItemNameFontSize, FontStyles.Bold,
-                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemTextLineHeight, truncate: false);
+                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemNameHeight, truncate: false);
             ConfigureListItemText(go, "Dates", UiLayoutMetrics.ListItemDatesFontSize, FontStyles.Normal,
                 UiLayoutMetrics.ListItemDatesPos, UiLayoutMetrics.ListItemTextLineHeight, truncate: false);
             ConfigureListItemText(go, "Bio", UiLayoutMetrics.ListItemBioFontSize, FontStyles.Italic,
@@ -920,7 +924,7 @@ namespace PeopleOfMath.Editor
         {
             var root = CreateStretchSectionRoot("DetailSection_Identity");
             AddSectionVerticalLayout(root);
-            var name = AddDetailField(root.transform, "Name", 26, FontStyles.Bold, height: 48);
+            var name = AddDetailField(root.transform, "Name", 26, FontStyles.Bold, autoHeight: true, autoMinHeightBase: 48f, useContentSizeFitter: false);
             var dates = AddDetailField(root.transform, "Dates", 16, FontStyles.Normal, height: 40);
             var section = root.AddComponent<IdentityDetailSection>();
             var so = new SerializedObject(section);
@@ -1126,7 +1130,9 @@ namespace PeopleOfMath.Editor
             float size,
             FontStyles style,
             float height = 36,
-            bool autoHeight = false)
+            bool autoHeight = false,
+            float autoMinHeightBase = 80f,
+            bool useContentSizeFitter = true)
         {
             var go = CreateTmpChild(parent, name, size, style, Vector2.zero);
             var tmp = go.GetComponent<TextMeshProUGUI>();
@@ -1137,21 +1143,25 @@ namespace PeopleOfMath.Editor
 
             if (autoHeight)
             {
-                var fitter = go.AddComponent<ContentSizeFitter>();
-                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                if (useContentSizeFitter)
+                {
+                    var fitter = go.AddComponent<ContentSizeFitter>();
+                    fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                    fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                }
 
+                var scaledMin = UiLayoutMetrics.ScaleFont(autoMinHeightBase);
                 le.preferredHeight = -1;
-                le.minHeight = UiLayoutMetrics.ScaleFont(80);
+                le.minHeight = scaledMin;
 
                 var layoutHeight = go.AddComponent<TmpLayoutHeight>();
                 var lhSo = new SerializedObject(layoutHeight);
-                lhSo.FindProperty("minHeight").floatValue = UiLayoutMetrics.ScaleFont(48);
+                lhSo.FindProperty("minHeight").floatValue = scaledMin;
                 lhSo.FindProperty("padding").floatValue = 10f;
                 lhSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var rt = go.GetComponent<RectTransform>();
-                rt.sizeDelta = new Vector2(0, le.minHeight);
+                rt.sizeDelta = new Vector2(0, scaledMin);
                 return tmp;
             }
 

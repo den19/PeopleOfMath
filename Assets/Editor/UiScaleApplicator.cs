@@ -78,10 +78,52 @@ namespace PeopleOfMath.Editor
                 if (tmp.gameObject.scene != scene)
                     continue;
                 var n = tmp.gameObject.name;
-                if (n != "Achievements" && n != "Personal")
-                    continue;
-                ConfigureAutoHeightField(tmp.gameObject);
+                if (n == "Name" && IsIdentitySectionField(tmp.transform))
+                    ConfigureIdentityNameField(tmp.gameObject);
+                else if (n is "Achievements" or "Personal")
+                    ConfigureAutoHeightField(tmp.gameObject);
             }
+        }
+
+        static bool IsIdentitySectionField(Transform field)
+        {
+            var section = field.parent;
+            return section != null && section.name == "DetailSection_Identity";
+        }
+
+        static void ConfigureIdentityNameField(GameObject go)
+        {
+            var tmp = go.GetComponent<TextMeshProUGUI>();
+            if (tmp == null)
+                return;
+
+            tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.overflowMode = TextOverflowModes.Overflow;
+
+            var rt = go.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.localScale = Vector3.one;
+
+            var minHeight = UiLayoutMetrics.ScaleFont(48f);
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.flexibleWidth = 1;
+            le.preferredHeight = -1;
+            le.minHeight = minHeight;
+
+            if (rt != null)
+                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, minHeight);
+
+            var fitter = go.GetComponent<ContentSizeFitter>();
+            if (fitter != null)
+                Object.DestroyImmediate(fitter);
+
+            var layoutHeight = go.GetComponent<TmpLayoutHeight>() ?? go.AddComponent<TmpLayoutHeight>();
+            var so = new SerializedObject(layoutHeight);
+            so.FindProperty("minHeight").floatValue = minHeight;
+            so.FindProperty("padding").floatValue = 10f;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            EditorUtility.SetDirty(go);
         }
 
         public static void FixHomeTitleLayout(UnityEngine.SceneManagement.Scene scene)
