@@ -856,6 +856,9 @@ namespace PeopleOfMath.Editor
                     BuildLabeledTextSectionPrefab(LabeledDetailSectionKind.Fields),
                     $"{DetailPrefabFolder}/DetailSection_Fields.prefab"),
                 SaveDetailSectionPrefab(
+                    BuildScrollTextSectionPrefab(ScrollDetailSectionKind.ShortBio),
+                    $"{DetailPrefabFolder}/DetailSection_ShortBio.prefab"),
+                SaveDetailSectionPrefab(
                     BuildScrollTextSectionPrefab(ScrollDetailSectionKind.Achievements),
                     $"{DetailPrefabFolder}/DetailSection_Achievements.prefab"),
                 SaveDetailSectionPrefab(

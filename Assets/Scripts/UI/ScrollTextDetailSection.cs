@@ -9,7 +9,8 @@ namespace PeopleOfMath.UI
     public enum ScrollDetailSectionKind
     {
         Achievements,
-        PersonalLife
+        PersonalLife,
+        ShortBio
     }
 
     public class ScrollTextDetailSection : MathematicianDetailSection
@@ -45,6 +46,7 @@ namespace PeopleOfMath.UI
                 {
                     ScrollDetailSectionKind.Achievements => data.GetAchievements(english),
                     ScrollDetailSectionKind.PersonalLife => data.GetPersonalLife(english),
+                    ScrollDetailSectionKind.ShortBio => data.GetShortBio(english),
                     _ => ""
                 };
             }
@@ -58,6 +60,7 @@ namespace PeopleOfMath.UI
                 ? "Achievements and contributions"
                 : "Достижения и вклад",
             ScrollDetailSectionKind.PersonalLife => english ? "Personal life" : "Личная жизнь",
+            ScrollDetailSectionKind.ShortBio => english ? "Short bio" : "Краткая биография",
             _ => ""
         };
 
