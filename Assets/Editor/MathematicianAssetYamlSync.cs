@@ -131,6 +131,15 @@ namespace PeopleOfMath.Editor
                     i += 5;
                     return true;
                 }
+                case 'U' when i + 9 < yaml.Length:
+                {
+                    var hex = yaml.Substring(i + 2, 8);
+                    if (!IsHex(hex))
+                        return false;
+                    sb.Append(char.ConvertFromUtf32(Convert.ToInt32(hex, 16)));
+                    i += 9;
+                    return true;
+                }
                 case 'x' when i + 3 < yaml.Length:
                 {
                     var hex = yaml.Substring(i + 2, 2);
