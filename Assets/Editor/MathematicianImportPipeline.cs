@@ -16,7 +16,7 @@ namespace PeopleOfMath.Editor
     {
         const string CatalogPath = "Assets/Data/mathematicians_catalog.json";
         const string DataFolder = "Assets/Data/Mathematicians";
-        const int MaxBlockChars = 2200;
+        const int MaxBlockChars = 9200;
         const int MaxShortBioChars = 350;
         const int RequestDelayMs = 800;
         const int MaxRetries = 3;

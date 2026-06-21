@@ -1,5 +1,6 @@
 using System.Collections;
 using PeopleOfMath.Data;
+using PeopleOfMath.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,13 +43,14 @@ namespace PeopleOfMath.UI
                 labelText.text = GetSectionTitle(english);
             if (bodyText != null)
             {
-                bodyText.text = sectionKind switch
+                var raw = sectionKind switch
                 {
                     ScrollDetailSectionKind.Achievements => data.GetAchievements(english),
                     ScrollDetailSectionKind.PersonalLife => data.GetPersonalLife(english),
                     ScrollDetailSectionKind.ShortBio => data.GetShortBio(english),
                     _ => ""
                 };
+                bodyText.text = MarkdownToTmp.Convert(raw);
             }
 
             ScheduleBodyHeightRefresh();
