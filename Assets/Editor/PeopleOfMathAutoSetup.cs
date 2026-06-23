@@ -23,6 +23,11 @@ namespace PeopleOfMath.Editor
                 return;
             if (SessionState.GetBool(SessionKey, false))
                 return;
+            if (EditorApplication.isPlaying)
+            {
+                EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+                return;
+            }
             if (EditorApplication.isCompiling || EditorApplication.isUpdating)
             {
                 EditorApplication.delayCall += TryRun;
@@ -39,6 +44,15 @@ namespace PeopleOfMath.Editor
             {
                 Debug.LogError($"PeopleOfMath auto setup failed: {ex}");
             }
+        }
+
+        static void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state != PlayModeStateChange.EnteredEditMode)
+                return;
+
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            EditorApplication.delayCall += TryRun;
         }
     }
 }

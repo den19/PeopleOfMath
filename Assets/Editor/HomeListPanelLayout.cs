@@ -1,3 +1,4 @@
+using PeopleOfMath.UI;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -43,6 +44,7 @@ namespace PeopleOfMath.Editor
 
             var fontSize = UiLayoutMetrics.SectionLabelFontSize;
             tmp.fontSize = fontSize;
+            tmp.color = UiTheme.TextSecondary;
             var so = new SerializedObject(tmp);
             var baseProp = so.FindProperty("m_fontSizeBase");
             if (baseProp != null)
@@ -66,6 +68,7 @@ namespace PeopleOfMath.Editor
 
             var fontSize = UiLayoutMetrics.EmptyStateFontSize;
             tmp.fontSize = fontSize;
+            tmp.color = UiTheme.TextSecondary;
             var so = new SerializedObject(tmp);
             var baseProp = so.FindProperty("m_fontSizeBase");
             if (baseProp != null)

@@ -112,7 +112,7 @@ namespace PeopleOfMath.UI
             {
                 var empty = CreatePage();
                 empty.sprite = placeholderSprite;
-                empty.color = new Color(0.2f, 0.22f, 0.28f, 1f);
+                empty.color = UiTheme.PortraitPlaceholder;
                 _pages.Add(empty);
             }
             else
@@ -238,8 +238,8 @@ namespace PeopleOfMath.UI
             if (index < 0 || index >= _dots.Count)
                 return;
             _dots[index].color = active
-                ? new Color(0.9f, 0.9f, 0.95f, 1f)
-                : new Color(0.45f, 0.48f, 0.55f, 0.8f);
+                ? UiTheme.GalleryDotActive
+                : UiTheme.GalleryDotInactive;
         }
 
         void RefreshCaption() => RefreshCaption(snap != null ? snap.CurrentIndex : 0);

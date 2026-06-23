@@ -35,19 +35,37 @@ namespace PeopleOfMath.Editor
         const string DetailPrefabFolder = "Assets/Prefabs/UI/Detail";
 
         [MenuItem("PeopleOfMath/Setup Project")]
-        public static void SetupMenu() => Run();
+        public static void SetupMenu() => Run(manual: true);
 
         [MenuItem("PeopleOfMath/Regenerate Main Scene")]
         public static void RegenerateScene()
         {
+            if (DeferUntilEditMode(RegenerateScene))
+                return;
+
             if (File.Exists(ScenePath))
                 AssetDatabase.DeleteAsset(ScenePath);
             PeopleOfMathAutoSetup.ResetSession();
-            Run();
+            Run(manual: true);
         }
 
-        public static void Run()
+        public static void Run(bool manual = false)
         {
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+            {
+                EditorApplication.delayCall += () => Run(manual);
+                return;
+            }
+
+            if (EditorApplication.isPlaying)
+            {
+                if (manual)
+                    DeferUntilEditMode(() => Run(manual: true));
+                else
+                    Debug.LogWarning("PeopleOfMath setup skipped: cannot run during Play mode.");
+                return;
+            }
+
             try
             {
                 RunInternal();
@@ -59,9 +77,20 @@ namespace PeopleOfMath.Editor
             }
         }
 
+        static bool DeferUntilEditMode(System.Action retry)
+        {
+            if (!EditorApplication.isPlaying)
+                return false;
+
+            EditorApplication.isPlaying = false;
+            EditorApplication.delayCall += () => retry();
+            return true;
+        }
+
         static void RunInternal()
         {
             EnsureFolders();
+            UiSpriteFactory.EnsureSprites();
             if (!Application.isBatchMode)
                 TryImportTmpResources();
             SetupRenderPipeline();
@@ -125,7 +154,7 @@ namespace PeopleOfMath.Editor
                      {
                          "Assets/Scenes", DataFolder, SettingsFolder, LocalizationFolder,
                          PrefabFolder, DetailPrefabFolder, "Assets/Resources", "Assets/Scripts", "Assets/Editor",
-                         "Assets/Data/Images", "Assets/Data"
+                         "Assets/Data/Images", "Assets/Data", "Assets/UI", "Assets/UI/Sprites"
                      })
             {
                 if (!Directory.Exists(dir))
@@ -298,6 +327,31 @@ namespace PeopleOfMath.Editor
             return ls;
         }
 
+        static void EditPrefabContents(string path, System.Action<GameObject> edit)
+        {
+            var root = PrefabUtility.LoadPrefabContents(path);
+            try
+            {
+                edit(root);
+                RemoveMissingScripts(root);
+                PrefabUtility.SaveAsPrefabAsset(root, path);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        public static void RemoveMissingScripts(GameObject root)
+        {
+            if (root == null)
+                return;
+
+            GameObjectUtility.RemoveMonoBehavioursWithMissingScript(root);
+            foreach (Transform child in root.transform)
+                RemoveMissingScripts(child.gameObject);
+        }
+
         static void EnsureListItemInResources()
         {
             const string src = "Assets/Prefabs/UI/MathematicianListItem.prefab";
@@ -311,24 +365,33 @@ namespace PeopleOfMath.Editor
             AssetDatabase.CopyAsset(src, dst);
         }
 
+        static void SyncListItemResourcesCopy(string sourcePath)
+        {
+            const string dst = "Assets/Resources/MathematicianListItem.prefab";
+            if (!AssetDatabase.LoadAssetAtPath<GameObject>(dst))
+                return;
+
+            AssetDatabase.CopyAsset(sourcePath, dst);
+        }
+
         static MathematicianListItem CreateListItemPrefab()
         {
             var path = $"{PrefabFolder}/MathematicianListItem.prefab";
-            var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if (existing != null)
-            {
-                ConfigureListItem(existing);
-                EditorUtility.SetDirty(existing);
-                return existing.GetComponent<MathematicianListItem>();
-            }
+            var root = BuildListItemRoot();
+            var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+            Object.DestroyImmediate(root);
+            SyncListItemResourcesCopy(path);
+            return prefab.GetComponent<MathematicianListItem>();
+        }
 
+        static GameObject BuildListItemRoot()
+        {
             var root = new GameObject("MathematicianListItem", typeof(RectTransform), typeof(Image), typeof(Button));
-            var img = root.GetComponent<Image>();
-            img.color = new Color(0.2f, 0.22f, 0.28f, 1f);
+            root.GetComponent<Image>().color = UiTheme.CardFill;
 
             CreateTmpChild(root.transform, "Name", UiLayoutMetrics.ListItemNameBaseFontSize, FontStyles.Bold, UiLayoutMetrics.ListItemNamePos);
             CreateTmpChild(root.transform, "Dates", UiLayoutMetrics.ListItemDatesBaseFontSize, FontStyles.Normal, UiLayoutMetrics.ListItemDatesPos);
-            CreateTmpChild(root.transform, "Bio", UiLayoutMetrics.ListItemBioBaseFontSize, FontStyles.Italic, UiLayoutMetrics.ListItemBioPos);
+            CreateTmpChild(root.transform, "Bio", UiLayoutMetrics.ListItemBioBaseFontSize, FontStyles.Normal, UiLayoutMetrics.ListItemBioPos);
             ConfigureListItem(root);
 
             var item = root.AddComponent<MathematicianListItem>();
@@ -338,17 +401,25 @@ namespace PeopleOfMath.Editor
             so.FindProperty("bioText").objectReferenceValue = root.transform.Find("Bio").GetComponent<TMP_Text>();
             so.FindProperty("button").objectReferenceValue = root.GetComponent<Button>();
             so.ApplyModifiedPropertiesWithoutUndo();
+            return root;
+        }
 
-            var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
-            Object.DestroyImmediate(root);
-            return prefab.GetComponent<MathematicianListItem>();
+        static void ConfigureLayoutRect(RectTransform rt, float height)
+        {
+            if (rt == null)
+                return;
+
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = new Vector2(0f, height);
         }
 
         public static void ConfigureListItem(GameObject go)
         {
             var rt = go.GetComponent<RectTransform>();
-            if (rt != null)
-                rt.sizeDelta = new Vector2(rt.sizeDelta.x, UiLayoutMetrics.ListItemRowHeight);
+            ConfigureLayoutRect(rt, UiLayoutMetrics.ListItemRowHeight);
 
             var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
             le.preferredHeight = UiLayoutMetrics.ListItemRowHeight;
@@ -358,11 +429,14 @@ namespace PeopleOfMath.Editor
                 go.AddComponent<RectMask2D>();
 
             ConfigureListItemText(go, "Name", UiLayoutMetrics.ListItemNameFontSize, FontStyles.Bold,
-                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemNameHeight, truncate: false);
+                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemNameHeight, truncate: false, UiTheme.TextPrimary);
             ConfigureListItemText(go, "Dates", UiLayoutMetrics.ListItemDatesFontSize, FontStyles.Normal,
-                UiLayoutMetrics.ListItemDatesPos, UiLayoutMetrics.ListItemTextLineHeight, truncate: false);
-            ConfigureListItemText(go, "Bio", UiLayoutMetrics.ListItemBioFontSize, FontStyles.Italic,
-                UiLayoutMetrics.ListItemBioPos, UiLayoutMetrics.ListItemBioHeight, truncate: true);
+                UiLayoutMetrics.ListItemDatesPos, UiLayoutMetrics.ListItemTextLineHeight, truncate: false, UiTheme.TextSecondary);
+            ConfigureListItemText(go, "Bio", UiLayoutMetrics.ListItemBioFontSize, FontStyles.Normal,
+                UiLayoutMetrics.ListItemBioPos, UiLayoutMetrics.ListItemBioHeight, truncate: true, UiTheme.TextSecondary);
+
+            UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.ListItem);
+            ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.ListItemRowHeight);
         }
 
         static void ConfigureListItemText(
@@ -372,7 +446,8 @@ namespace PeopleOfMath.Editor
             FontStyles style,
             Vector2 anchoredPos,
             float height,
-            bool truncate)
+            bool truncate,
+            Color textColor)
         {
             var child = root.transform.Find(childName);
             if (child == null)
@@ -388,6 +463,7 @@ namespace PeopleOfMath.Editor
 
             tmp.fontSize = fontSize;
             tmp.fontStyle = style;
+            tmp.color = textColor;
             tmp.textWrappingMode = TextWrappingModes.Normal;
             tmp.overflowMode = truncate ? TextOverflowModes.Ellipsis : TextOverflowModes.Overflow;
             var so = new SerializedObject(tmp);
@@ -410,7 +486,7 @@ namespace PeopleOfMath.Editor
             var tmp = go.AddComponent<TextMeshProUGUI>();
             tmp.fontSize = UiLayoutMetrics.ScaleFont(size);
             tmp.fontStyle = style;
-            tmp.color = Color.white;
+            tmp.color = UiTheme.TextPrimary;
             tmp.textWrappingMode = TextWrappingModes.Normal;
             try
             {
@@ -444,7 +520,7 @@ namespace PeopleOfMath.Editor
             cam.orthographic = true;
             cam.orthographicSize = 5;
             cam.clearFlags = CameraClearFlags.SolidColor;
-            cam.backgroundColor = new Color(0.12f, 0.13f, 0.16f);
+            cam.backgroundColor = UiTheme.Background;
             camGo.AddComponent<UniversalAdditionalCameraData>();
 
             var esGo = new GameObject("EventSystem");
@@ -491,6 +567,7 @@ namespace PeopleOfMath.Editor
         static HeaderResult CreateHeader(Transform canvas, LocalizationRefs loc)
         {
             var header = CreatePanel(canvas, "Header", new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -120), new Vector2(0, 0));
+            UiStyleBuilder.ApplyNavBarStyle(header);
 
             var homeTitle = CreateLocalizedTitle(header.transform, "HomeTitle", loc.HomeTitle);
             ConfigureHomeTitle(homeTitle);
@@ -502,7 +579,7 @@ namespace PeopleOfMath.Editor
             plainTitle.GetComponent<TextMeshProUGUI>().raycastTarget = false;
             plainTitle.SetActive(false);
 
-            var back = CreateButton(header.transform, "BackButton", new Vector2(20, -60), new Vector2(160, 56), loc.UiCollection, "btn_back");
+            var back = CreateSceneButton(header.transform, UiButtonLayout.HeaderBack, loc.UiCollection);
             back.SetActive(false);
             back.transform.SetAsLastSibling();
 
@@ -564,7 +641,13 @@ namespace PeopleOfMath.Editor
 
         public static void ConfigureHomeTitle(GameObject go)
         {
+            if (go == null)
+                return;
+
             var rt = go.GetComponent<RectTransform>();
+            if (rt == null)
+                return;
+
             rt.anchorMin = new Vector2(0, 1);
             rt.anchorMax = new Vector2(1, 1);
             rt.pivot = new Vector2(0.5f, 1);
@@ -572,18 +655,27 @@ namespace PeopleOfMath.Editor
             rt.sizeDelta = new Vector2(-48, 120);
 
             var tmp = go.GetComponent<TextMeshProUGUI>();
+            if (tmp == null)
+                return;
+
             tmp.enableAutoSizing = true;
             tmp.fontSizeMin = 18;
             tmp.fontSizeMax = 40;
             tmp.fontSize = 36;
+            tmp.color = UiTheme.TextPrimary;
             tmp.textWrappingMode = TextWrappingModes.Normal;
             tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
             tmp.verticalAlignment = VerticalAlignmentOptions.Top;
             WireLocalizeStringToTmp(go);
 
             var lse = go.GetComponent<LocalizeStringEvent>();
+            if (lse == null)
+                return;
+
             var lseSo = new SerializedObject(lse);
-            lseSo.FindProperty("m_WaitForCompletion").boolValue = true;
+            var waitProp = lseSo.FindProperty("m_WaitForCompletion");
+            if (waitProp != null)
+                waitProp.boolValue = true;
             lseSo.ApplyModifiedPropertiesWithoutUndo();
             lse.enabled = false;
         }
@@ -596,6 +688,7 @@ namespace PeopleOfMath.Editor
         static GameObject CreateHomePanel(Transform parent, NavigationController nav, LocalizationRefs loc)
         {
             var panel = CreatePanel(parent, "HomePanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            AddHomeDecorGlow(panel.transform);
             var scroll = CreateScrollView(panel.transform, "HomeScroll");
             var content = scroll.content;
 
@@ -619,11 +712,28 @@ namespace PeopleOfMath.Editor
             return panel;
         }
 
+        static void AddHomeDecorGlow(Transform panel)
+        {
+            var go = new GameObject("DecorGlow", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(panel, false);
+            go.transform.SetAsFirstSibling();
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 1f);
+            rt.anchorMax = new Vector2(0.5f, 1f);
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.anchoredPosition = new Vector2(0, -40);
+            rt.sizeDelta = new Vector2(900, 360);
+            var image = go.GetComponent<Image>();
+            image.raycastTarget = false;
+            UiSpriteFactory.EnsureSprites();
+            image.sprite = UiSpriteFactory.RoundedRect;
+            image.type = Image.Type.Sliced;
+            image.color = new Color(0.749f, 0.353f, 0.949f, 0.12f);
+        }
+
         public static void ConfigureFilterButton(GameObject go)
         {
-            var rt = go.GetComponent<RectTransform>();
-            if (rt != null)
-                rt.sizeDelta = new Vector2(0f, UiLayoutMetrics.FilterButtonHeight);
+            ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.FilterButtonHeight);
 
             var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
             le.preferredWidth = -1f;
@@ -675,32 +785,32 @@ namespace PeopleOfMath.Editor
                 var layoutHeight = label.GetComponent<TmpLayoutHeight>();
                 if (layoutHeight != null)
                     Object.DestroyImmediate(layoutHeight);
+
+                label.color = UiTheme.TextPrimary;
             }
 
+            UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.Filter);
+            ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.FilterButtonHeight);
             EditorUtility.SetDirty(go);
         }
 
         static Button CreateFilterButtonPrefab()
         {
             var path = $"{PrefabFolder}/FilterButton.prefab";
-            var existing = AssetDatabase.LoadAssetAtPath<Button>(path);
-            if (existing != null)
-            {
-                ConfigureFilterButton(existing.gameObject);
-                EditorUtility.SetDirty(existing);
-                return existing;
-            }
-
-            var go = new GameObject("FilterButton", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
-            var img = go.GetComponent<Image>();
-            img.color = new Color(0.28f, 0.35f, 0.48f);
-            var label = CreateTmpChild(go.transform, "Label", UiLayoutMetrics.FilterButtonBaseFontSize, FontStyles.Normal, UiLayoutMetrics.FilterButtonLabelOffset);
-            label.GetComponent<RectTransform>().anchorMax = Vector2.one;
-            ConfigureFilterButton(go);
-            var btn = go.GetComponent<Button>();
+            var go = BuildFilterButtonRoot();
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
             Object.DestroyImmediate(go);
             return prefab.GetComponent<Button>();
+        }
+
+        static GameObject BuildFilterButtonRoot()
+        {
+            var go = new GameObject("FilterButton", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            go.GetComponent<Image>().color = UiTheme.CardFill;
+            var label = CreateTmpChild(go.transform, "Label", UiLayoutMetrics.FilterButtonBaseFontSize, FontStyles.Normal, UiLayoutMetrics.FilterButtonLabelOffset);
+            label.GetComponent<RectTransform>().anchorMax = Vector2.one;
+            ConfigureFilterButton(go);
+            return go;
         }
 
         static void AddSectionLabel(Transform parent, StringTableCollection collection, string key)
@@ -739,7 +849,7 @@ namespace PeopleOfMath.Editor
             var viewport = CreatePanel(root.transform, "Viewport", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var mask = viewport.AddComponent<Mask>();
             mask.showMaskGraphic = false;
-            viewport.GetComponent<Image>().color = new Color(0, 0, 0, 0.01f);
+            viewport.GetComponent<Image>().color = UiTheme.ViewportMask;
 
             var content = CreatePanel(viewport.transform, "Content", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
             var contentRt = content.GetComponent<RectTransform>();
@@ -820,11 +930,15 @@ namespace PeopleOfMath.Editor
             Transform parent,
             StringTableCollection collection)
         {
-            var bar = CreatePanel(parent, "SectionNavBar", new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, new Vector2(0, 90));
-            bar.GetComponent<Image>().color = new Color(0.12f, 0.13f, 0.16f, 0.98f);
+            var bar = CreatePanel(parent, "SectionNavBar", new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, Vector2.zero);
+            UiButtonLayout.ApplyBottomStretchBarRect(
+                bar.GetComponent<RectTransform>(),
+                UiButtonLayout.SectionNavBarPosition,
+                UiButtonLayout.SectionNavBarSize);
+            UiStyleBuilder.ApplyNavBarStyle(bar);
 
-            var back = CreateButton(bar.transform, "BackButton", new Vector2(24, 12), new Vector2(220, 66), collection, "btn_back");
-            var next = CreateButton(bar.transform, "NextButton", new Vector2(836, 12), new Vector2(220, 66), collection, "btn_next");
+            var back = CreateSceneButton(bar.transform, UiButtonLayout.SectionNavBack, collection);
+            var next = CreateSceneButton(bar.transform, UiButtonLayout.SectionNavNext, collection);
             var indicatorGo = CreateTmpChild(bar.transform, "PageIndicator", 16, FontStyles.Normal, new Vector2(0, -28));
             var indicatorRt = indicatorGo.GetComponent<RectTransform>();
             indicatorRt.anchorMin = new Vector2(0.5f, 1);
@@ -832,6 +946,7 @@ namespace PeopleOfMath.Editor
             indicatorRt.pivot = new Vector2(0.5f, 1);
             indicatorRt.sizeDelta = new Vector2(200, 32);
             indicatorGo.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+            indicatorGo.GetComponent<TextMeshProUGUI>().color = UiTheme.PrimaryAccent;
 
             return new SectionNavBarResult
             {
@@ -903,8 +1018,9 @@ namespace PeopleOfMath.Editor
         static void AddSectionVerticalLayout(GameObject root)
         {
             var vlg = root.AddComponent<VerticalLayoutGroup>();
-            vlg.padding = new RectOffset(24, 24, 24, 24);
-            vlg.spacing = 16;
+            var pad = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailSectionPadding);
+            vlg.padding = new RectOffset(pad, pad, pad, pad);
+            vlg.spacing = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailSectionSpacing);
             vlg.childAlignment = TextAnchor.UpperLeft;
             vlg.childForceExpandWidth = true;
             vlg.childForceExpandHeight = false;
@@ -927,8 +1043,8 @@ namespace PeopleOfMath.Editor
         {
             var root = CreateStretchSectionRoot("DetailSection_Identity");
             AddSectionVerticalLayout(root);
-            var name = AddDetailField(root.transform, "Name", 26, FontStyles.Bold, autoHeight: true, autoMinHeightBase: 48f, useContentSizeFitter: false);
-            var dates = AddDetailField(root.transform, "Dates", 16, FontStyles.Normal, height: 40);
+            var name = AddDetailField(root.transform, "Name", 26, FontStyles.Bold, autoHeight: true, autoMinHeightBase: 48f, useContentSizeFitter: false, textColor: UiTheme.TextPrimary);
+            var dates = AddDetailField(root.transform, "Dates", 16, FontStyles.Normal, height: 40, textColor: UiTheme.TextSecondary);
             var section = root.AddComponent<IdentityDetailSection>();
             var so = new SerializedObject(section);
             so.FindProperty("nameText").objectReferenceValue = name;
@@ -941,8 +1057,8 @@ namespace PeopleOfMath.Editor
         {
             var root = CreateStretchSectionRoot($"DetailSection_{kind}");
             AddSectionVerticalLayout(root);
-            var label = AddDetailField(root.transform, "Label", 15, FontStyles.Bold, height: 36);
-            var body = AddDetailField(root.transform, "Body", 15, FontStyles.Normal, height: 120);
+            var label = AddDetailField(root.transform, "Label", 15, FontStyles.Bold, height: 36, textColor: UiTheme.TextPrimary);
+            var body = AddDetailField(root.transform, "Body", 15, FontStyles.Normal, height: 120, textColor: UiTheme.TextSecondary);
             var section = root.AddComponent<LabeledTextDetailSection>();
             var so = new SerializedObject(section);
             so.FindProperty("sectionKind").enumValueIndex = (int)kind;
@@ -956,20 +1072,20 @@ namespace PeopleOfMath.Editor
         {
             var root = CreateStretchSectionRoot($"DetailSection_{kind}");
             AddSectionVerticalLayout(root);
-            var label = AddDetailField(root.transform, "Label", 15, FontStyles.Bold, height: 36);
+            var label = AddDetailField(root.transform, "Label", 15, FontStyles.Bold, height: 36, textColor: UiTheme.TextPrimary);
 
             var scrollRoot = new GameObject("Scroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
             scrollRoot.transform.SetParent(root.transform, false);
             var scrollLe = scrollRoot.AddComponent<LayoutElement>();
             scrollLe.flexibleHeight = 1;
-            scrollLe.minHeight = 240;
+            scrollLe.minHeight = UiLayoutMetrics.ScaleDetailSize(UiLayoutMetrics.DetailScrollMinHeight);
             StretchToParent(scrollRoot.GetComponent<RectTransform>());
-            scrollRoot.GetComponent<Image>().color = new Color(0.1f, 0.11f, 0.14f, 0.35f);
+            UiStyleBuilder.ApplyScrollBackground(scrollRoot.GetComponent<Image>());
 
             var viewport = CreatePanel(scrollRoot.transform, "Viewport", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var mask = viewport.AddComponent<Mask>();
             mask.showMaskGraphic = false;
-            viewport.GetComponent<Image>().color = new Color(0, 0, 0, 0.01f);
+            viewport.GetComponent<Image>().color = UiTheme.ViewportMask;
 
             var content = CreatePanel(viewport.transform, "Content", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
             var contentRt = content.GetComponent<RectTransform>();
@@ -977,8 +1093,10 @@ namespace PeopleOfMath.Editor
             contentRt.anchorMin = new Vector2(0, 1);
             contentRt.anchorMax = new Vector2(1, 1);
             var vlg = content.AddComponent<VerticalLayoutGroup>();
-            vlg.padding = new RectOffset(16, 16, 8, 16);
-            vlg.spacing = 8;
+            var scrollPad = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailScrollContentPadding);
+            var scrollSpacing = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailScrollContentSpacing);
+            vlg.padding = new RectOffset(scrollPad, scrollPad, scrollSpacing, scrollPad);
+            vlg.spacing = scrollSpacing;
             vlg.childControlWidth = true;
             vlg.childForceExpandWidth = true;
             var fitter = content.AddComponent<ContentSizeFitter>();
@@ -990,7 +1108,7 @@ namespace PeopleOfMath.Editor
             scroll.horizontal = false;
             scroll.movementType = ScrollRect.MovementType.Clamped;
 
-            var body = AddDetailField(content.transform, "Body", 15, FontStyles.Normal, autoHeight: true);
+            var body = AddDetailField(content.transform, "Body", 15, FontStyles.Normal, autoHeight: true, textColor: UiTheme.TextSecondary);
 
             var section = root.AddComponent<ScrollTextDetailSection>();
             var so = new SerializedObject(section);
@@ -1053,9 +1171,9 @@ namespace PeopleOfMath.Editor
             var scrollRt = scrollGo.GetComponent<RectTransform>();
             scrollRt.anchorMin = Vector2.zero;
             scrollRt.anchorMax = Vector2.one;
-            scrollRt.offsetMin = new Vector2(0, 48);
-            scrollRt.offsetMax = new Vector2(0, -40);
-            scrollGo.GetComponent<Image>().color = new Color(0.1f, 0.11f, 0.14f, 1f);
+            scrollRt.offsetMin = new Vector2(0, UiLayoutMetrics.ScaleDetailSize(UiLayoutMetrics.DetailGalleryBottomInset));
+            scrollRt.offsetMax = new Vector2(0, -UiLayoutMetrics.ScaleDetailSize(UiLayoutMetrics.DetailGalleryTopInset));
+            UiStyleBuilder.ApplyScrollBackground(scrollGo.GetComponent<Image>());
 
             var viewport = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D));
             viewport.transform.SetParent(scrollGo.transform, false);
@@ -1092,27 +1210,38 @@ namespace PeopleOfMath.Editor
             dotsRt.anchorMin = new Vector2(0, 0);
             dotsRt.anchorMax = new Vector2(1, 0);
             dotsRt.pivot = new Vector2(0.5f, 0);
-            dotsRt.sizeDelta = new Vector2(0, 24);
-            dotsRt.anchoredPosition = new Vector2(0, 8);
+            dotsRt.sizeDelta = new Vector2(0, UiLayoutMetrics.ScaleDetailSize(UiLayoutMetrics.DetailGalleryDotsHeight));
+            dotsRt.anchoredPosition = new Vector2(0, UiLayoutMetrics.ScaleDetailPadding(8));
             var hlg = dots.GetComponent<HorizontalLayoutGroup>();
-            hlg.spacing = 8;
+            hlg.spacing = UiLayoutMetrics.ScaleDetailPadding(8);
             hlg.childAlignment = TextAnchor.MiddleCenter;
             hlg.childControlWidth = false;
             hlg.childControlHeight = false;
 
             var dotTpl = new GameObject("DotTemplate", typeof(RectTransform), typeof(Image));
             dotTpl.transform.SetParent(dots.transform, false);
-            dotTpl.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 10);
-            dotTpl.GetComponent<Image>().color = new Color(0.45f, 0.48f, 0.55f, 0.8f);
+            dotTpl.GetComponent<RectTransform>().sizeDelta = new Vector2(
+                UiLayoutMetrics.ScaleDetailSize(UiLayoutMetrics.DetailGalleryDotSize),
+                UiLayoutMetrics.ScaleDetailSize(UiLayoutMetrics.DetailGalleryDotSize));
+            dotTpl.GetComponent<Image>().color = UiTheme.GalleryDotInactive;
             dotTpl.SetActive(false);
 
-            var caption = CreateTmpChild(block.transform, "Caption", 11, FontStyles.Italic, new Vector2(8, 4));
+            var caption = CreateTmpChild(block.transform, "Caption", UiLayoutMetrics.DetailCaptionBaseFontSize, FontStyles.Italic, new Vector2(8, 4));
+            var capTmp = caption.GetComponent<TextMeshProUGUI>();
+            var detailCaptionSize = UiLayoutMetrics.ScaleDetailFont(UiLayoutMetrics.DetailCaptionBaseFontSize);
+            capTmp.fontSize = detailCaptionSize;
+            var capFontSo = new SerializedObject(capTmp);
+            var capBase = capFontSo.FindProperty("m_fontSizeBase");
+            if (capBase != null)
+                capBase.floatValue = detailCaptionSize;
+            capFontSo.ApplyModifiedPropertiesWithoutUndo();
             var capRt = caption.GetComponent<RectTransform>();
             capRt.anchorMin = new Vector2(0, 0);
             capRt.anchorMax = new Vector2(1, 0);
             capRt.pivot = new Vector2(0, 0);
-            capRt.sizeDelta = new Vector2(-16, 36);
+            capRt.sizeDelta = new Vector2(-16, UiLayoutMetrics.ScaleDetailSize(36f));
             caption.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.TopLeft;
+            caption.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
 
             var gallery = block.AddComponent<PortraitGalleryView>();
             var gso = new SerializedObject(gallery);
@@ -1135,11 +1264,20 @@ namespace PeopleOfMath.Editor
             float height = 36,
             bool autoHeight = false,
             float autoMinHeightBase = 80f,
-            bool useContentSizeFitter = true)
+            bool useContentSizeFitter = true,
+            Color? textColor = null)
         {
             var go = CreateTmpChild(parent, name, size, style, Vector2.zero);
             var tmp = go.GetComponent<TextMeshProUGUI>();
             tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.color = textColor ?? UiTheme.TextPrimary;
+            var fontSize = UiLayoutMetrics.ScaleDetailFont(size);
+            tmp.fontSize = fontSize;
+            var fontSo = new SerializedObject(tmp);
+            var baseProp = fontSo.FindProperty("m_fontSizeBase");
+            if (baseProp != null)
+                baseProp.floatValue = fontSize;
+            fontSo.ApplyModifiedPropertiesWithoutUndo();
 
             var le = go.AddComponent<LayoutElement>();
             le.flexibleWidth = 1;
@@ -1153,14 +1291,15 @@ namespace PeopleOfMath.Editor
                     fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
                 }
 
-                var scaledMin = UiLayoutMetrics.ScaleFont(autoMinHeightBase);
+                var scaledMin = UiLayoutMetrics.ScaleDetailSize(autoMinHeightBase);
                 le.preferredHeight = -1;
                 le.minHeight = scaledMin;
 
                 var layoutHeight = go.AddComponent<TmpLayoutHeight>();
                 var lhSo = new SerializedObject(layoutHeight);
                 lhSo.FindProperty("minHeight").floatValue = scaledMin;
-                lhSo.FindProperty("padding").floatValue = 10f;
+                lhSo.FindProperty("padding").floatValue =
+                    UiLayoutMetrics.DetailFieldPadding * UiLayoutMetrics.DetailContentScale;
                 lhSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var rt = go.GetComponent<RectTransform>();
@@ -1168,7 +1307,7 @@ namespace PeopleOfMath.Editor
                 return tmp;
             }
 
-            var scaledHeight = UiLayoutMetrics.ScaleFont(height);
+            var scaledHeight = UiLayoutMetrics.ScaleDetailSize(height);
             var rect = go.GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(0, scaledHeight);
             le.preferredHeight = scaledHeight;
@@ -1181,15 +1320,17 @@ namespace PeopleOfMath.Editor
             panel.SetActive(false);
 
             var langLabel = CreateTmpChild(panel.transform, "LangLabel", 18, FontStyles.Bold, new Vector2(40, -80));
+            langLabel.GetComponent<TextMeshProUGUI>().color = UiTheme.TextPrimary;
             var lse = langLabel.AddComponent<LocalizeStringEvent>();
             var collection = loc.UiCollection;
             var soLse = new SerializedObject(lse);
             AssignLocalized(soLse.FindProperty("m_StringReference"), MakeLocalized(collection, "settings_language"));
             soLse.ApplyModifiedPropertiesWithoutUndo();
 
-            var ruBtn = CreateButton(panel.transform, "RuButton", new Vector2(40, -160), new Vector2(400, 64), collection, "btn_russian");
-            var enBtn = CreateButton(panel.transform, "EnButton", new Vector2(40, -240), new Vector2(400, 64), collection, "btn_english");
+            var ruBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsRussian, collection);
+            var enBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsEnglish, collection);
             var status = CreateTmpChild(panel.transform, "Status", 16, FontStyles.Italic, new Vector2(40, -320));
+            status.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
 
             var settings = panel.AddComponent<SettingsPanel>();
             var so = new SerializedObject(settings);
@@ -1205,37 +1346,43 @@ namespace PeopleOfMath.Editor
 
         static GameObject CreateBottomBar(Transform canvas, NavigationController nav, LocalizationRefs loc)
         {
-            var bar = CreatePanel(canvas, "BottomBar", new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 0), new Vector2(0, 140));
-            var browse = CreateButton(bar.transform, "BrowseTab", new Vector2(40, 40), new Vector2(440, 72), loc.UiCollection, "tab_browse");
-            var settings = CreateButton(bar.transform, "SettingsTab", new Vector2(520, 40), new Vector2(440, 72), loc.UiCollection, "tab_settings");
+            var bar = CreatePanel(canvas, "BottomBar", new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, Vector2.zero);
+            UiButtonLayout.ApplyBottomStretchBarRect(
+                bar.GetComponent<RectTransform>(),
+                UiButtonLayout.BottomBarPosition,
+                UiButtonLayout.BottomBarSize);
+            UiStyleBuilder.ApplyNavBarStyle(bar);
+            var browse = CreateSceneButton(bar.transform, UiButtonLayout.BottomBrowse, loc.UiCollection);
+            var settings = CreateSceneButton(bar.transform, UiButtonLayout.BottomSettings, loc.UiCollection);
             WireButtonClick(browse.GetComponent<Button>(), nav.OnBrowseTabClicked);
             WireButtonClick(settings.GetComponent<Button>(), nav.OnSettingsTabClicked);
             return bar;
         }
 
-        static GameObject CreateButton(
+        static GameObject CreateSceneButton(
             Transform parent,
-            string name,
-            Vector2 pos,
-            Vector2 size,
-            StringTableCollection collection,
-            string key)
+            UiButtonLayout.SceneButton spec,
+            StringTableCollection collection)
         {
-            var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+            var go = new GameObject(spec.Name, typeof(RectTransform), typeof(Image), typeof(Button));
             go.transform.SetParent(parent, false);
-            var rt = go.GetComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0, 1);
-            rt.anchorMax = new Vector2(0, 1);
-            rt.pivot = new Vector2(0, 1);
-            rt.anchoredPosition = pos;
-            rt.sizeDelta = size;
-            go.GetComponent<Image>().color = new Color(0.25f, 0.32f, 0.45f);
-            var label = CreateTmpChild(go.transform, "Text", 17, FontStyles.Normal, new Vector2(12, -18));
-            label.GetComponent<RectTransform>().anchorMax = Vector2.one;
+            UiButtonLayout.ApplyTopLeftAnchoredRect(go.GetComponent<RectTransform>(), spec.Position, spec.Size);
+            go.GetComponent<Image>().color = UiTheme.CardFill;
+
+            var label = CreateTmpChild(go.transform, "Text", UiButtonLayout.StandardLabelFontBase, FontStyles.Normal, UiButtonLayout.StandardLabelOffset);
+            UiButtonLayout.ConfigureStandardLabel(label);
             var lse = label.AddComponent<LocalizeStringEvent>();
             var so = new SerializedObject(lse);
-            AssignLocalized(so.FindProperty("m_StringReference"), MakeLocalized(collection, key));
+            AssignLocalized(so.FindProperty("m_StringReference"), MakeLocalized(collection, spec.LocalizationKey));
             so.ApplyModifiedPropertiesWithoutUndo();
+            WireLocalizeStringToTmp(label);
+
+            if (spec.Style == UiButtonStyle.Primary)
+                UiStyleBuilder.ApplyPrimaryButton(go);
+            else
+                UiStyleBuilder.ApplySecondaryButton(go);
+
+            UiButtonLayout.ConfigureStandardLabel(label);
             return go;
         }
 
@@ -1254,7 +1401,7 @@ namespace PeopleOfMath.Editor
             rt.anchorMax = anchorMax;
             rt.offsetMin = offsetMin;
             rt.offsetMax = offsetMax;
-            go.GetComponent<Image>().color = new Color(0.14f, 0.15f, 0.18f, 0.95f);
+            go.GetComponent<Image>().color = UiTheme.Background;
             return go;
         }
 

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.Data.MathematicianCatalog
   mathematicians:
   - {fileID: 11400000, guid: d4aa3907c95167b4fbc4418ed330ce49, type: 2}
-  - {fileID: 11400000, guid: 2212f79ba55e13a4482076ae1c639c92, type: 2}
   - {fileID: 11400000, guid: 9112b538fa150a448a0d3be49d0e747f, type: 2}
+  - {fileID: 11400000, guid: 2212f79ba55e13a4482076ae1c639c92, type: 2}
   - {fileID: 11400000, guid: 1b65ff768e9c13440964614ff570f87e, type: 2}
   - {fileID: 11400000, guid: d49e6d558f907ea439b85dc2a54dd95b, type: 2}
   - {fileID: 11400000, guid: 4185f1a38ffb7f745a2cf63a9cf65de7, type: 2}

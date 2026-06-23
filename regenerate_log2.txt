@@ -1,0 +1,22 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.4/staging' branch; Version is '6000.4.5f1 (cc83ebd631f8) revision 13403115'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26200) Professional' Language: 'en' Physical Memory: 40686 MB
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-den" at "2026-06-23T19:34:34.3893119Z"
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-06-23T19:34:34Z
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.4.5f1\Editor\Unity.exe
+-batchmode
+-quit
+-projectPath
+C:\git\PeopleOfMath
+-executeMethod
+PeopleOfMath.Editor.PeopleOfMathProjectSetup.RegenerateScene
+-logFile
+C:\git\PeopleOfMath\regenerate_log2.txt
+Successfully changed project path to: C:\git\PeopleOfMath
+C:/git/PeopleOfMath
+Exiting without the bug reporter. Application will terminate with return code 1

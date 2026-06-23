@@ -46,6 +46,7 @@ namespace PeopleOfMath.Editor
                 else
                     PeopleOfMathProjectSetup.ConfigureListItem(root);
 
+                PeopleOfMathProjectSetup.RemoveMissingScripts(root);
                 PrefabUtility.SaveAsPrefabAsset(root, path);
             }
             finally

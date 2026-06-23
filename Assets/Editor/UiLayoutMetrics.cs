@@ -20,15 +20,15 @@ namespace PeopleOfMath.Editor
             FilterButtonMetrics.Height - FilterButtonMetrics.VerticalPadding;
         public static Vector2 FilterButtonLabelOffset => FilterButtonMetrics.LabelOffset;
 
-        public const int BrowseScrollPaddingLeft = 48;
-        public const int BrowseScrollPaddingRight = 48;
+        public const int BrowseScrollPaddingLeft = 32;
+        public const int BrowseScrollPaddingRight = 32;
         public const int BrowseScrollPaddingTop = 32;
         public const int BrowseScrollPaddingBottom = 48;
-        public const float BrowseScrollSpacing = 24f;
+        public const float BrowseScrollSpacing = 28f;
 
-        public const int GroupPaddingTop = 8;
+        public const int GroupPaddingTop = 12;
         public const int GroupPaddingBottom = 24;
-        public const float GroupSpacing = 16f;
+        public const float GroupSpacing = 20f;
 
         public const float SectionLabelBaseFontSize = 18f;
         public static float SectionLabelFontSize => ScaleFont(SectionLabelBaseFontSize) * 2f;
@@ -60,6 +60,23 @@ namespace PeopleOfMath.Editor
         public static float EmptyStateFontSize => ScaleFont(EmptyStateBaseFontSize) * 2f;
         public static Vector2 EmptyStatePosition => new Vector2(80f, -400f);
         public static float EmptyStateLineHeight = 48f;
+
+        public const float DetailContentScale = 2f;
+        public const float DetailSectionPadding = 24f;
+        public const float DetailSectionSpacing = 16f;
+        public const float DetailScrollContentPadding = 16f;
+        public const float DetailScrollContentSpacing = 8f;
+        public const float DetailScrollMinHeight = 240f;
+        public const float DetailFieldPadding = 10f;
+        public const float DetailCaptionBaseFontSize = 11f;
+        public const float DetailGalleryDotsHeight = 24f;
+        public const float DetailGalleryDotSize = 10f;
+        public const float DetailGalleryBottomInset = 48f;
+        public const float DetailGalleryTopInset = 40f;
+
+        public static float ScaleDetailFont(float baseSize) => ScaleFont(baseSize) * DetailContentScale;
+        public static float ScaleDetailSize(float size) => ScaleFont(size) * DetailContentScale;
+        public static int ScaleDetailPadding(float value) => Mathf.RoundToInt(value * DetailContentScale);
 
         public static float ScaleFont(float size) => Mathf.Round(size * FontScale);
     }

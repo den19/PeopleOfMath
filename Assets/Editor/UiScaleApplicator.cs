@@ -104,7 +104,7 @@ namespace PeopleOfMath.Editor
             if (rt != null)
                 rt.localScale = Vector3.one;
 
-            var minHeight = UiLayoutMetrics.ScaleFont(48f);
+            var minHeight = UiLayoutMetrics.ScaleDetailSize(48f);
             var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
             le.flexibleWidth = 1;
             le.preferredHeight = -1;
@@ -120,7 +120,8 @@ namespace PeopleOfMath.Editor
             var layoutHeight = go.GetComponent<TmpLayoutHeight>() ?? go.AddComponent<TmpLayoutHeight>();
             var so = new SerializedObject(layoutHeight);
             so.FindProperty("minHeight").floatValue = minHeight;
-            so.FindProperty("padding").floatValue = 10f;
+            so.FindProperty("padding").floatValue =
+                UiLayoutMetrics.DetailFieldPadding * UiLayoutMetrics.DetailContentScale;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             EditorUtility.SetDirty(go);
@@ -156,7 +157,7 @@ namespace PeopleOfMath.Editor
                 if (vlg.transform.parent.parent == null || vlg.transform.parent.parent.name != "DetailScroll")
                     continue;
 
-                vlg.spacing = 16;
+                vlg.spacing = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailScrollContentSpacing);
                 vlg.childForceExpandHeight = false;
                 vlg.childControlHeight = true;
                 EditorUtility.SetDirty(vlg);
@@ -174,7 +175,7 @@ namespace PeopleOfMath.Editor
             var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
             le.flexibleWidth = 1;
             le.preferredHeight = -1;
-            le.minHeight = UiLayoutMetrics.ScaleFont(80);
+            le.minHeight = UiLayoutMetrics.ScaleDetailSize(80f);
 
             var rt = go.GetComponent<RectTransform>();
             if (rt != null)
@@ -186,8 +187,9 @@ namespace PeopleOfMath.Editor
 
             var layoutHeight = go.GetComponent<TmpLayoutHeight>() ?? go.AddComponent<TmpLayoutHeight>();
             var so = new SerializedObject(layoutHeight);
-            so.FindProperty("minHeight").floatValue = UiLayoutMetrics.ScaleFont(48);
-            so.FindProperty("padding").floatValue = 10f;
+            so.FindProperty("minHeight").floatValue = UiLayoutMetrics.ScaleDetailSize(48f);
+            so.FindProperty("padding").floatValue =
+                UiLayoutMetrics.DetailFieldPadding * UiLayoutMetrics.DetailContentScale;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             EditorUtility.SetDirty(go);
@@ -206,6 +208,7 @@ namespace PeopleOfMath.Editor
                 else
                     PeopleOfMathProjectSetup.ConfigureListItem(root);
 
+                PeopleOfMathProjectSetup.RemoveMissingScripts(root);
                 PrefabUtility.SaveAsPrefabAsset(root, path);
             }
             finally
