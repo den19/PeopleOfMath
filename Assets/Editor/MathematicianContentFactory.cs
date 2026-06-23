@@ -63,6 +63,8 @@ namespace PeopleOfMath.Editor
             to.personalLifeEn = from.personalLifeEn;
             to.shortBioRu = from.shortBioRu;
             to.shortBioEn = from.shortBioEn;
+            to.interestingFactsRu = from.interestingFactsRu;
+            to.interestingFactsEn = from.interestingFactsEn;
             to.wikipediaUrlRu = from.wikipediaUrlRu;
             to.portraits = from.portraits != null
                 ? new List<PortraitEntry>(from.portraits)

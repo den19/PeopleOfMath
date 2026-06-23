@@ -203,6 +203,7 @@ namespace PeopleOfMath.Editor
                 data.shortBioEn = "";
                 data.achievementsEn = "";
                 data.personalLifeEn = "";
+                data.interestingFactsEn = "";
             }
 
             EditorUtility.SetDirty(data);
@@ -213,7 +214,8 @@ namespace PeopleOfMath.Editor
             fullNameEn = d.fullNameEn,
             shortBioEn = d.shortBioEn,
             achievementsEn = d.achievementsEn,
-            personalLifeEn = d.personalLifeEn
+            personalLifeEn = d.personalLifeEn,
+            interestingFactsEn = d.interestingFactsEn
         };
 
         static void RestoreEn(MathematicianData d, EnSnapshot s)
@@ -222,6 +224,7 @@ namespace PeopleOfMath.Editor
             d.shortBioEn = s.shortBioEn;
             d.achievementsEn = s.achievementsEn;
             d.personalLifeEn = s.personalLifeEn;
+            d.interestingFactsEn = s.interestingFactsEn;
         }
 
         class EnSnapshot
@@ -230,6 +233,7 @@ namespace PeopleOfMath.Editor
             public string shortBioEn;
             public string achievementsEn;
             public string personalLifeEn;
+            public string interestingFactsEn;
         }
 
         static string FetchExtract(string title)

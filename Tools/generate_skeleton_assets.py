@@ -36,9 +36,11 @@ MonoBehaviour:
 {branches}
   achievementsRu: 
   achievementsEn: 
-  personalLifeRu: 
-  personalLifeEn: 
-  shortBioRu: 
+  personalLifeRu:
+  personalLifeEn:
+  interestingFactsRu:
+  interestingFactsEn:
+  shortBioRu:
   shortBioEn: 
   wikipediaUrlRu: 
   portraits: []

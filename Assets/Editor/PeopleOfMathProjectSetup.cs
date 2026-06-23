@@ -867,7 +867,10 @@ namespace PeopleOfMath.Editor
                     $"{DetailPrefabFolder}/DetailSection_Achievements.prefab"),
                 SaveDetailSectionPrefab(
                     BuildScrollTextSectionPrefab(ScrollDetailSectionKind.PersonalLife),
-                    $"{DetailPrefabFolder}/DetailSection_PersonalLife.prefab")
+                    $"{DetailPrefabFolder}/DetailSection_PersonalLife.prefab"),
+                SaveDetailSectionPrefab(
+                    BuildScrollTextSectionPrefab(ScrollDetailSectionKind.InterestingFacts),
+                    $"{DetailPrefabFolder}/DetailSection_InterestingFacts.prefab")
             };
         }
 

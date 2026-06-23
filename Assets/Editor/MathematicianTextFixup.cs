@@ -24,7 +24,8 @@ namespace PeopleOfMath.Editor
                 if (FixField(ref data.fullNameRu) |
                     FixField(ref data.shortBioRu) |
                     FixField(ref data.achievementsRu) |
-                    FixField(ref data.personalLifeRu))
+                    FixField(ref data.personalLifeRu) |
+                    FixField(ref data.interestingFactsRu))
                 {
                     EditorUtility.SetDirty(data);
                     fixedCount++;

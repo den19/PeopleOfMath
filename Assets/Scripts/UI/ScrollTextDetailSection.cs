@@ -11,7 +11,8 @@ namespace PeopleOfMath.UI
     {
         Achievements,
         PersonalLife,
-        ShortBio
+        ShortBio,
+        InterestingFacts
     }
 
     public class ScrollTextDetailSection : MathematicianDetailSection
@@ -48,6 +49,7 @@ namespace PeopleOfMath.UI
                     ScrollDetailSectionKind.Achievements => data.GetAchievements(english),
                     ScrollDetailSectionKind.PersonalLife => data.GetPersonalLife(english),
                     ScrollDetailSectionKind.ShortBio => data.GetShortBio(english),
+                    ScrollDetailSectionKind.InterestingFacts => data.GetInterestingFacts(english),
                     _ => ""
                 };
                 bodyText.text = MarkdownToTmp.Convert(raw);
@@ -63,8 +65,17 @@ namespace PeopleOfMath.UI
                 : "Достижения и вклад",
             ScrollDetailSectionKind.PersonalLife => english ? "Personal life" : "Личная жизнь",
             ScrollDetailSectionKind.ShortBio => english ? "Short bio" : "Краткая биография",
+            ScrollDetailSectionKind.InterestingFacts => english ? "Interesting facts" : "Интересные факты",
             _ => ""
         };
+
+        public override bool HasContent(MathematicianData data, bool english)
+        {
+            if (sectionKind != ScrollDetailSectionKind.InterestingFacts)
+                return true;
+
+            return !string.IsNullOrWhiteSpace(data.GetInterestingFacts(english));
+        }
 
         void ScheduleBodyHeightRefresh()
         {

@@ -23,6 +23,8 @@ namespace PeopleOfMath.Data
         public string personalLifeEn;
         public string shortBioRu;
         public string shortBioEn;
+        public string interestingFactsRu;
+        public string interestingFactsEn;
         public string wikipediaUrlRu;
         public List<PortraitEntry> portraits = new();
 
@@ -39,6 +41,9 @@ namespace PeopleOfMath.Data
         public string GetAchievements(bool english) => Pick(english, achievementsRu, achievementsEn);
 
         public string GetPersonalLife(bool english) => Pick(english, personalLifeRu, personalLifeEn);
+
+        public string GetInterestingFacts(bool english) =>
+            Pick(english, interestingFactsRu, interestingFactsEn);
 
         public IReadOnlyList<PortraitEntry> GetValidPortraits() =>
             portraits.Where(p => p != null && p.sprite != null).ToList();

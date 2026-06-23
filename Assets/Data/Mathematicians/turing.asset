@@ -51,6 +51,8 @@ MonoBehaviour:
   personalLifeEn: Born in London; studied at Cambridge and Princeton. Worked on secret
     wartime projects; later built early computers. Died young; received a posthumous
     royal pardon in 2013.
+  interestingFactsRu:
+  interestingFactsEn:
   shortBioRu: "Основоположник
             информатики и теоретической
             логики."

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PeopleOfMath.Data;
 using PeopleOfMath.Localization;
 using TMPro;
@@ -15,11 +16,12 @@ namespace PeopleOfMath.UI
         [SerializeField] Button sectionNextButton;
         [SerializeField] TMP_Text pageIndicator;
 
-        int _sectionIndex;
+        readonly List<int> _visibleIndices = new();
+        int _visibleSectionIndex;
         string _currentId;
 
         public bool CanGoNext =>
-            sections != null && _sectionIndex < sections.Length - 1;
+            _visibleIndices.Count > 0 && _visibleSectionIndex < _visibleIndices.Count - 1;
 
         void OnEnable()
         {
@@ -36,16 +38,16 @@ namespace PeopleOfMath.UI
         public void Bind(string mathematicianId)
         {
             _currentId = mathematicianId;
-            _sectionIndex = 0;
-            ShowSection(0);
+            _visibleSectionIndex = 0;
             Refresh();
+            ShowVisibleSection(_visibleSectionIndex);
         }
 
         public bool TryGoBack()
         {
-            if (_sectionIndex > 0)
+            if (_visibleSectionIndex > 0)
             {
-                ShowSection(_sectionIndex - 1);
+                ShowVisibleSection(_visibleSectionIndex - 1);
                 return true;
             }
 
@@ -55,7 +57,7 @@ namespace PeopleOfMath.UI
         public void GoNext()
         {
             if (CanGoNext)
-                ShowSection(_sectionIndex + 1);
+                ShowVisibleSection(_visibleSectionIndex + 1);
         }
 
         void Refresh()
@@ -68,47 +70,85 @@ namespace PeopleOfMath.UI
             if (sections == null)
                 return;
 
+            RebuildVisibleIndices(data, english);
+
             foreach (var section in sections)
             {
                 if (section != null)
                     section.Bind(data, english);
             }
 
-            var current = sections != null && sections.Length > 0
-                ? sections[Mathf.Clamp(_sectionIndex, 0, sections.Length - 1)]
-                : null;
+            if (_visibleIndices.Count == 0)
+            {
+                HideAllSections();
+                UpdateNavState();
+                return;
+            }
+
+            _visibleSectionIndex = Mathf.Clamp(_visibleSectionIndex, 0, _visibleIndices.Count - 1);
+            ShowVisibleSection(_visibleSectionIndex);
+        }
+
+        void RebuildVisibleIndices(MathematicianData data, bool english)
+        {
+            _visibleIndices.Clear();
+            if (sections == null)
+                return;
+
+            for (var i = 0; i < sections.Length; i++)
+            {
+                var section = sections[i];
+                if (section != null && section.HasContent(data, english))
+                    _visibleIndices.Add(i);
+            }
+        }
+
+        void ShowVisibleSection(int visibleIndex)
+        {
+            if (sections == null || sections.Length == 0 || _visibleIndices.Count == 0)
+            {
+                HideAllSections();
+                UpdateNavState();
+                return;
+            }
+
+            _visibleSectionIndex = Mathf.Clamp(visibleIndex, 0, _visibleIndices.Count - 1);
+            var sectionIndex = _visibleIndices[_visibleSectionIndex];
+
+            for (var i = 0; i < sections.Length; i++)
+            {
+                if (sections[i] != null)
+                    sections[i].gameObject.SetActive(i == sectionIndex);
+            }
+
+            var english = LocaleHelper.IsEnglish;
+            var current = sections[sectionIndex];
             if (current != null && headerTitle != null)
                 headerTitle.SetDetailSectionTitle(current.GetSectionTitle(english));
 
             UpdateNavState();
         }
 
-        void ShowSection(int index)
+        void HideAllSections()
         {
-            if (sections == null || sections.Length == 0)
+            if (sections == null)
                 return;
 
-            _sectionIndex = Mathf.Clamp(index, 0, sections.Length - 1);
-            for (var i = 0; i < sections.Length; i++)
+            foreach (var section in sections)
             {
-                if (sections[i] != null)
-                    sections[i].gameObject.SetActive(i == _sectionIndex);
+                if (section != null)
+                    section.gameObject.SetActive(false);
             }
-
-            var english = LocaleHelper.IsEnglish;
-            var current = sections != null && sections.Length > 0
-                ? sections[Mathf.Clamp(_sectionIndex, 0, sections.Length - 1)]
-                : null;
-            if (current != null && headerTitle != null)
-                headerTitle.SetDetailSectionTitle(current.GetSectionTitle(english));
-
-            UpdateNavState();
         }
 
         void UpdateNavState()
         {
-            if (pageIndicator != null && sections != null && sections.Length > 0)
-                pageIndicator.text = $"{_sectionIndex + 1} / {sections.Length}";
+            if (pageIndicator != null)
+            {
+                pageIndicator.text = _visibleIndices.Count > 0
+                    ? $"{_visibleSectionIndex + 1} / {_visibleIndices.Count}"
+                    : "";
+            }
 
             if (sectionNextButton != null)
                 sectionNextButton.gameObject.SetActive(CanGoNext);
