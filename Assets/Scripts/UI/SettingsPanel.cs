@@ -18,6 +18,8 @@ namespace PeopleOfMath.UI
 
         void Awake()
         {
+            UiButtonStyler.Initialize(fontNormalButton, fontLargeButton);
+
             BindButton(russianButton, SelectRussian);
             BindButton(englishButton, SelectEnglish);
             BindButton(fontNormalButton, SelectFontNormal);
@@ -87,6 +89,14 @@ namespace PeopleOfMath.UI
                     ? $"Current font size: {levelLabel}"
                     : $"Текущий размер шрифта: {levelLabel}";
             }
+
+            UiButtonStyler.Apply(russianButton, english ? UiButtonStyle.Secondary : UiButtonStyle.Primary);
+            UiButtonStyler.Apply(englishButton, english ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+
+            var level = FontSizeHelper.CurrentLevel;
+            UiButtonStyler.Apply(fontNormalButton, level == FontSizeLevel.Normal ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            UiButtonStyler.Apply(fontLargeButton, level == FontSizeLevel.Large ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            UiButtonStyler.Apply(fontExtraLargeButton, level == FontSizeLevel.ExtraLarge ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
         }
     }
 }

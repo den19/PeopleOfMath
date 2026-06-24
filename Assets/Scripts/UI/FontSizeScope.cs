@@ -23,6 +23,9 @@ namespace PeopleOfMath.UI
 
             foreach (var layout in GetComponentsInChildren<TmpLayoutHeight>(true))
                 layout.RefreshHeight();
+
+            foreach (var item in GetComponentsInChildren<MathematicianListItem>(true))
+                item.RefreshLayout();
         }
     }
 }
