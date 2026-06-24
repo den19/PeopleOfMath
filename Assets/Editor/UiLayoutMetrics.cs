@@ -40,6 +40,14 @@ namespace PeopleOfMath.Editor
         public const float ListItemVerticalGap = 8f;
         public const float ListItemTextLineHeight = 48f;
         public const float ListItemBioHeight = 200f;
+        public const float ListItemThumbnailSize = 180f;
+        public const float ListItemThumbnailGap = 20f;
+        public const float ListItemLeftPadding = 20f;
+        public const float ListItemTextRightInset = 20f;
+        public static float ListItemTextColumnLeft =>
+            ListItemLeftPadding + ListItemThumbnailSize + ListItemThumbnailGap;
+        public static float ListItemTextWidthInset =>
+            ListItemTextColumnLeft + ListItemTextRightInset;
         public const float ListItemNameBaseFontSize = 20f;
         public const float ListItemDatesBaseFontSize = 14f;
         public const float ListItemBioBaseFontSize = 13f;
@@ -48,11 +56,11 @@ namespace PeopleOfMath.Editor
         public static float ListItemDatesFontSize => ScaleFont(ListItemDatesBaseFontSize) * 2f;
         public static float ListItemBioFontSize => ScaleFont(ListItemBioBaseFontSize) * 2f;
         public static float ListItemNameHeight => ListItemNameFontSize * 2f;
-        public static Vector2 ListItemNamePos => new Vector2(20f, -ListItemTopPadding);
+        public static Vector2 ListItemNamePos => new Vector2(ListItemTextColumnLeft, -ListItemTopPadding);
         public static Vector2 ListItemDatesPos => new Vector2(
-            20f, -(ListItemTopPadding + ListItemNameHeight + ListItemVerticalGap));
+            ListItemTextColumnLeft, -(ListItemTopPadding + ListItemNameHeight + ListItemVerticalGap));
         public static Vector2 ListItemBioPos => new Vector2(
-            20f,
+            ListItemTextColumnLeft,
             -(ListItemTopPadding + ListItemNameHeight + ListItemVerticalGap
               + ListItemTextLineHeight + ListItemVerticalGap));
 

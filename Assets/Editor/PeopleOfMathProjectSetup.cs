@@ -392,6 +392,7 @@ namespace PeopleOfMath.Editor
             CreateTmpChild(root.transform, "Name", UiLayoutMetrics.ListItemNameBaseFontSize, FontStyles.Bold, UiLayoutMetrics.ListItemNamePos);
             CreateTmpChild(root.transform, "Dates", UiLayoutMetrics.ListItemDatesBaseFontSize, FontStyles.Normal, UiLayoutMetrics.ListItemDatesPos);
             CreateTmpChild(root.transform, "Bio", UiLayoutMetrics.ListItemBioBaseFontSize, FontStyles.Normal, UiLayoutMetrics.ListItemBioPos);
+            CreateListItemPortrait(root);
             ConfigureListItem(root);
 
             var item = root.AddComponent<MathematicianListItem>();
@@ -399,6 +400,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("nameText").objectReferenceValue = root.transform.Find("Name").GetComponent<TMP_Text>();
             so.FindProperty("datesText").objectReferenceValue = root.transform.Find("Dates").GetComponent<TMP_Text>();
             so.FindProperty("bioText").objectReferenceValue = root.transform.Find("Bio").GetComponent<TMP_Text>();
+            so.FindProperty("portraitImage").objectReferenceValue = root.transform.Find("Portrait").GetComponent<Image>();
             so.FindProperty("button").objectReferenceValue = root.GetComponent<Button>();
             so.ApplyModifiedPropertiesWithoutUndo();
             return root;
@@ -428,6 +430,8 @@ namespace PeopleOfMath.Editor
             if (go.GetComponent<RectMask2D>() == null)
                 go.AddComponent<RectMask2D>();
 
+            ConfigureListItemPortrait(go);
+
             ConfigureListItemText(go, "Name", UiLayoutMetrics.ListItemNameFontSize, FontStyles.Bold,
                 UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemNameHeight, truncate: false, UiTheme.TextPrimary);
             ConfigureListItemText(go, "Dates", UiLayoutMetrics.ListItemDatesFontSize, FontStyles.Normal,
@@ -437,6 +441,48 @@ namespace PeopleOfMath.Editor
 
             UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.ListItem);
             ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.ListItemRowHeight);
+        }
+
+        static void CreateListItemPortrait(GameObject root)
+        {
+            var portrait = new GameObject("Portrait", typeof(RectTransform), typeof(Image));
+            portrait.transform.SetParent(root.transform, false);
+        }
+
+        public static void ConfigureListItemPortrait(GameObject root)
+        {
+            var portraitTransform = root.transform.Find("Portrait");
+            GameObject portraitGo;
+            if (portraitTransform == null)
+            {
+                CreateListItemPortrait(root);
+                portraitTransform = root.transform.Find("Portrait");
+            }
+
+            portraitGo = portraitTransform.gameObject;
+            portraitTransform.SetAsFirstSibling();
+
+            var rt = portraitGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0f, 0.5f);
+            rt.anchorMax = new Vector2(0f, 0.5f);
+            rt.pivot = new Vector2(0f, 0.5f);
+            rt.anchoredPosition = new Vector2(UiLayoutMetrics.ListItemLeftPadding, 0f);
+            rt.sizeDelta = new Vector2(
+                UiLayoutMetrics.ListItemThumbnailSize,
+                UiLayoutMetrics.ListItemThumbnailSize);
+
+            var img = portraitGo.GetComponent<Image>() ?? portraitGo.AddComponent<Image>();
+            img.preserveAspect = true;
+            img.raycastTarget = false;
+            img.color = UiTheme.PortraitPlaceholder;
+
+            var item = root.GetComponent<MathematicianListItem>();
+            if (item != null)
+            {
+                var so = new SerializedObject(item);
+                so.FindProperty("portraitImage").objectReferenceValue = img;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
         }
 
         static void ConfigureListItemText(
@@ -455,7 +501,7 @@ namespace PeopleOfMath.Editor
 
             var childRt = child.GetComponent<RectTransform>();
             childRt.anchoredPosition = anchoredPos;
-            childRt.sizeDelta = new Vector2(-UiLayoutMetrics.ListItemHorizontalInset, height);
+            childRt.sizeDelta = new Vector2(-UiLayoutMetrics.ListItemTextWidthInset, height);
 
             var tmp = child.GetComponent<TextMeshProUGUI>();
             if (tmp == null)
