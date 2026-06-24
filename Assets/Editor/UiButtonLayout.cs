@@ -59,7 +59,7 @@ namespace PeopleOfMath.Editor
             "FontExtraLargeButton", new Vector2(40f, -640f), new Vector2(400f, 64f), "btn_font_extra_large", UiButtonStyle.Secondary);
 
         public static readonly SceneButton BottomBrowse = new(
-            "BrowseTab", new Vector2(19f, -22f), new Vector2(440f, 72f), "tab_browse", UiButtonStyle.Primary);
+            "BrowseTab", new Vector2(19f, -22f), new Vector2(440f, 72f), "tab_browse", UiButtonStyle.Secondary);
 
         public static readonly SceneButton BottomSettings = new(
             "SettingsTab", new Vector2(520f, -22f), new Vector2(440f, 72f), "tab_settings", UiButtonStyle.Secondary);

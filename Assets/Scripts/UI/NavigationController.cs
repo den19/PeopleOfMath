@@ -1,6 +1,7 @@
 using PeopleOfMath.Data;
 using PeopleOfMath.UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace PeopleOfMath.Core
@@ -21,6 +22,8 @@ namespace PeopleOfMath.Core
         [SerializeField] SettingsPanel settingsPanel;
         [SerializeField] GameObject headerBackButton;
         [SerializeField] HeaderTitleBinder headerTitle;
+        [SerializeField] Button browseTab;
+        [SerializeField] Button settingsTab;
 
         AppScreen _screen = AppScreen.Home;
         FilterKind _filterKind;
@@ -33,6 +36,7 @@ namespace PeopleOfMath.Core
         {
             HideAllPanels();
             WireHeaderBackButton();
+            UiButtonStyler.Initialize(browseTab, settingsTab);
         }
 
         void WireHeaderBackButton()
@@ -63,6 +67,7 @@ namespace PeopleOfMath.Core
             homePanel.gameObject.SetActive(true);
             headerBackButton.SetActive(false);
             headerTitle?.SetHomeTitle();
+            RefreshTabStyles();
         }
 
         public void ShowList(FilterKind kind, string key)
@@ -75,6 +80,7 @@ namespace PeopleOfMath.Core
             listPanel.BindFilter(kind, key);
             headerBackButton.SetActive(true);
             headerTitle?.SetFilterTitle(kind, key);
+            RefreshTabStyles();
         }
 
         public void ShowDetail(string mathematicianId)
@@ -85,6 +91,7 @@ namespace PeopleOfMath.Core
             detailPanel.gameObject.SetActive(true);
             detailPanel.Bind(mathematicianId);
             headerBackButton.SetActive(true);
+            RefreshTabStyles();
         }
 
         public void ShowSettings()
@@ -94,6 +101,15 @@ namespace PeopleOfMath.Core
             settingsPanel.gameObject.SetActive(true);
             headerBackButton.SetActive(false);
             headerTitle?.SetSettingsTitle();
+            RefreshTabStyles();
+        }
+
+        void RefreshTabStyles()
+        {
+            var settingsActive = _screen == AppScreen.Settings;
+            UiButtonStyler.Apply(browseTab, settingsActive ? UiButtonStyle.Secondary : UiButtonStyle.Primary);
+            UiButtonStyler.Apply(settingsTab, settingsActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            EventSystem.current?.SetSelectedGameObject(null);
         }
 
         public void HandleBack()

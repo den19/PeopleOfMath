@@ -600,7 +600,7 @@ namespace PeopleOfMath.Editor
             var settings = CreateSettingsPanel(content.transform, loc);
             var bottom = CreateBottomBar(canvasGo.transform, navigation, loc);
 
-            WireNavigation(navigation, home, list, detail, settings, header.backButton, headerBinder);
+            WireNavigation(navigation, home, list, detail, settings, header.backButton, headerBinder, bottom);
             WireBootstrap(bootstrap, navigation);
             WireBackHandler(app.GetComponent<BackButtonHandler>(), navigation);
 
@@ -1492,7 +1492,13 @@ namespace PeopleOfMath.Editor
             return panel;
         }
 
-        static GameObject CreateBottomBar(Transform canvas, NavigationController nav, LocalizationRefs loc)
+        struct BottomBarResult
+        {
+            public Button browseTab;
+            public Button settingsTab;
+        }
+
+        static BottomBarResult CreateBottomBar(Transform canvas, NavigationController nav, LocalizationRefs loc)
         {
             var bar = CreatePanel(canvas, "BottomBar", new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, Vector2.zero);
             UiButtonLayout.ApplyBottomStretchBarRect(
@@ -1504,7 +1510,11 @@ namespace PeopleOfMath.Editor
             var settings = CreateSceneButton(bar.transform, UiButtonLayout.BottomSettings, loc.UiCollection);
             WireButtonClick(browse.GetComponent<Button>(), nav.OnBrowseTabClicked);
             WireButtonClick(settings.GetComponent<Button>(), nav.OnSettingsTabClicked);
-            return bar;
+            return new BottomBarResult
+            {
+                browseTab = browse.GetComponent<Button>(),
+                settingsTab = settings.GetComponent<Button>()
+            };
         }
 
         static GameObject CreateSceneButton(
@@ -1560,7 +1570,8 @@ namespace PeopleOfMath.Editor
             GameObject detail,
             GameObject settings,
             GameObject backButton,
-            HeaderTitleBinder header)
+            HeaderTitleBinder header,
+            BottomBarResult bottomBar)
         {
             var so = new SerializedObject(nav);
             so.FindProperty("homePanel").objectReferenceValue = home.GetComponent<HomePanel>();
@@ -1569,6 +1580,8 @@ namespace PeopleOfMath.Editor
             so.FindProperty("settingsPanel").objectReferenceValue = settings.GetComponent<SettingsPanel>();
             so.FindProperty("headerBackButton").objectReferenceValue = backButton;
             so.FindProperty("headerTitle").objectReferenceValue = header;
+            so.FindProperty("browseTab").objectReferenceValue = bottomBar.browseTab;
+            so.FindProperty("settingsTab").objectReferenceValue = bottomBar.settingsTab;
             so.ApplyModifiedPropertiesWithoutUndo();
             WireButtonClick(backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
         }

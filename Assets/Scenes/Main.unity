@@ -662,6 +662,8 @@ MonoBehaviour:
   settingsPanel: {fileID: 1222350714}
   headerBackButton: {fileID: 1913252849}
   headerTitle: {fileID: 1900078550}
+  browseTab: {fileID: 1144735261}
+  settingsTab: {fileID: 812254806}
 --- !u!114 &189052805
 MonoBehaviour:
   m_ObjectHideFlags: 0
