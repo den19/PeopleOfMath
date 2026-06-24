@@ -36,15 +36,19 @@ namespace PeopleOfMath.UI
         void OnEnable()
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+            FontSizeHelper.FontSizeChanged += OnFontSizeChanged;
             Refresh();
         }
 
         void OnDisable()
         {
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            FontSizeHelper.FontSizeChanged -= OnFontSizeChanged;
         }
 
         void OnLocaleChanged(UnityEngine.Localization.Locale _) => Refresh();
+
+        void OnFontSizeChanged() => Refresh();
 
         void Refresh()
         {
@@ -71,6 +75,8 @@ namespace PeopleOfMath.UI
                 var item = Instantiate(itemPrefab, listContent);
                 item.Bind(data, id => navigation.ShowDetail(id));
             }
+
+            GetComponent<FontSizeScope>()?.Apply();
         }
     }
 }

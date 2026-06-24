@@ -100,6 +100,7 @@ namespace PeopleOfMath.Editor
             if (mathematicians.Count == 0)
                 mathematicians = MathematicianContentFactory.CreateAll(DataFolder);
             var localization = SetupLocalization();
+            AssetDatabase.SaveAssets();
             var listItemPrefab = CreateListItemPrefab();
             EnsureListItemInResources();
             CreateMainScene(mathematicians, localization, listItemPrefab);
@@ -262,6 +263,10 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "settings_language", "Язык интерфейса", "Interface language");
             AddUiEntry(collection, "btn_russian", "Русский", "Russian");
             AddUiEntry(collection, "btn_english", "English", "English");
+            AddUiEntry(collection, "settings_font_size", "Размер шрифта", "Font size");
+            AddUiEntry(collection, "btn_font_normal", "Обычный", "Normal");
+            AddUiEntry(collection, "btn_font_large", "Крупный", "Large");
+            AddUiEntry(collection, "btn_font_extra_large", "Очень крупный", "Extra large");
             AddUiEntry(collection, "empty_list", "Нет математиков по выбранному фильтру", "No mathematicians for this filter");
             AddUiEntry(collection, "gallery_license", "Лицензия", "License");
             AddUiEntry(collection, "gallery_source", "Источник", "Source");
@@ -279,6 +284,8 @@ namespace PeopleOfMath.Editor
                 AssetDatabase.CreateAsset(locSettings, $"{LocalizationFolder}/Localization Settings.asset");
                 LocalizationEditorSettings.ActiveLocalizationSettings = locSettings;
             }
+
+            EditorUtility.SetDirty(collection);
 
             return new LocalizationRefs
             {
@@ -300,6 +307,7 @@ namespace PeopleOfMath.Editor
 
             SetTableValue(collection, "ru", sharedEntry.Id, ru);
             SetTableValue(collection, "en", sharedEntry.Id, en);
+            EditorUtility.SetDirty(shared);
         }
 
         static void SetTableValue(StringTableCollection collection, string localeCode, long id, string value)
@@ -319,12 +327,21 @@ namespace PeopleOfMath.Editor
         static LocalizedString MakeLocalized(StringTableCollection collection, string key)
         {
             var entry = collection.SharedData.GetEntry(key);
-            var ls = new LocalizedString
+            if (entry == null)
+            {
+                Debug.LogError($"Localization key missing: {key}");
+                return new LocalizedString
+                {
+                    TableReference = collection.TableCollectionNameReference,
+                    TableEntryReference = key
+                };
+            }
+
+            return new LocalizedString
             {
                 TableReference = collection.TableCollectionNameReference,
                 TableEntryReference = entry.Id
             };
-            return ls;
         }
 
         static void EditPrefabContents(string path, System.Action<GameObject> edit)
@@ -942,6 +959,7 @@ namespace PeopleOfMath.Editor
                 new Vector2(0, 90),
                 Vector2.zero);
             container.GetComponent<Image>().color = Color.clear;
+            container.AddComponent<FontSizeScope>();
 
             var sectionPrefabs = EnsureDetailSectionPrefabs();
             var sections = new List<MathematicianDetailSection>();
@@ -1235,6 +1253,7 @@ namespace PeopleOfMath.Editor
         {
             var panel = CreatePanel(parent, "ListPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             panel.SetActive(false);
+            panel.AddComponent<FontSizeScope>();
             var scroll = CreateScrollView(panel.transform, "ListScroll");
             var empty = CreateTmpChild(panel.transform, "Empty", UiLayoutMetrics.EmptyStateBaseFontSize, FontStyles.Italic, UiLayoutMetrics.EmptyStatePosition);
             HomeListPanelLayout.ConfigureEmptyState(empty);
@@ -1438,16 +1457,38 @@ namespace PeopleOfMath.Editor
             var enBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsEnglish, collection);
             var status = CreateTmpChild(panel.transform, "Status", 16, FontStyles.Italic, new Vector2(40, -320));
             status.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+            status.GetComponent<TextMeshProUGUI>().raycastTarget = false;
+
+            var fontLabel = CreateTmpChild(panel.transform, "FontSizeLabel", 18, FontStyles.Bold, new Vector2(40, -400));
+            fontLabel.GetComponent<TextMeshProUGUI>().color = UiTheme.TextPrimary;
+            var fontLse = fontLabel.AddComponent<LocalizeStringEvent>();
+            var fontLseSo = new SerializedObject(fontLse);
+            AssignLocalized(fontLseSo.FindProperty("m_StringReference"), MakeLocalized(collection, "settings_font_size"));
+            fontLseSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var fontNormalBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsFontNormal, collection);
+            var fontLargeBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsFontLarge, collection);
+            var fontExtraLargeBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsFontExtraLarge, collection);
+            var fontStatus = CreateTmpChild(panel.transform, "FontStatus", 16, FontStyles.Italic, new Vector2(40, -720));
+            fontStatus.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+            fontStatus.GetComponent<TextMeshProUGUI>().raycastTarget = false;
 
             var settings = panel.AddComponent<SettingsPanel>();
             var so = new SerializedObject(settings);
             so.FindProperty("russianButton").objectReferenceValue = ruBtn.GetComponent<Button>();
             so.FindProperty("englishButton").objectReferenceValue = enBtn.GetComponent<Button>();
             so.FindProperty("statusText").objectReferenceValue = status.GetComponent<TMP_Text>();
+            so.FindProperty("fontNormalButton").objectReferenceValue = fontNormalBtn.GetComponent<Button>();
+            so.FindProperty("fontLargeButton").objectReferenceValue = fontLargeBtn.GetComponent<Button>();
+            so.FindProperty("fontExtraLargeButton").objectReferenceValue = fontExtraLargeBtn.GetComponent<Button>();
+            so.FindProperty("fontStatusText").objectReferenceValue = fontStatus.GetComponent<TMP_Text>();
             so.ApplyModifiedPropertiesWithoutUndo();
 
-            ruBtn.GetComponent<Button>().onClick.AddListener(settings.SelectRussian);
-            enBtn.GetComponent<Button>().onClick.AddListener(settings.SelectEnglish);
+            WireButtonClick(ruBtn.GetComponent<Button>(), settings.SelectRussian);
+            WireButtonClick(enBtn.GetComponent<Button>(), settings.SelectEnglish);
+            WireButtonClick(fontNormalBtn.GetComponent<Button>(), settings.SelectFontNormal);
+            WireButtonClick(fontLargeBtn.GetComponent<Button>(), settings.SelectFontLarge);
+            WireButtonClick(fontExtraLargeBtn.GetComponent<Button>(), settings.SelectFontExtraLarge);
             return panel;
         }
 

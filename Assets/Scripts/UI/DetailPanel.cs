@@ -26,14 +26,18 @@ namespace PeopleOfMath.UI
         void OnEnable()
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+            FontSizeHelper.FontSizeChanged += OnFontSizeChanged;
         }
 
         void OnDisable()
         {
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            FontSizeHelper.FontSizeChanged -= OnFontSizeChanged;
         }
 
         void OnLocaleChanged(UnityEngine.Localization.Locale _) => Refresh();
+
+        void OnFontSizeChanged() => Refresh();
 
         public void Bind(string mathematicianId)
         {
@@ -87,6 +91,8 @@ namespace PeopleOfMath.UI
 
             _visibleSectionIndex = Mathf.Clamp(_visibleSectionIndex, 0, _visibleIndices.Count - 1);
             ShowVisibleSection(_visibleSectionIndex);
+
+            GetComponentInChildren<FontSizeScope>(true)?.Apply();
         }
 
         void RebuildVisibleIndices(MathematicianData data, bool english)

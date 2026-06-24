@@ -1,5 +1,6 @@
 using System.Collections;
 using PeopleOfMath.Localization;
+using PeopleOfMath.UI;
 using UnityEngine;
 
 namespace PeopleOfMath.Core
@@ -21,6 +22,7 @@ namespace PeopleOfMath.Core
         IEnumerator Bootstrap()
         {
             yield return LocaleHelper.InitializeLocale();
+            FontSizeHelper.Initialize();
             navigation?.ShowHome();
         }
     }

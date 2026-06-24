@@ -207,6 +207,34 @@ MonoBehaviour:
     m_Key: New Entry 30
     m_Metadata:
       m_Items: []
+  - m_Id: 7372777647497216
+    m_Key: settings_font_size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606080
+    m_Key: btn_font_normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606081
+    m_Key: btn_font_large
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606082
+    m_Key: btn_font_extra_large
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606083
+    m_Key: gallery_license
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606084
+    m_Key: gallery_source
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606085
+    m_Key: gallery_no_images
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
