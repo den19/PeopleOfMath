@@ -58,6 +58,12 @@ namespace PeopleOfMath.Editor
         public static readonly SceneButton SettingsFontExtraLarge = new(
             "FontExtraLargeButton", new Vector2(40f, -640f), new Vector2(400f, 64f), "btn_font_extra_large", UiButtonStyle.Secondary);
 
+        public static readonly SceneButton SettingsThemeDark = new(
+            "DarkThemeButton", new Vector2(40f, -880f), new Vector2(400f, 64f), "btn_theme_dark", UiButtonStyle.Primary);
+
+        public static readonly SceneButton SettingsThemeLight = new(
+            "LightThemeButton", new Vector2(40f, -960f), new Vector2(400f, 64f), "btn_theme_light", UiButtonStyle.Secondary);
+
         public static readonly SceneButton BottomBrowse = new(
             "BrowseTab", new Vector2(19f, -22f), new Vector2(440f, 72f), "tab_browse", UiButtonStyle.Secondary);
 

@@ -37,6 +37,7 @@ namespace PeopleOfMath.UI
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
             FontSizeHelper.FontSizeChanged += OnFontSizeChanged;
+            ThemeHelper.ThemeChanged += OnThemeChanged;
             Refresh();
         }
 
@@ -44,11 +45,23 @@ namespace PeopleOfMath.UI
         {
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
             FontSizeHelper.FontSizeChanged -= OnFontSizeChanged;
+            ThemeHelper.ThemeChanged -= OnThemeChanged;
         }
 
         void OnLocaleChanged(UnityEngine.Localization.Locale _) => Refresh();
 
         void OnFontSizeChanged() => Refresh();
+
+        void OnThemeChanged() => RefreshTheme();
+
+        void RefreshTheme()
+        {
+            if (listContent == null)
+                return;
+
+            foreach (Transform child in listContent)
+                child.GetComponent<UiThemedCard>()?.Apply();
+        }
 
         void Refresh()
         {

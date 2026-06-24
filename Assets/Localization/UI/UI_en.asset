@@ -342,6 +342,18 @@ MonoBehaviour:
     m_Localized: No images available
     m_Metadata:
       m_Items: []
+  - m_Id: 7372777714606086
+    m_Localized: Appearance theme
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606087
+    m_Localized: Dark
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606088
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

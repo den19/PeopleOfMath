@@ -15,6 +15,9 @@ namespace PeopleOfMath.UI
         [SerializeField] Button fontLargeButton;
         [SerializeField] Button fontExtraLargeButton;
         [SerializeField] TMP_Text fontStatusText;
+        [SerializeField] Button darkThemeButton;
+        [SerializeField] Button lightThemeButton;
+        [SerializeField] TMP_Text themeStatusText;
 
         void Awake()
         {
@@ -25,6 +28,8 @@ namespace PeopleOfMath.UI
             BindButton(fontNormalButton, SelectFontNormal);
             BindButton(fontLargeButton, SelectFontLarge);
             BindButton(fontExtraLargeButton, SelectFontExtraLarge);
+            BindButton(darkThemeButton, SelectDark);
+            BindButton(lightThemeButton, SelectLight);
         }
 
         void OnEnable()
@@ -71,7 +76,19 @@ namespace PeopleOfMath.UI
             RefreshStatus();
         }
 
-        void RefreshStatus()
+        public void SelectDark()
+        {
+            ThemeHelper.SetTheme(AppTheme.Dark);
+            RefreshStatus();
+        }
+
+        public void SelectLight()
+        {
+            ThemeHelper.SetTheme(AppTheme.Light);
+            RefreshStatus();
+        }
+
+        public void RefreshStatus()
         {
             var english = LocaleHelper.IsEnglish;
 
@@ -90,6 +107,14 @@ namespace PeopleOfMath.UI
                     : $"Текущий размер шрифта: {levelLabel}";
             }
 
+            if (themeStatusText != null)
+            {
+                var themeLabel = ThemeHelper.GetThemeLabel(english, ThemeHelper.Current);
+                themeStatusText.text = english
+                    ? $"Current theme: {themeLabel}"
+                    : $"Текущая тема: {themeLabel}";
+            }
+
             UiButtonStyler.Apply(russianButton, english ? UiButtonStyle.Secondary : UiButtonStyle.Primary);
             UiButtonStyler.Apply(englishButton, english ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
 
@@ -97,6 +122,10 @@ namespace PeopleOfMath.UI
             UiButtonStyler.Apply(fontNormalButton, level == FontSizeLevel.Normal ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
             UiButtonStyler.Apply(fontLargeButton, level == FontSizeLevel.Large ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
             UiButtonStyler.Apply(fontExtraLargeButton, level == FontSizeLevel.ExtraLarge ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+
+            var darkTheme = ThemeHelper.Current == AppTheme.Dark;
+            UiButtonStyler.Apply(darkThemeButton, darkTheme ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            UiButtonStyler.Apply(lightThemeButton, darkTheme ? UiButtonStyle.Secondary : UiButtonStyle.Primary);
         }
     }
 }

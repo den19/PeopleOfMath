@@ -23,6 +23,7 @@ namespace PeopleOfMath.Core
         {
             yield return LocaleHelper.InitializeLocale();
             FontSizeHelper.Initialize();
+            ThemeHelper.Initialize();
             navigation?.ShowHome();
         }
     }

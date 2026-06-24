@@ -235,6 +235,18 @@ MonoBehaviour:
     m_Key: gallery_no_images
     m_Metadata:
       m_Items: []
+  - m_Id: 7372777714606086
+    m_Key: settings_theme
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606087
+    m_Key: btn_theme_dark
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7372777714606088
+    m_Key: btn_theme_light
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

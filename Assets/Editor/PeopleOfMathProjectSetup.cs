@@ -49,6 +49,27 @@ namespace PeopleOfMath.Editor
             Run(manual: true);
         }
 
+        [MenuItem("PeopleOfMath/Patch Theme Support")]
+        public static void PatchThemeSupport()
+        {
+            if (DeferUntilEditMode(PatchThemeSupport))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var loc = SetupLocalization();
+            AssetDatabase.SaveAssets();
+            EditorSceneManager.OpenScene(ScenePath);
+            PatchThemeInOpenScene(loc.UiCollection);
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+            AssetDatabase.SaveAssets();
+            Debug.Log("Theme support patched in Main scene.");
+        }
+
         public static void Run(bool manual = false)
         {
             if (EditorApplication.isCompiling || EditorApplication.isUpdating)
@@ -267,6 +288,9 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "btn_font_normal", "Обычный", "Normal");
             AddUiEntry(collection, "btn_font_large", "Крупный", "Large");
             AddUiEntry(collection, "btn_font_extra_large", "Очень крупный", "Extra large");
+            AddUiEntry(collection, "settings_theme", "Тема оформления", "Appearance theme");
+            AddUiEntry(collection, "btn_theme_dark", "Тёмная", "Dark");
+            AddUiEntry(collection, "btn_theme_light", "Светлая", "Light");
             AddUiEntry(collection, "empty_list", "Нет математиков по выбранному фильтру", "No mathematicians for this filter");
             AddUiEntry(collection, "gallery_license", "Лицензия", "License");
             AddUiEntry(collection, "gallery_source", "Источник", "Source");
@@ -458,6 +482,7 @@ namespace PeopleOfMath.Editor
 
             UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.ListItem);
             ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.ListItemRowHeight);
+            EnsureThemedCard(go, UiCardVariant.ListItem);
         }
 
         static void CreateListItemPortrait(GameObject root)
@@ -603,6 +628,7 @@ namespace PeopleOfMath.Editor
             WireNavigation(navigation, home, list, detail, settings, header.backButton, headerBinder, bottom);
             WireBootstrap(bootstrap, navigation);
             WireBackHandler(app.GetComponent<BackButtonHandler>(), navigation);
+            WireThemeScope(canvasGo, cam, navigation, settings, detail);
 
             AssignMathematicians(repository, mathematicians);
             EditorSceneManager.MarkSceneDirty(scene);
@@ -854,6 +880,7 @@ namespace PeopleOfMath.Editor
 
             UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.Filter);
             ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.FilterButtonHeight);
+            EnsureThemedCard(go, UiCardVariant.Filter);
             EditorUtility.SetDirty(go);
         }
 
@@ -1472,6 +1499,22 @@ namespace PeopleOfMath.Editor
             var fontStatus = CreateTmpChild(panel.transform, "FontStatus", 16, FontStyles.Italic, new Vector2(40, -720));
             fontStatus.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
             fontStatus.GetComponent<TextMeshProUGUI>().raycastTarget = false;
+            AddThemeBinding(fontStatus, UiThemeToken.TextSecondary);
+
+            var themeLabel = CreateTmpChild(panel.transform, "ThemeLabel", 18, FontStyles.Bold, new Vector2(40, -800));
+            themeLabel.GetComponent<TextMeshProUGUI>().color = UiTheme.TextPrimary;
+            AddThemeBinding(themeLabel, UiThemeToken.TextPrimary);
+            var themeLse = themeLabel.AddComponent<LocalizeStringEvent>();
+            var themeLseSo = new SerializedObject(themeLse);
+            AssignLocalized(themeLseSo.FindProperty("m_StringReference"), MakeLocalized(collection, "settings_theme"));
+            themeLseSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var darkBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeDark, collection);
+            var lightBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeLight, collection);
+            var themeStatus = CreateTmpChild(panel.transform, "ThemeStatus", 16, FontStyles.Italic, new Vector2(40, -1040));
+            themeStatus.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+            themeStatus.GetComponent<TextMeshProUGUI>().raycastTarget = false;
+            AddThemeBinding(themeStatus, UiThemeToken.TextSecondary);
 
             var settings = panel.AddComponent<SettingsPanel>();
             var so = new SerializedObject(settings);
@@ -1482,6 +1525,9 @@ namespace PeopleOfMath.Editor
             so.FindProperty("fontLargeButton").objectReferenceValue = fontLargeBtn.GetComponent<Button>();
             so.FindProperty("fontExtraLargeButton").objectReferenceValue = fontExtraLargeBtn.GetComponent<Button>();
             so.FindProperty("fontStatusText").objectReferenceValue = fontStatus.GetComponent<TMP_Text>();
+            so.FindProperty("darkThemeButton").objectReferenceValue = darkBtn.GetComponent<Button>();
+            so.FindProperty("lightThemeButton").objectReferenceValue = lightBtn.GetComponent<Button>();
+            so.FindProperty("themeStatusText").objectReferenceValue = themeStatus.GetComponent<TMP_Text>();
             so.ApplyModifiedPropertiesWithoutUndo();
 
             WireButtonClick(ruBtn.GetComponent<Button>(), settings.SelectRussian);
@@ -1489,6 +1535,8 @@ namespace PeopleOfMath.Editor
             WireButtonClick(fontNormalBtn.GetComponent<Button>(), settings.SelectFontNormal);
             WireButtonClick(fontLargeBtn.GetComponent<Button>(), settings.SelectFontLarge);
             WireButtonClick(fontExtraLargeBtn.GetComponent<Button>(), settings.SelectFontExtraLarge);
+            WireButtonClick(darkBtn.GetComponent<Button>(), settings.SelectDark);
+            WireButtonClick(lightBtn.GetComponent<Button>(), settings.SelectLight);
             return panel;
         }
 
@@ -1606,6 +1654,185 @@ namespace PeopleOfMath.Editor
             var so = new SerializedObject(handler);
             so.FindProperty("navigation").objectReferenceValue = nav;
             so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void WireThemeScope(
+            GameObject canvasGo,
+            Camera cam,
+            NavigationController nav,
+            GameObject settings,
+            GameObject detail)
+        {
+            var scope = canvasGo.GetComponent<UiThemeScope>() ?? canvasGo.AddComponent<UiThemeScope>();
+            var gallery = detail.GetComponentInChildren<PortraitGalleryView>(true);
+            var so = new SerializedObject(scope);
+            so.FindProperty("targetCamera").objectReferenceValue = cam;
+            so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("settingsPanel").objectReferenceValue = settings.GetComponent<SettingsPanel>();
+            so.FindProperty("portraitGallery").objectReferenceValue = gallery;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            TagThemeBindings(canvasGo.transform);
+        }
+
+        static void EnsureThemedCard(GameObject go, UiCardVariant variant)
+        {
+            if (go.GetComponent<UiThemedCard>() == null)
+                go.AddComponent<UiThemedCard>();
+        }
+
+        static void AddThemeBinding(GameObject go, UiThemeToken token)
+        {
+            var binding = go.GetComponent<UiThemeBinding>() ?? go.AddComponent<UiThemeBinding>();
+            var so = new SerializedObject(binding);
+            so.FindProperty("token").enumValueIndex = (int)token;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void TagThemeBindings(Transform canvas)
+        {
+            var contentArea = canvas.Find("ContentArea");
+            if (contentArea != null)
+                AddThemeBinding(contentArea.gameObject, UiThemeToken.Background);
+
+            TagNavBar(canvas.Find("Header"));
+            TagNavBar(canvas.Find("BottomBar"));
+
+            foreach (var scroll in canvas.GetComponentsInChildren<ScrollRect>(true))
+            {
+                if (scroll.viewport != null)
+                    AddThemeBinding(scroll.viewport.gameObject, UiThemeToken.ViewportMask);
+
+                var scrollImage = scroll.GetComponent<Image>();
+                if (scrollImage != null)
+                    AddThemeBinding(scroll.gameObject, UiThemeToken.ScrollBackground);
+
+                if (scroll.content != null)
+                {
+                    var contentImage = scroll.content.GetComponent<Image>();
+                    if (contentImage != null)
+                        AddThemeBinding(scroll.content.gameObject, UiThemeToken.Background);
+                }
+            }
+
+            foreach (var text in canvas.GetComponentsInChildren<TMP_Text>(true))
+            {
+                if (text.GetComponent<UiThemeBinding>() != null)
+                    continue;
+
+                var name = text.gameObject.name;
+                if (name is "Status" or "FontStatus" or "ThemeStatus" or "Caption" or "Empty")
+                    AddThemeBinding(text.gameObject, UiThemeToken.TextSecondary);
+                else if (name is "LangLabel" or "FontSizeLabel" or "ThemeLabel"
+                         || name.StartsWith("section_")
+                         || name is "Name" or "Label" or "HomeTitle" or "SettingsTitle" or "PlainTitle")
+                    AddThemeBinding(text.gameObject, UiThemeToken.TextPrimary);
+                else if (name is "Dates" or "Bio" or "Body")
+                    AddThemeBinding(text.gameObject, UiThemeToken.TextSecondary);
+            }
+
+            foreach (var node in canvas.GetComponentsInChildren<Transform>(true))
+            {
+                if (node.name == "DecorGlow" && node.GetComponent<UiThemeBinding>() == null)
+                    AddThemeBinding(node.gameObject, UiThemeToken.Glow);
+            }
+
+            foreach (var panel in canvas.GetComponentsInChildren<Transform>(true))
+            {
+                if (!panel.name.EndsWith("Panel"))
+                    continue;
+
+                if (panel.GetComponent<Image>() == null || panel.GetComponent<UiThemeBinding>() != null)
+                    continue;
+
+                AddThemeBinding(panel.gameObject, UiThemeToken.Background);
+            }
+
+            foreach (var gallery in canvas.GetComponentsInChildren<PortraitGalleryView>(true))
+            {
+                if (gallery.transform.Find("Dots") is { } dotsRoot)
+                {
+                    var dotTemplate = dotsRoot.Find("DotTemplate");
+                    if (dotTemplate != null)
+                        AddThemeBinding(dotTemplate.gameObject, UiThemeToken.GalleryDotInactive);
+                }
+            }
+        }
+
+        static void TagNavBar(Transform bar)
+        {
+            if (bar == null)
+                return;
+
+            AddThemeBinding(bar.gameObject, UiThemeToken.NavBar);
+            var topGlow = bar.Find("TopGlow");
+            if (topGlow != null)
+                AddThemeBinding(topGlow.gameObject, UiThemeToken.NavBarAccent);
+        }
+
+        static void PatchThemeInOpenScene(StringTableCollection collection)
+        {
+            var settings = Object.FindFirstObjectByType<SettingsPanel>(FindObjectsInactive.Include);
+            if (settings != null)
+            {
+                var panel = settings.gameObject;
+                if (panel.transform.Find("DarkThemeButton") == null)
+                {
+                    var themeLabel = CreateTmpChild(panel.transform, "ThemeLabel", 18, FontStyles.Bold, new Vector2(40, -800));
+                    themeLabel.GetComponent<TextMeshProUGUI>().color = UiTheme.TextPrimary;
+                    AddThemeBinding(themeLabel, UiThemeToken.TextPrimary);
+                    var themeLse = themeLabel.AddComponent<LocalizeStringEvent>();
+                    var themeLseSo = new SerializedObject(themeLse);
+                    AssignLocalized(themeLseSo.FindProperty("m_StringReference"), MakeLocalized(collection, "settings_theme"));
+                    themeLseSo.ApplyModifiedPropertiesWithoutUndo();
+
+                    var darkBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeDark, collection);
+                    var lightBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeLight, collection);
+                    var themeStatus = CreateTmpChild(panel.transform, "ThemeStatus", 16, FontStyles.Italic, new Vector2(40, -1040));
+                    themeStatus.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+                    themeStatus.GetComponent<TextMeshProUGUI>().raycastTarget = false;
+                    AddThemeBinding(themeStatus, UiThemeToken.TextSecondary);
+
+                    var settingsSo = new SerializedObject(settings);
+                    settingsSo.FindProperty("darkThemeButton").objectReferenceValue = darkBtn.GetComponent<Button>();
+                    settingsSo.FindProperty("lightThemeButton").objectReferenceValue = lightBtn.GetComponent<Button>();
+                    settingsSo.FindProperty("themeStatusText").objectReferenceValue = themeStatus.GetComponent<TMP_Text>();
+                    settingsSo.ApplyModifiedPropertiesWithoutUndo();
+
+                    WireButtonClick(darkBtn.GetComponent<Button>(), settings.SelectDark);
+                    WireButtonClick(lightBtn.GetComponent<Button>(), settings.SelectLight);
+                }
+            }
+
+            var canvas = Object.FindAnyObjectByType<Canvas>();
+            var navigation = Object.FindAnyObjectByType<NavigationController>();
+            var gallery = Object.FindFirstObjectByType<PortraitGalleryView>(FindObjectsInactive.Include);
+            if (canvas != null)
+            {
+                var scope = canvas.GetComponent<UiThemeScope>() ?? canvas.gameObject.AddComponent<UiThemeScope>();
+                var scopeSo = new SerializedObject(scope);
+                scopeSo.FindProperty("targetCamera").objectReferenceValue = Camera.main;
+                scopeSo.FindProperty("navigation").objectReferenceValue = navigation;
+                scopeSo.FindProperty("settingsPanel").objectReferenceValue = settings;
+                scopeSo.FindProperty("portraitGallery").objectReferenceValue = gallery;
+                scopeSo.ApplyModifiedPropertiesWithoutUndo();
+                TagThemeBindings(canvas.transform);
+            }
+
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/FilterButton.prefab", UiCardVariant.Filter);
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/MathematicianListItem.prefab", UiCardVariant.ListItem);
+            EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
+        }
+
+        static void EnsureThemedCardOnPrefab(string path, UiCardVariant variant)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null)
+                return;
+
+            var root = PrefabUtility.LoadPrefabContents(path);
+            EnsureThemedCard(root, variant);
+            PrefabUtility.SaveAsPrefabAsset(root, path);
+            PrefabUtility.UnloadPrefabContents(root);
         }
 
         static void AssignMathematicians(MathematicianRepository repository, List<MathematicianData> list) =>

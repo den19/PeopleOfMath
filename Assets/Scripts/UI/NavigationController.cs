@@ -104,7 +104,7 @@ namespace PeopleOfMath.Core
             RefreshTabStyles();
         }
 
-        void RefreshTabStyles()
+        public void RefreshTabStyles()
         {
             var settingsActive = _screen == AppScreen.Settings;
             UiButtonStyler.Apply(browseTab, settingsActive ? UiButtonStyle.Secondary : UiButtonStyle.Primary);

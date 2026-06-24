@@ -231,6 +231,23 @@ namespace PeopleOfMath.UI
                 : UiTheme.GalleryDotInactive;
         }
 
+        public void RefreshTheme()
+        {
+            for (var i = 0; i < _dots.Count; i++)
+                SetDotActive(i, snap != null && i == snap.CurrentIndex);
+
+            foreach (var page in _pages)
+            {
+                if (page == null)
+                    continue;
+                if (page.sprite == null || page.sprite == placeholderSprite)
+                    page.color = UiTheme.PortraitPlaceholder;
+            }
+
+            if (captionText != null)
+                captionText.color = UiTheme.TextSecondary;
+        }
+
         void RefreshCaption() => RefreshCaption(snap != null ? snap.CurrentIndex : 0);
 
         void RefreshCaption(int index)
