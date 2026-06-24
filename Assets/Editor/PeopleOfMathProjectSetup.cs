@@ -1031,7 +1031,8 @@ namespace PeopleOfMath.Editor
                     $"{DetailPrefabFolder}/DetailSection_PersonalLife.prefab"),
                 SaveDetailSectionPrefab(
                     BuildScrollTextSectionPrefab(ScrollDetailSectionKind.InterestingFacts),
-                    $"{DetailPrefabFolder}/DetailSection_InterestingFacts.prefab")
+                    $"{DetailPrefabFolder}/DetailSection_InterestingFacts.prefab"),
+                SaveDetailSectionPrefab(BuildExternalLinksSectionPrefab(), $"{DetailPrefabFolder}/DetailSection_ExternalLinks.prefab")
             };
         }
 
@@ -1097,6 +1098,66 @@ namespace PeopleOfMath.Editor
             so.FindProperty("datesText").objectReferenceValue = dates;
             so.ApplyModifiedPropertiesWithoutUndo();
             return root;
+        }
+
+        static GameObject BuildExternalLinksSectionPrefab()
+        {
+            var root = CreateStretchSectionRoot("DetailSection_ExternalLinks");
+            AddSectionVerticalLayout(root);
+
+            var row = new GameObject("LinkRow", typeof(RectTransform));
+            row.transform.SetParent(root.transform, false);
+            var rowLe = row.AddComponent<LayoutElement>();
+            rowLe.flexibleWidth = 1;
+            rowLe.minHeight = UiLayoutMetrics.ScaleDetailSize(80f);
+            rowLe.preferredHeight = UiLayoutMetrics.ScaleDetailSize(80f);
+
+            var hlg = row.AddComponent<HorizontalLayoutGroup>();
+            var gap = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailSectionSpacing);
+            hlg.spacing = gap;
+            hlg.childAlignment = TextAnchor.MiddleCenter;
+            hlg.childForceExpandWidth = true;
+            hlg.childForceExpandHeight = true;
+            hlg.childControlWidth = true;
+            hlg.childControlHeight = true;
+
+            var wikipediaButton = BuildExternalLinkButton(row.transform, "WikipediaButton", "Wikipedia");
+            var wikidataButton = BuildExternalLinkButton(row.transform, "WikidataButton", "Wikidata");
+
+            var section = root.AddComponent<ExternalLinksDetailSection>();
+            var so = new SerializedObject(section);
+            so.FindProperty("wikipediaButton").objectReferenceValue = wikipediaButton;
+            so.FindProperty("wikidataButton").objectReferenceValue = wikidataButton;
+            so.FindProperty("wikipediaLabel").objectReferenceValue =
+                wikipediaButton.transform.Find("Text")?.GetComponent<TMP_Text>();
+            so.FindProperty("wikidataLabel").objectReferenceValue =
+                wikidataButton.transform.Find("Text")?.GetComponent<TMP_Text>();
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return root;
+        }
+
+        static Button BuildExternalLinkButton(Transform parent, string name, string labelText)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+            go.transform.SetParent(parent, false);
+            var le = go.AddComponent<LayoutElement>();
+            le.flexibleWidth = 1;
+            le.minHeight = UiLayoutMetrics.ScaleDetailSize(72f);
+            le.preferredHeight = UiLayoutMetrics.ScaleDetailSize(72f);
+
+            var label = CreateTmpChild(
+                go.transform,
+                "Text",
+                15,
+                FontStyles.Normal,
+                UiButtonLayout.StandardLabelOffset);
+            UiButtonLayout.ConfigureStandardLabel(label);
+            label.GetComponent<TextMeshProUGUI>().text = labelText;
+            label.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+            UiStyleBuilder.ApplySecondaryButton(go);
+            UiButtonLayout.ConfigureStandardLabel(label);
+            return go.GetComponent<Button>();
         }
 
         static GameObject BuildLabeledTextSectionPrefab(LabeledDetailSectionKind kind)

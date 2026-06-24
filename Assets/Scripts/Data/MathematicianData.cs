@@ -73,5 +73,24 @@ namespace PeopleOfMath.Data
                 return attr;
             return entry.licenseShort ?? "";
         }
+
+        public string GetWikidataUrl() =>
+            string.IsNullOrWhiteSpace(wikidataId)
+                ? null
+                : $"https://www.wikidata.org/wiki/{wikidataId.Trim()}";
+
+        public string GetWikipediaUrl(bool english)
+        {
+            if (!english && !string.IsNullOrWhiteSpace(wikipediaUrlRu))
+                return wikipediaUrlRu;
+
+            if (!string.IsNullOrWhiteSpace(wikidataId))
+            {
+                var lang = english ? "en" : "ru";
+                return $"https://{lang}.wikipedia.org/wiki/Special:EntityPage/{wikidataId.Trim()}";
+            }
+
+            return string.IsNullOrWhiteSpace(wikipediaUrlRu) ? null : wikipediaUrlRu;
+        }
     }
 }

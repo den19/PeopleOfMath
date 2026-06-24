@@ -246,6 +246,18 @@ MonoBehaviour:
     m_Localized: No images available
     m_Metadata:
       m_Items: []
+  - m_Id: 7367335324147712
+    m_Localized: License
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7367335387062272
+    m_Localized: Source
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7367335387062273
+    m_Localized: No images available
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
