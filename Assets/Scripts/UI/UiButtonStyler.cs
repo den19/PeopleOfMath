@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,8 @@ namespace PeopleOfMath.UI
                     ApplySecondary(button);
                     break;
             }
+
+            ApplyLabelColor(button, style);
         }
 
         static void ApplyPrimary(Button button)
@@ -79,6 +82,23 @@ namespace PeopleOfMath.UI
         {
             var fill = button.transform.Find(FillChildName);
             return fill != null ? fill.GetComponent<Image>() : null;
+        }
+
+        static void ApplyLabelColor(Button button, UiButtonStyle style)
+        {
+            var color = style == UiButtonStyle.Primary
+                ? Color.white
+                : UiTheme.TextPrimary;
+
+            foreach (Transform child in button.transform)
+            {
+                if (child.name is GlowChildName or FillChildName)
+                    continue;
+
+                var tmp = child.GetComponent<TMP_Text>();
+                if (tmp != null)
+                    tmp.color = color;
+            }
         }
     }
 }

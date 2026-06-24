@@ -82,7 +82,7 @@ namespace PeopleOfMath.Editor
 
             ConfigureButton(root, fill.GetComponent<Image>());
             MoveLabelAboveFill(root.transform);
-            SetLabelColor(root.transform, UiTheme.TextPrimary);
+            SetLabelColor(root.transform, Color.white);
         }
 
         public static void ApplySecondaryButton(GameObject root)
