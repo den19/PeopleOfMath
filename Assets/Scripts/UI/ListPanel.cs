@@ -11,14 +11,24 @@ namespace PeopleOfMath.UI
     {
         const string ListItemResourceName = "MathematicianListItem";
 
+        enum ListMode
+        {
+            None,
+            Filter,
+            Search
+        }
+
         [SerializeField] NavigationController navigation;
         [SerializeField] MathematicianRepository repository;
         [SerializeField] Transform listContent;
         [SerializeField] MathematicianListItem itemPrefab;
         [SerializeField] GameObject emptyState;
 
+        ListMode _mode = ListMode.None;
         FilterKind _kind;
         string _key;
+        string _searchQuery;
+        int _lastResultCount;
 
         void Awake()
         {
@@ -28,9 +38,18 @@ namespace PeopleOfMath.UI
 
         public void BindFilter(FilterKind kind, string key)
         {
+            _mode = ListMode.Filter;
             _kind = kind;
             _key = key;
             Refresh();
+        }
+
+        public int BindSearch(string query)
+        {
+            _mode = ListMode.Search;
+            _searchQuery = query?.Trim() ?? "";
+            Refresh();
+            return _lastResultCount;
         }
 
         void OnEnable()
@@ -68,12 +87,25 @@ namespace PeopleOfMath.UI
             foreach (Transform child in listContent)
                 Destroy(child.gameObject);
 
-            if (repository == null || string.IsNullOrEmpty(_key))
+            if (repository == null)
                 return;
 
             var english = LocaleHelper.IsEnglish;
-            var results = FilterService.Filter(repository.All, _kind, _key, english);
+            var results = _mode switch
+            {
+                ListMode.Filter when !string.IsNullOrEmpty(_key) =>
+                    FilterService.Filter(repository.All, _kind, _key, english),
+                ListMode.Search when !string.IsNullOrWhiteSpace(_searchQuery) =>
+                    SearchService.Search(repository.All, _searchQuery, english),
+                _ => null
+            };
+
+            if (results == null)
+                return;
+
+            _lastResultCount = results.Count;
             emptyState?.SetActive(results.Count == 0);
+            UpdateEmptyStateMessage();
 
             if (itemPrefab == null)
             {
@@ -90,6 +122,19 @@ namespace PeopleOfMath.UI
             }
 
             GetComponent<FontSizeScope>()?.Apply();
+        }
+
+        void UpdateEmptyStateMessage()
+        {
+            if (emptyState == null)
+                return;
+
+            var text = emptyState.GetComponent<TMP_Text>();
+            if (text == null)
+                return;
+
+            var key = _mode == ListMode.Search ? "empty_search" : "empty_list";
+            text.text = LocalizationSettings.StringDatabase.GetLocalizedString("UI", key);
         }
     }
 }

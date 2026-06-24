@@ -147,15 +147,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 12797315407872
-    m_Localized: License
+    m_Localized: "Name, bio, branch\u2026"
     m_Metadata:
       m_Items: []
   - m_Id: 12797353156608
-    m_Localized: Source
+    m_Localized: 'Search: {0}'
     m_Metadata:
       m_Items: []
   - m_Id: 12797353156609
-    m_Localized: No images available
+    m_Localized: '{0} found'
     m_Metadata:
       m_Items: []
   - m_Id: 745777533018112
@@ -163,7 +163,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 745777570766848
-    m_Localized: License
+    m_Localized: No results
     m_Metadata:
       m_Items: []
   - m_Id: 745777570766849

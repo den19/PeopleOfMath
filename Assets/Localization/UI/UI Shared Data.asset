@@ -148,19 +148,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 12797315407872
-    m_Key: New Entry 16
+    m_Key: search_placeholder
     m_Metadata:
       m_Items: []
   - m_Id: 12797353156608
-    m_Key: New Entry 17
+    m_Key: search_results_title
     m_Metadata:
       m_Items: []
   - m_Id: 12797353156609
-    m_Key: New Entry 18
+    m_Key: search_results_count
     m_Metadata:
       m_Items: []
   - m_Id: 745777570766848
-    m_Key: New Entry 19
+    m_Key: empty_search
     m_Metadata:
       m_Items: []
   - m_Id: 745777570766849

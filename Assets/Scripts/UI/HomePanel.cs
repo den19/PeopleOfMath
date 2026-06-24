@@ -12,6 +12,7 @@ namespace PeopleOfMath.UI
     public class HomePanel : MonoBehaviour
     {
         [SerializeField] NavigationController navigation;
+        [SerializeField] SearchBar searchBar;
         [SerializeField] Transform centuryContainer;
         [SerializeField] Transform countryContainer;
         [SerializeField] Transform branchContainer;

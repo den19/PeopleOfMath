@@ -78,7 +78,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.388, g: 0.384, b: 0.478, a: 1}
+  m_fontColor: {r: 0.557, g: 0.557, b: 0.576, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -202,7 +202,6 @@ GameObject:
   - component: {fileID: 9190006951756368927}
   - component: {fileID: 4323744251458095946}
   - component: {fileID: 4306646774544667903}
-  - component: {fileID: 9182736450192837467}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -308,19 +307,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!114 &9182736450192837467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4872159303195441342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 0
 --- !u!1 &5900100223905397639
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.04}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.35}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -629,7 +615,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.01}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.01}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -735,7 +721,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.11, g: 0.106, b: 0.133, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

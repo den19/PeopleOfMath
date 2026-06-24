@@ -49,6 +49,50 @@ namespace PeopleOfMath.Editor
             Run(manual: true);
         }
 
+        [MenuItem("PeopleOfMath/Patch Search Support")]
+        public static void PatchSearchSupport()
+        {
+            if (DeferUntilEditMode(PatchSearchSupport))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var loc = SetupLocalization();
+            AssetDatabase.SaveAssets();
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var home = GameObject.Find("HomePanel");
+            var nav = Object.FindFirstObjectByType<NavigationController>();
+
+            if (home != null && nav != null && home.transform.Find("SearchBar") == null)
+            {
+                var searchBar = CreateSearchBar(home.transform, nav, loc);
+                var scroll = home.transform.Find("HomeScroll")?.GetComponent<ScrollRect>();
+                if (scroll != null)
+                    PinHomeSearchAndScroll(searchBar, scroll);
+
+                var homePanel = home.GetComponent<HomePanel>();
+                if (homePanel != null)
+                {
+                    var so = new SerializedObject(homePanel);
+                    so.FindProperty("searchBar").objectReferenceValue = searchBar.GetComponent<SearchBar>();
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+
+            if (home != null)
+                HomeListPanelLayout.ApplyToPanel(home);
+
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/SearchBar.prefab", UiCardVariant.Filter);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Search support patched in Main scene.");
+        }
+
         [MenuItem("PeopleOfMath/Patch Theme Support")]
         public static void PatchThemeSupport()
         {
@@ -292,6 +336,10 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "btn_theme_dark", "Тёмная", "Dark");
             AddUiEntry(collection, "btn_theme_light", "Светлая", "Light");
             AddUiEntry(collection, "empty_list", "Нет математиков по выбранному фильтру", "No mathematicians for this filter");
+            AddUiEntry(collection, "search_placeholder", "Имя, биография, раздел…", "Name, bio, branch…");
+            AddUiEntry(collection, "search_results_title", "Поиск: {0}", "Search: {0}");
+            AddUiEntry(collection, "search_results_count", "{0} найдено", "{0} found");
+            AddUiEntry(collection, "empty_search", "Ничего не найдено", "No results");
             AddUiEntry(collection, "gallery_license", "Лицензия", "License");
             AddUiEntry(collection, "gallery_source", "Источник", "Source");
             AddUiEntry(collection, "gallery_no_images", "Изображения недоступны", "No images available");
@@ -778,7 +826,9 @@ namespace PeopleOfMath.Editor
         {
             var panel = CreatePanel(parent, "HomePanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             AddHomeDecorGlow(panel.transform);
+            var searchBar = CreateSearchBar(panel.transform, nav, loc);
             var scroll = CreateScrollView(panel.transform, "HomeScroll");
+            PinHomeSearchAndScroll(searchBar, scroll);
             var content = scroll.content;
 
             AddSectionLabel(content, loc.UiCollection, "section_century");
@@ -792,6 +842,7 @@ namespace PeopleOfMath.Editor
             var filterPrefab = CreateFilterButtonPrefab();
             var so = new SerializedObject(home);
             so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("searchBar").objectReferenceValue = searchBar.GetComponent<SearchBar>();
             so.FindProperty("centuryContainer").objectReferenceValue = centuryBox;
             so.FindProperty("countryContainer").objectReferenceValue = countryBox;
             so.FindProperty("branchContainer").objectReferenceValue = branchBox;
@@ -818,6 +869,185 @@ namespace PeopleOfMath.Editor
             image.sprite = UiSpriteFactory.RoundedRect;
             image.type = Image.Type.Sliced;
             image.color = new Color(0.749f, 0.353f, 0.949f, 0.12f);
+        }
+
+        static GameObject CreateSearchBar(Transform parent, NavigationController nav, LocalizationRefs loc)
+        {
+            var path = $"{PrefabFolder}/SearchBar.prefab";
+            var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (existing != null)
+            {
+                var instance = (GameObject)PrefabUtility.InstantiatePrefab(existing, parent);
+                WireSearchBar(instance, nav);
+                return instance;
+            }
+
+            var go = BuildSearchBarRoot();
+            ConfigureSearchBar(go);
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
+            Object.DestroyImmediate(go);
+            var placed = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            WireSearchBar(placed, nav);
+            return placed;
+        }
+
+        static void WireSearchBar(GameObject go, NavigationController nav)
+        {
+            var searchBar = go.GetComponent<SearchBar>();
+            if (searchBar == null)
+                return;
+
+            var so = new SerializedObject(searchBar);
+            so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("inputField").objectReferenceValue = go.GetComponentInChildren<TMP_InputField>(true);
+            so.FindProperty("clearButton").objectReferenceValue = go.transform.Find("ClearButton")?.GetComponent<Button>();
+            so.FindProperty("themedCard").objectReferenceValue = go.GetComponent<UiThemedCard>();
+            so.FindProperty("glowImage").objectReferenceValue = go.transform.Find("Glow")?.GetComponent<Image>();
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static GameObject BuildSearchBarRoot()
+        {
+            var go = new GameObject("SearchBar", typeof(RectTransform), typeof(Image), typeof(SearchBar), typeof(LayoutElement));
+            var le = go.GetComponent<LayoutElement>();
+            le.preferredHeight = UiLayoutMetrics.SearchBarHeight;
+            le.minHeight = UiLayoutMetrics.SearchBarHeight;
+
+            var icon = CreateTmpChild(
+                go.transform,
+                "Icon",
+                UiLayoutMetrics.SearchBarBaseFontSize,
+                FontStyles.Normal,
+                new Vector2(UiLayoutMetrics.SearchBarIconInset, -UiLayoutMetrics.SearchBarHeight * 0.5f));
+            var iconRt = icon.GetComponent<RectTransform>();
+            iconRt.anchorMin = new Vector2(0, 0.5f);
+            iconRt.anchorMax = new Vector2(0, 0.5f);
+            iconRt.pivot = new Vector2(0, 0.5f);
+            iconRt.sizeDelta = new Vector2(48, 48);
+            var iconTmp = icon.GetComponent<TextMeshProUGUI>();
+            iconTmp.text = "\u2315";
+            iconTmp.alignment = TextAlignmentOptions.Center;
+            iconTmp.color = UiTheme.TextSecondary;
+
+            var inputRoot = new GameObject("InputArea", typeof(RectTransform));
+            inputRoot.transform.SetParent(go.transform, false);
+            var inputRt = inputRoot.GetComponent<RectTransform>();
+            StretchToParent(inputRt);
+            inputRt.offsetMin = new Vector2(UiLayoutMetrics.SearchBarIconInset + 40f, 8f);
+            inputRt.offsetMax = new Vector2(-UiLayoutMetrics.SearchBarClearButtonWidth, -8f);
+
+            var textArea = new GameObject("TextArea", typeof(RectTransform), typeof(RectMask2D));
+            textArea.transform.SetParent(inputRoot.transform, false);
+            StretchToParent(textArea.GetComponent<RectTransform>());
+
+            var placeholder = CreateTmpChild(
+                textArea.transform,
+                "Placeholder",
+                UiLayoutMetrics.SearchBarBaseFontSize,
+                FontStyles.Italic,
+                Vector2.zero);
+            StretchToParent(placeholder.GetComponent<RectTransform>());
+            var placeholderTmp = placeholder.GetComponent<TextMeshProUGUI>();
+            placeholderTmp.color = UiTheme.TextSecondary;
+            placeholderTmp.alignment = TextAlignmentOptions.MidlineLeft;
+
+            var text = CreateTmpChild(
+                textArea.transform,
+                "Text",
+                UiLayoutMetrics.SearchBarBaseFontSize,
+                FontStyles.Normal,
+                Vector2.zero);
+            StretchToParent(text.GetComponent<RectTransform>());
+            var textTmp = text.GetComponent<TextMeshProUGUI>();
+            textTmp.alignment = TextAlignmentOptions.MidlineLeft;
+
+            var inputField = inputRoot.AddComponent<TMP_InputField>();
+            inputField.textViewport = textArea.GetComponent<RectTransform>();
+            inputField.textComponent = textTmp;
+            inputField.placeholder = placeholderTmp;
+            inputField.lineType = TMP_InputField.LineType.SingleLine;
+            inputField.characterValidation = TMP_InputField.CharacterValidation.None;
+
+            var clearGo = new GameObject("ClearButton", typeof(RectTransform), typeof(Image), typeof(Button));
+            clearGo.transform.SetParent(go.transform, false);
+            var clearRt = clearGo.GetComponent<RectTransform>();
+            clearRt.anchorMin = new Vector2(1, 0.5f);
+            clearRt.anchorMax = new Vector2(1, 0.5f);
+            clearRt.pivot = new Vector2(1, 0.5f);
+            clearRt.anchoredPosition = new Vector2(-12f, 0f);
+            clearRt.sizeDelta = new Vector2(UiLayoutMetrics.SearchBarClearButtonWidth, UiLayoutMetrics.SearchBarHeight - 16f);
+            clearGo.GetComponent<Image>().color = Color.clear;
+            var clearLabel = CreateTmpChild(
+                clearGo.transform,
+                "Label",
+                UiLayoutMetrics.SearchBarBaseFontSize,
+                FontStyles.Bold,
+                Vector2.zero);
+            StretchToParent(clearLabel.GetComponent<RectTransform>());
+            var clearTmp = clearLabel.GetComponent<TextMeshProUGUI>();
+            clearTmp.text = "\u00d7";
+            clearTmp.alignment = TextAlignmentOptions.Center;
+            clearTmp.color = UiTheme.TextSecondary;
+            clearGo.SetActive(false);
+
+            return go;
+        }
+
+        public static void ConfigureSearchBar(GameObject go)
+        {
+            ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.SearchBarHeight);
+
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.preferredHeight = UiLayoutMetrics.SearchBarHeight;
+            le.minHeight = UiLayoutMetrics.SearchBarHeight;
+            le.flexibleWidth = 1f;
+
+            var inputField = go.GetComponentInChildren<TMP_InputField>(true);
+            if (inputField != null)
+            {
+                if (inputField.textComponent != null)
+                {
+                    inputField.textComponent.fontSize = UiLayoutMetrics.SearchBarFontSize;
+                    inputField.textComponent.color = UiTheme.TextPrimary;
+                }
+
+                if (inputField.placeholder is TextMeshProUGUI placeholder)
+                {
+                    placeholder.fontSize = UiLayoutMetrics.SearchBarFontSize;
+                    placeholder.color = UiTheme.TextSecondary;
+                }
+            }
+
+            var icon = go.transform.Find("Icon")?.GetComponent<TextMeshProUGUI>();
+            if (icon != null)
+            {
+                icon.fontSize = UiLayoutMetrics.SearchBarFontSize;
+                icon.color = UiTheme.TextSecondary;
+            }
+
+            UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.Filter);
+            EnsureThemedCard(go, UiCardVariant.Filter);
+            EditorUtility.SetDirty(go);
+        }
+
+        static void PinHomeSearchAndScroll(GameObject searchBar, ScrollRect scroll)
+        {
+            var searchRt = searchBar.GetComponent<RectTransform>();
+            searchRt.anchorMin = new Vector2(0, 1);
+            searchRt.anchorMax = new Vector2(1, 1);
+            searchRt.pivot = new Vector2(0.5f, 1);
+            searchRt.anchoredPosition = new Vector2(0, -UiLayoutMetrics.SearchBarMarginTop);
+            searchRt.sizeDelta = new Vector2(
+                -(UiLayoutMetrics.BrowseScrollPaddingLeft + UiLayoutMetrics.BrowseScrollPaddingRight),
+                UiLayoutMetrics.SearchBarHeight);
+            searchRt.offsetMin = new Vector2(UiLayoutMetrics.BrowseScrollPaddingLeft, searchRt.offsetMin.y);
+            searchRt.offsetMax = new Vector2(-UiLayoutMetrics.BrowseScrollPaddingRight, -UiLayoutMetrics.SearchBarMarginTop);
+
+            var scrollRt = scroll.GetComponent<RectTransform>();
+            scrollRt.anchorMin = Vector2.zero;
+            scrollRt.anchorMax = Vector2.one;
+            scrollRt.offsetMin = Vector2.zero;
+            scrollRt.offsetMax = new Vector2(0, -UiLayoutMetrics.SearchBarTotalTopInset);
         }
 
         public static void ConfigureFilterButton(GameObject go)
@@ -1819,6 +2049,7 @@ namespace PeopleOfMath.Editor
             }
 
             EnsureThemedCardOnPrefab($"{PrefabFolder}/FilterButton.prefab", UiCardVariant.Filter);
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/SearchBar.prefab", UiCardVariant.Filter);
             EnsureThemedCardOnPrefab($"{PrefabFolder}/MathematicianListItem.prefab", UiCardVariant.ListItem);
             EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
         }

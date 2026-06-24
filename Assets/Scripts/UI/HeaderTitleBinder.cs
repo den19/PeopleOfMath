@@ -29,6 +29,8 @@ namespace PeopleOfMath.UI
 
         FilterKind? _pendingKind;
         string _pendingKey;
+        string _pendingSearchQuery;
+        int _pendingSearchCount;
         TitleMode _mode = TitleMode.Home;
 
         enum TitleMode
@@ -36,6 +38,7 @@ namespace PeopleOfMath.UI
             Home,
             Settings,
             Filter,
+            Search,
             Detail
         }
 
@@ -75,6 +78,18 @@ namespace PeopleOfMath.UI
             RefreshFilterTitle();
         }
 
+        public void SetSearchTitle(string query, int count)
+        {
+            _mode = TitleMode.Search;
+            _pendingSearchQuery = query;
+            _pendingSearchCount = count;
+            homeTitleEvent?.gameObject.SetActive(false);
+            settingsTitleEvent?.gameObject.SetActive(false);
+            if (titleText != null)
+                titleText.gameObject.SetActive(true);
+            RefreshSearchTitle();
+        }
+
         public void SetDetailTitle()
         {
             _mode = TitleMode.Detail;
@@ -112,6 +127,10 @@ namespace PeopleOfMath.UI
                     if (_pendingKind.HasValue && _pendingKey != null)
                         SetFilterTitle(_pendingKind.Value, _pendingKey);
                     break;
+                case TitleMode.Search:
+                    if (_pendingSearchQuery != null)
+                        SetSearchTitle(_pendingSearchQuery, _pendingSearchCount);
+                    break;
                 case TitleMode.Detail:
                     SetDetailTitle();
                     break;
@@ -133,6 +152,16 @@ namespace PeopleOfMath.UI
             };
 
             titleText.text = label;
+        }
+
+        void RefreshSearchTitle()
+        {
+            if (titleText == null || _pendingSearchQuery == null)
+                return;
+
+            var titleFmt = LocalizationSettings.StringDatabase.GetLocalizedString("UI", "search_results_title");
+            var countFmt = LocalizationSettings.StringDatabase.GetLocalizedString("UI", "search_results_count");
+            titleText.text = $"{string.Format(titleFmt, _pendingSearchQuery)} · {string.Format(countFmt, _pendingSearchCount)}";
         }
     }
 }

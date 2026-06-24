@@ -10,6 +10,7 @@ namespace PeopleOfMath.Editor
         static readonly string[] PrefabPaths =
         {
             "Assets/Prefabs/UI/FilterButton.prefab",
+            "Assets/Prefabs/UI/SearchBar.prefab",
             "Assets/Prefabs/UI/MathematicianListItem.prefab",
             "Assets/Resources/MathematicianListItem.prefab"
         };
@@ -43,6 +44,8 @@ namespace PeopleOfMath.Editor
             {
                 if (path.EndsWith("FilterButton.prefab", System.StringComparison.OrdinalIgnoreCase))
                     PeopleOfMathProjectSetup.ConfigureFilterButton(root);
+                else if (path.EndsWith("SearchBar.prefab", System.StringComparison.OrdinalIgnoreCase))
+                    PeopleOfMathProjectSetup.ConfigureSearchBar(root);
                 else
                     PeopleOfMathProjectSetup.ConfigureListItem(root);
 

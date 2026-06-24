@@ -28,6 +28,8 @@ namespace PeopleOfMath.Core
         AppScreen _screen = AppScreen.Home;
         FilterKind _filterKind;
         string _filterKey;
+        string _searchQuery;
+        bool _listFromSearch;
         string _selectedMathematicianId;
 
         public AppScreen CurrentScreen => _screen;
@@ -62,6 +64,7 @@ namespace PeopleOfMath.Core
 
         public void ShowHome()
         {
+            _listFromSearch = false;
             _screen = AppScreen.Home;
             HideAllPanels();
             homePanel.gameObject.SetActive(true);
@@ -70,14 +73,34 @@ namespace PeopleOfMath.Core
             RefreshTabStyles();
         }
 
+        public void ShowSearch(string query)
+        {
+            _searchQuery = query?.Trim() ?? "";
+            if (string.IsNullOrEmpty(_searchQuery))
+            {
+                ShowHome();
+                return;
+            }
+
+            _listFromSearch = true;
+            _screen = AppScreen.List;
+            HideAllPanels();
+            var count = listPanel.BindSearch(_searchQuery);
+            listPanel.gameObject.SetActive(true);
+            headerBackButton.SetActive(true);
+            headerTitle?.SetSearchTitle(_searchQuery, count);
+            RefreshTabStyles();
+        }
+
         public void ShowList(FilterKind kind, string key)
         {
+            _listFromSearch = false;
             _filterKind = kind;
             _filterKey = key;
             _screen = AppScreen.List;
             HideAllPanels();
-            listPanel.gameObject.SetActive(true);
             listPanel.BindFilter(kind, key);
+            listPanel.gameObject.SetActive(true);
             headerBackButton.SetActive(true);
             headerTitle?.SetFilterTitle(kind, key);
             RefreshTabStyles();
@@ -122,7 +145,10 @@ namespace PeopleOfMath.Core
                 case AppScreen.Detail:
                     if (detailPanel != null && detailPanel.TryGoBack())
                         break;
-                    ShowList(_filterKind, _filterKey);
+                    if (_listFromSearch)
+                        ShowSearch(_searchQuery);
+                    else
+                        ShowList(_filterKind, _filterKey);
                     break;
             }
         }

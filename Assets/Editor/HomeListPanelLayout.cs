@@ -77,6 +77,22 @@ namespace PeopleOfMath.Editor
             EditorUtility.SetDirty(go);
         }
 
+        public static void ConfigureSearchBar(GameObject go)
+        {
+            var rt = go.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.sizeDelta = new Vector2(rt.sizeDelta.x, UiLayoutMetrics.SearchBarHeight);
+
+            var le = go.GetComponent<LayoutElement>();
+            if (le != null)
+            {
+                le.preferredHeight = UiLayoutMetrics.SearchBarHeight;
+                le.minHeight = UiLayoutMetrics.SearchBarHeight;
+            }
+
+            PeopleOfMathProjectSetup.ConfigureSearchBar(go);
+        }
+
         public static void ApplyToPanel(GameObject panel)
         {
             if (panel == null)
@@ -107,6 +123,36 @@ namespace PeopleOfMath.Editor
                 else if (name == "Empty")
                     ConfigureEmptyState(tmp.gameObject);
             }
+
+            var searchBar = panel.transform.Find("SearchBar");
+            if (searchBar != null)
+                ConfigureSearchBar(searchBar.gameObject);
+
+            var homeScroll = panel.transform.Find("HomeScroll")?.GetComponent<ScrollRect>();
+            if (searchBar != null && homeScroll != null)
+                PinHomeSearchAndScroll(searchBar.gameObject, homeScroll);
+        }
+
+        static void PinHomeSearchAndScroll(GameObject searchBar, ScrollRect scroll)
+        {
+            var searchRt = searchBar.GetComponent<RectTransform>();
+            searchRt.anchorMin = new Vector2(0, 1);
+            searchRt.anchorMax = new Vector2(1, 1);
+            searchRt.pivot = new Vector2(0.5f, 1);
+            searchRt.anchoredPosition = new Vector2(0, -UiLayoutMetrics.SearchBarMarginTop);
+            searchRt.sizeDelta = new Vector2(
+                -(UiLayoutMetrics.BrowseScrollPaddingLeft + UiLayoutMetrics.BrowseScrollPaddingRight),
+                UiLayoutMetrics.SearchBarHeight);
+            searchRt.offsetMin = new Vector2(UiLayoutMetrics.BrowseScrollPaddingLeft, searchRt.offsetMin.y);
+            searchRt.offsetMax = new Vector2(-UiLayoutMetrics.BrowseScrollPaddingRight, -UiLayoutMetrics.SearchBarMarginTop);
+
+            var scrollRt = scroll.GetComponent<RectTransform>();
+            scrollRt.anchorMin = Vector2.zero;
+            scrollRt.anchorMax = Vector2.one;
+            scrollRt.offsetMin = Vector2.zero;
+            scrollRt.offsetMax = new Vector2(0, -UiLayoutMetrics.SearchBarTotalTopInset);
+            EditorUtility.SetDirty(scrollRt);
+            EditorUtility.SetDirty(searchRt);
         }
     }
 }

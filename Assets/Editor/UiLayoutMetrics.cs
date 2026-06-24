@@ -20,6 +20,18 @@ namespace PeopleOfMath.Editor
             FilterButtonMetrics.Height - FilterButtonMetrics.VerticalPadding;
         public static Vector2 FilterButtonLabelOffset => FilterButtonMetrics.LabelOffset;
 
+        public const float SearchBarBaseHeight = 56f;
+        public const int SearchBarMarginTop = 24;
+        public const int SearchBarMarginBottom = 16;
+        public const float SearchBarBaseFontSize = 16f;
+        public const float SearchBarIconInset = 28f;
+        public const float SearchBarClearButtonWidth = 72f;
+
+        public static float SearchBarHeight => ScaleFont(SearchBarBaseHeight) * 2f;
+        public static float SearchBarFontSize => ScaleFont(SearchBarBaseFontSize) * 2f;
+        public static float SearchBarTotalTopInset =>
+            SearchBarMarginTop + SearchBarHeight + SearchBarMarginBottom;
+
         public const int BrowseScrollPaddingLeft = 32;
         public const int BrowseScrollPaddingRight = 32;
         public const int BrowseScrollPaddingTop = 32;
