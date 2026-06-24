@@ -38,7 +38,6 @@ namespace PeopleOfMath.Core
         {
             HideAllPanels();
             WireHeaderBackButton();
-            UiButtonStyler.Initialize(browseTab, settingsTab);
         }
 
         void WireHeaderBackButton()

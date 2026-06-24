@@ -21,8 +21,6 @@ namespace PeopleOfMath.UI
 
         void Awake()
         {
-            UiButtonStyler.Initialize(fontNormalButton, fontLargeButton);
-
             BindButton(russianButton, SelectRussian);
             BindButton(englishButton, SelectEnglish);
             BindButton(fontNormalButton, SelectFontNormal);
