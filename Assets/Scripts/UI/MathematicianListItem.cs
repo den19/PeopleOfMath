@@ -17,6 +17,7 @@ namespace PeopleOfMath.UI
         [SerializeField] Image portraitImage;
         [SerializeField] Button button;
         [SerializeField] ShareIconButton shareButton;
+        [SerializeField] FavoriteIconButton favoriteButton;
 
         string _id;
         Action<string> _onSelected;
@@ -24,6 +25,24 @@ namespace PeopleOfMath.UI
         Coroutine _layoutRefreshRoutine;
 
         void Awake() => ConfigureBioText();
+
+        void OnEnable()
+        {
+            FavoritesHelper.FavoritesChanged += OnFavoritesChanged;
+        }
+
+        void OnDisable()
+        {
+            FavoritesHelper.FavoritesChanged -= OnFavoritesChanged;
+        }
+
+        void OnFavoritesChanged()
+        {
+            if (string.IsNullOrEmpty(_id) || favoriteButton == null)
+                return;
+
+            favoriteButton.SetFavorite(FavoritesHelper.IsFavorite(_id));
+        }
 
         void OnValidate() => ConfigureBioText();
 
@@ -49,6 +68,7 @@ namespace PeopleOfMath.UI
             bioText.text = data.GetShortBio(english);
             BindPortrait(data);
             BindShareButton(data, english);
+            BindFavoriteButton();
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => _onSelected?.Invoke(_id));
             ScheduleLayoutRefresh();
@@ -68,6 +88,20 @@ namespace PeopleOfMath.UI
             {
                 var text = MathematicianShareText.BuildListShare(_data, LocaleHelper.IsEnglish);
                 NativeShare.ShareText(text);
+            });
+        }
+
+        void BindFavoriteButton()
+        {
+            if (favoriteButton == null)
+                return;
+
+            favoriteButton.SetVisible(true);
+            favoriteButton.SetFavorite(FavoritesHelper.IsFavorite(_id));
+            favoriteButton.SetClickHandler(() =>
+            {
+                FavoritesHelper.Toggle(_id);
+                favoriteButton.SetFavorite(FavoritesHelper.IsFavorite(_id));
             });
         }
 

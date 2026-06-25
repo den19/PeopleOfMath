@@ -428,6 +428,7 @@ namespace PeopleOfMath.Editor
             public LocalizedString HomeTitle;
             public LocalizedString IndexTitle;
             public LocalizedString SettingsTitle;
+            public LocalizedString FavoritesTitle;
             public LocalizedString DetailTitle;
         }
 
@@ -494,6 +495,11 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "gallery_source", "Источник", "Source");
             AddUiEntry(collection, "gallery_no_images", "Изображения недоступны", "No images available");
             AddUiEntry(collection, "share_chooser_title", "Поделиться", "Share");
+            AddUiEntry(collection, "title_favorites", "Избранное", "Favorites");
+            AddUiEntry(collection, "btn_favorites", "Избранное", "Favorites");
+            AddUiEntry(collection, "empty_favorites",
+                "Пока нет избранных математиков. Нажмите ♥ на карточке, чтобы добавить.",
+                "No favorites yet. Tap ♥ on a card to add one.");
 
             if (!LocalizationEditorSettings.GetLocales().Contains(ru))
                 LocalizationEditorSettings.AddLocale(ru);
@@ -518,6 +524,7 @@ namespace PeopleOfMath.Editor
                 HomeTitle = MakeLocalized(collection, "title_home"),
                 IndexTitle = MakeLocalized(collection, "title_index"),
                 SettingsTitle = MakeLocalized(collection, "title_settings"),
+                FavoritesTitle = MakeLocalized(collection, "title_favorites"),
                 DetailTitle = MakeLocalized(collection, "title_detail"),
             };
         }
@@ -644,6 +651,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("portraitImage").objectReferenceValue = root.transform.Find("Portrait").GetComponent<Image>();
             so.FindProperty("button").objectReferenceValue = root.GetComponent<Button>();
             so.FindProperty("shareButton").objectReferenceValue = ConfigureShareButton(root.transform);
+            so.FindProperty("favoriteButton").objectReferenceValue = ConfigureFavoriteButton(root.transform);
             so.ApplyModifiedPropertiesWithoutUndo();
             return root;
         }
@@ -685,6 +693,19 @@ namespace PeopleOfMath.Editor
             ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.ListItemRowHeight);
             EnsureThemedCard(go, UiCardVariant.ListItem);
             ConfigureListItemShareButton(go);
+            ConfigureListItemFavoriteButton(go);
+        }
+
+        static void ConfigureListItemFavoriteButton(GameObject root)
+        {
+            var favoriteButton = ConfigureFavoriteButton(root.transform);
+            var item = root.GetComponent<MathematicianListItem>();
+            if (item == null)
+                return;
+
+            var so = new SerializedObject(item);
+            so.FindProperty("favoriteButton").objectReferenceValue = favoriteButton;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static void ConfigureListItemShareButton(GameObject root)
@@ -757,6 +778,69 @@ namespace PeopleOfMath.Editor
             so.FindProperty("iconImage").objectReferenceValue = iconGo.GetComponent<Image>();
             so.ApplyModifiedPropertiesWithoutUndo();
             return shareButton;
+        }
+
+        public static FavoriteIconButton ConfigureFavoriteButton(Transform parent, Vector2? anchoredPosition = null)
+        {
+            var buttonSize = UiLayoutMetrics.SearchBarClearButtonWidth;
+            var shareOffset = 12f;
+            var position = anchoredPosition ?? new Vector2(
+                -shareOffset - buttonSize - ListItemLayoutMetrics.ActionButtonGap,
+                -shareOffset);
+
+            var existing = parent.Find("FavoriteButton");
+            GameObject favoriteGo;
+            if (existing != null)
+                favoriteGo = existing.gameObject;
+            else
+            {
+                favoriteGo = new GameObject(
+                    "FavoriteButton",
+                    typeof(RectTransform),
+                    typeof(Image),
+                    typeof(Button),
+                    typeof(FavoriteIconButton));
+                favoriteGo.transform.SetParent(parent, false);
+            }
+
+            favoriteGo.transform.SetAsLastSibling();
+
+            var rt = favoriteGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(1f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot = new Vector2(1f, 1f);
+            rt.anchoredPosition = position;
+            rt.sizeDelta = new Vector2(buttonSize, buttonSize);
+
+            var iconTransform = favoriteGo.transform.Find("Icon");
+            GameObject iconGo;
+            if (iconTransform == null)
+            {
+                iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+                iconGo.transform.SetParent(favoriteGo.transform, false);
+            }
+            else
+            {
+                iconGo = iconTransform.gameObject;
+            }
+
+            var iconRt = iconGo.GetComponent<RectTransform>();
+            StretchToParent(iconRt);
+            iconRt.offsetMin = new Vector2(8f, 8f);
+            iconRt.offsetMax = new Vector2(-8f, -8f);
+
+            var layoutElement = favoriteGo.GetComponent<LayoutElement>() ?? favoriteGo.AddComponent<LayoutElement>();
+            layoutElement.ignoreLayout = true;
+            layoutElement.minWidth = buttonSize;
+            layoutElement.minHeight = buttonSize;
+            layoutElement.preferredWidth = buttonSize;
+            layoutElement.preferredHeight = buttonSize;
+
+            var favoriteButton = favoriteGo.GetComponent<FavoriteIconButton>();
+            var so = new SerializedObject(favoriteButton);
+            so.FindProperty("iconImage").objectReferenceValue = iconGo.GetComponent<Image>();
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return favoriteButton;
         }
 
         static void CreateListItemPortrait(GameObject root)
@@ -895,12 +979,13 @@ namespace PeopleOfMath.Editor
             var home = CreateHomePanel(content.transform, navigation, loc);
             var index = CreateIndexPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var list = CreateListPanel(content.transform, navigation, repository, listItemPrefab, loc);
+            var favorites = CreateFavoritesPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var headerBinder = header.root.GetComponent<HeaderTitleBinder>();
             var detail = CreateDetailPanel(content.transform, repository, navigation, headerBinder, loc);
             var settings = CreateSettingsPanel(content.transform, loc);
             var bottom = CreateBottomBar(canvasGo.transform, navigation, loc);
 
-            WireNavigation(navigation, home, index, list, detail, settings, header.backButton, headerBinder, bottom);
+            WireNavigation(navigation, home, index, list, favorites, detail, settings, header.backButton, headerBinder, bottom);
             WireBootstrap(bootstrap, navigation);
             WireBackHandler(app.GetComponent<BackButtonHandler>(), navigation);
             WireThemeScope(canvasGo, cam, navigation, settings, detail);
@@ -939,6 +1024,8 @@ namespace PeopleOfMath.Editor
             settingsTitle.SetActive(false);
             var indexTitle = CreateLocalizedTitle(header.transform, "IndexTitle", loc.IndexTitle);
             indexTitle.SetActive(false);
+            var favoritesTitle = CreateLocalizedTitle(header.transform, "FavoritesTitle", loc.FavoritesTitle);
+            favoritesTitle.SetActive(false);
 
             var plainTitle = CreateTmpChild(header.transform, "PlainTitle", 22, FontStyles.Bold, new Vector2(180, -50));
             plainTitle.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, 40);
@@ -955,6 +1042,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("homeTitleEvent").objectReferenceValue = homeTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("indexTitleEvent").objectReferenceValue = indexTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("settingsTitleEvent").objectReferenceValue = settingsTitle.GetComponent<LocalizeStringEvent>();
+            so.FindProperty("favoritesTitleEvent").objectReferenceValue = favoritesTitle.GetComponent<LocalizeStringEvent>();
             AssignLocalized(so.FindProperty("detailTitle"), loc.DetailTitle);
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -1049,7 +1137,7 @@ namespace PeopleOfMath.Editor
 
         static GameObject CreateContentArea(Transform canvas)
         {
-            return CreatePanel(canvas, "ContentArea", new Vector2(0, 0), new Vector2(1, 1), new Vector2(0, 140), new Vector2(0, -120));
+            return CreatePanel(canvas, "ContentArea", new Vector2(0, 0), new Vector2(1, 1), new Vector2(0, 220), new Vector2(0, -120));
         }
 
         static GameObject CreateHomePanel(Transform parent, NavigationController nav, LocalizationRefs loc)
@@ -1835,6 +1923,38 @@ namespace PeopleOfMath.Editor
             return panel;
         }
 
+        static GameObject CreateFavoritesPanel(
+            Transform parent,
+            NavigationController nav,
+            MathematicianRepository repo,
+            MathematicianListItem prefab,
+            LocalizationRefs loc)
+        {
+            var panel = CreatePanel(parent, "FavoritesPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            panel.SetActive(false);
+            panel.AddComponent<FontSizeScope>();
+            var scroll = CreateScrollView(panel.transform, "ListScroll");
+            var empty = CreateTmpChild(panel.transform, "Empty", UiLayoutMetrics.EmptyStateBaseFontSize, FontStyles.Italic, UiLayoutMetrics.EmptyStatePosition);
+            HomeListPanelLayout.ConfigureEmptyState(empty);
+            empty.SetActive(false);
+            var lse = empty.AddComponent<LocalizeStringEvent>();
+            var soLse = new SerializedObject(lse);
+            AssignLocalized(soLse.FindProperty("m_StringReference"), MakeLocalized(loc.UiCollection, "empty_favorites"));
+            soLse.ApplyModifiedPropertiesWithoutUndo();
+
+            var favorites = panel.AddComponent<FavoritesPanel>();
+            var prefabRef = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab") ?? prefab;
+            var so = new SerializedObject(favorites);
+            so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("repository").objectReferenceValue = repo;
+            so.FindProperty("listContent").objectReferenceValue = scroll.content;
+            so.FindProperty("itemPrefab").objectReferenceValue = prefabRef;
+            so.FindProperty("emptyState").objectReferenceValue = empty;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return panel;
+        }
+
         static GameObject CreateIndexPanel(
             Transform parent,
             NavigationController nav,
@@ -2241,6 +2361,7 @@ namespace PeopleOfMath.Editor
             public Button browseTab;
             public Button indexTab;
             public Button settingsTab;
+            public Button favoritesButton;
         }
 
         static BottomBarResult CreateBottomBar(Transform canvas, NavigationController nav, LocalizationRefs loc)
@@ -2254,14 +2375,17 @@ namespace PeopleOfMath.Editor
             var browse = CreateSceneButton(bar.transform, UiButtonLayout.BottomBrowse, loc.UiCollection);
             var index = CreateSceneButton(bar.transform, UiButtonLayout.BottomIndex, loc.UiCollection);
             var settings = CreateSceneButton(bar.transform, UiButtonLayout.BottomSettings, loc.UiCollection);
+            var favorites = CreateSceneButton(bar.transform, UiButtonLayout.BottomFavorites, loc.UiCollection);
             WireButtonClick(browse.GetComponent<Button>(), nav.OnBrowseTabClicked);
             WireButtonClick(index.GetComponent<Button>(), nav.OnIndexTabClicked);
             WireButtonClick(settings.GetComponent<Button>(), nav.OnSettingsTabClicked);
+            WireButtonClick(favorites.GetComponent<Button>(), nav.OnFavoritesButtonClicked);
             return new BottomBarResult
             {
                 browseTab = browse.GetComponent<Button>(),
                 indexTab = index.GetComponent<Button>(),
-                settingsTab = settings.GetComponent<Button>()
+                settingsTab = settings.GetComponent<Button>(),
+                favoritesButton = favorites.GetComponent<Button>()
             };
         }
 
@@ -2316,6 +2440,7 @@ namespace PeopleOfMath.Editor
             GameObject home,
             GameObject index,
             GameObject list,
+            GameObject favorites,
             GameObject detail,
             GameObject settings,
             GameObject backButton,
@@ -2326,6 +2451,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("homePanel").objectReferenceValue = home.GetComponent<HomePanel>();
             so.FindProperty("indexPanel").objectReferenceValue = index.GetComponent<IndexPanel>();
             so.FindProperty("listPanel").objectReferenceValue = list.GetComponent<ListPanel>();
+            so.FindProperty("favoritesPanel").objectReferenceValue = favorites.GetComponent<FavoritesPanel>();
             so.FindProperty("detailPanel").objectReferenceValue = detail.GetComponent<DetailPanel>();
             so.FindProperty("settingsPanel").objectReferenceValue = settings.GetComponent<SettingsPanel>();
             so.FindProperty("headerBackButton").objectReferenceValue = backButton;
@@ -2333,6 +2459,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("browseTab").objectReferenceValue = bottomBar.browseTab;
             so.FindProperty("indexTab").objectReferenceValue = bottomBar.indexTab;
             so.FindProperty("settingsTab").objectReferenceValue = bottomBar.settingsTab;
+            so.FindProperty("favoritesButton").objectReferenceValue = bottomBar.favoritesButton;
             so.ApplyModifiedPropertiesWithoutUndo();
             WireButtonClick(backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
         }
@@ -2427,7 +2554,7 @@ namespace PeopleOfMath.Editor
                     AddThemeBinding(text.gameObject, UiThemeToken.TextSecondary);
                 else if (name is "LangLabel" or "FontSizeLabel" or "ThemeLabel"
                          || name.StartsWith("section_")
-                         || name is "Name" or "Label" or "HomeTitle" or "IndexTitle" or "SettingsTitle" or "PlainTitle")
+                         || name is "Name" or "Label" or "HomeTitle" or "IndexTitle" or "SettingsTitle" or "FavoritesTitle" or "PlainTitle")
                     AddThemeBinding(text.gameObject, UiThemeToken.TextPrimary);
                 else if (name is "Dates" or "Bio" or "Body")
                     AddThemeBinding(text.gameObject, UiThemeToken.TextSecondary);
@@ -2527,6 +2654,33 @@ namespace PeopleOfMath.Editor
             EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
         }
 
+        [MenuItem("PeopleOfMath/Patch Favorites Support")]
+        public static void PatchFavoritesSupport()
+        {
+            if (DeferUntilEditMode(PatchFavoritesSupport))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            UiSpriteFactory.EnsureSprites();
+            var loc = SetupLocalization();
+            AssetDatabase.SaveAssets();
+
+            PatchShareListItemPrefab($"{PrefabFolder}/MathematicianListItem.prefab");
+            PatchShareListItemPrefab("Assets/Resources/MathematicianListItem.prefab");
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            PatchFavoritesInOpenScene(loc);
+            PatchShareButtonsInScene();
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Favorites support patched in Main scene.");
+        }
+
         static void PatchIndexInOpenScene(LocalizationRefs loc)
         {
             var navigation = Object.FindFirstObjectByType<NavigationController>();
@@ -2622,12 +2776,20 @@ namespace PeopleOfMath.Editor
                     indexGo = CreateSceneButton(bottomBar, UiButtonLayout.BottomIndex, loc.UiCollection);
                     WireButtonClick(indexGo.GetComponent<Button>(), navigation.OnIndexTabClicked);
                 }
+                else
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        indexGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomIndex.Position,
+                        UiButtonLayout.BottomIndex.Size);
+                }
 
                 indexTab = indexGo.GetComponent<Button>();
             }
 
             var home = contentArea.Find("HomePanel")?.gameObject;
             var list = contentArea.Find("ListPanel")?.gameObject;
+            var favorites = contentArea.Find("FavoritesPanel")?.gameObject;
             var detail = contentArea.Find("DetailPanel")?.gameObject;
             var settings = contentArea.Find("SettingsPanel")?.gameObject;
             var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
@@ -2641,6 +2803,7 @@ namespace PeopleOfMath.Editor
                     home,
                     indexPanelGo,
                     list,
+                    favorites != null ? favorites : CreateFavoritesPanel(contentArea, navigation, repository, listItemPrefab, loc),
                     detail,
                     settings,
                     backButton,
@@ -2649,7 +2812,8 @@ namespace PeopleOfMath.Editor
                     {
                         browseTab = browseTab,
                         indexTab = indexTab,
-                        settingsTab = settingsTab
+                        settingsTab = settingsTab,
+                        favoritesButton = null
                     });
             }
             else
@@ -2663,6 +2827,163 @@ namespace PeopleOfMath.Editor
 
             EnsureThemedCardOnPrefab($"{PrefabFolder}/LetterButton.prefab", UiCardVariant.Filter);
             CreateLetterButtonPrefab();
+        }
+
+        static void PatchFavoritesInOpenScene(LocalizationRefs loc)
+        {
+            var navigation = Object.FindFirstObjectByType<NavigationController>();
+            var repository = Object.FindFirstObjectByType<MathematicianRepository>();
+            if (navigation == null || repository == null)
+            {
+                Debug.LogError("NavigationController or MathematicianRepository not found in Main scene.");
+                return;
+            }
+
+            var contentArea = GameObject.Find("ContentArea")?.transform;
+            if (contentArea == null)
+            {
+                Debug.LogError("ContentArea not found in Main scene.");
+                return;
+            }
+
+            var contentRt = contentArea.GetComponent<RectTransform>();
+            if (contentRt != null)
+                contentRt.offsetMin = new Vector2(0f, UiButtonLayout.BottomBarSize.y);
+
+            var listItemPrefab = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab");
+
+            var favoritesPanelGo = contentArea.Find("FavoritesPanel")?.gameObject;
+            if (favoritesPanelGo == null)
+            {
+                favoritesPanelGo = CreateFavoritesPanel(contentArea, navigation, repository, listItemPrefab, loc);
+                var listPanel = contentArea.Find("ListPanel");
+                if (listPanel != null)
+                    favoritesPanelGo.transform.SetSiblingIndex(listPanel.GetSiblingIndex() + 1);
+            }
+
+            var header = GameObject.Find("Header");
+            HeaderTitleBinder headerBinder = null;
+            if (header != null)
+            {
+                headerBinder = header.GetComponent<HeaderTitleBinder>();
+                var favoritesTitle = header.transform.Find("FavoritesTitle")?.gameObject;
+                if (favoritesTitle == null)
+                {
+                    favoritesTitle = CreateLocalizedTitle(header.transform, "FavoritesTitle", loc.FavoritesTitle);
+                    favoritesTitle.SetActive(false);
+                }
+
+                if (headerBinder != null)
+                {
+                    var binderSo = new SerializedObject(headerBinder);
+                    binderSo.FindProperty("favoritesTitleEvent").objectReferenceValue =
+                        favoritesTitle.GetComponent<LocalizeStringEvent>();
+                    binderSo.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+
+            Button browseTab = null;
+            Button indexTab = null;
+            Button settingsTab = null;
+            Button favoritesButton = null;
+            var bottomBar = GameObject.Find("BottomBar")?.transform;
+            if (bottomBar != null)
+            {
+                UiButtonLayout.ApplyBottomStretchBarRect(
+                    bottomBar.GetComponent<RectTransform>(),
+                    UiButtonLayout.BottomBarPosition,
+                    UiButtonLayout.BottomBarSize);
+
+                var browseGo = bottomBar.Find("BrowseTab")?.gameObject;
+                if (browseGo != null)
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        browseGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomBrowse.Position,
+                        UiButtonLayout.BottomBrowse.Size);
+                    browseTab = browseGo.GetComponent<Button>();
+                }
+
+                var indexGo = bottomBar.Find("IndexTab")?.gameObject;
+                if (indexGo != null)
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        indexGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomIndex.Position,
+                        UiButtonLayout.BottomIndex.Size);
+                    indexTab = indexGo.GetComponent<Button>();
+                }
+
+                var settingsGo = bottomBar.Find("SettingsTab")?.gameObject;
+                if (settingsGo != null)
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        settingsGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomSettings.Position,
+                        UiButtonLayout.BottomSettings.Size);
+                    settingsTab = settingsGo.GetComponent<Button>();
+                }
+
+                var favoritesGo = bottomBar.Find("FavoritesTab")?.gameObject;
+                if (favoritesGo == null)
+                {
+                    favoritesGo = CreateSceneButton(bottomBar, UiButtonLayout.BottomFavorites, loc.UiCollection);
+                    WireButtonClick(favoritesGo.GetComponent<Button>(), navigation.OnFavoritesButtonClicked);
+                }
+                else
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        favoritesGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomFavorites.Position,
+                        UiButtonLayout.BottomFavorites.Size);
+                    WireButtonClick(favoritesGo.GetComponent<Button>(), navigation.OnFavoritesButtonClicked);
+                }
+
+                favoritesButton = favoritesGo.GetComponent<Button>();
+            }
+
+            var home = contentArea.Find("HomePanel")?.gameObject;
+            var indexPanelGo = contentArea.Find("IndexPanel")?.gameObject;
+            var list = contentArea.Find("ListPanel")?.gameObject;
+            var detail = contentArea.Find("DetailPanel")?.gameObject;
+            var settings = contentArea.Find("SettingsPanel")?.gameObject;
+            var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
+
+            if (home != null && indexPanelGo != null && list != null && detail != null && settings != null
+                && backButton != null && headerBinder != null && browseTab != null && indexTab != null
+                && settingsTab != null && favoritesButton != null)
+            {
+                WireNavigation(
+                    navigation,
+                    home,
+                    indexPanelGo,
+                    list,
+                    favoritesPanelGo,
+                    detail,
+                    settings,
+                    backButton,
+                    headerBinder,
+                    new BottomBarResult
+                    {
+                        browseTab = browseTab,
+                        indexTab = indexTab,
+                        settingsTab = settingsTab,
+                        favoritesButton = favoritesButton
+                    });
+            }
+            else
+            {
+                var navSo = new SerializedObject(navigation);
+                navSo.FindProperty("favoritesPanel").objectReferenceValue =
+                    favoritesPanelGo.GetComponent<FavoritesPanel>();
+                if (favoritesButton != null)
+                    navSo.FindProperty("favoritesButton").objectReferenceValue = favoritesButton;
+                navSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/MathematicianListItem.prefab", UiCardVariant.ListItem);
+            EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
         }
 
         static void EnsureThemedCardOnPrefab(string path, UiCardVariant variant)

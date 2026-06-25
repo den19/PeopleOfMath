@@ -13,8 +13,8 @@ namespace PeopleOfMath.Editor
         public static readonly Vector2 SectionNavBarPosition = new(0f, 45f);
         public static readonly Vector2 SectionNavBarSize = new(0f, 90f);
 
-        public static readonly Vector2 BottomBarPosition = new(0f, 70f);
-        public static readonly Vector2 BottomBarSize = new(0f, 140f);
+        public static readonly Vector2 BottomBarPosition = new(0f, 110f);
+        public static readonly Vector2 BottomBarSize = new(0f, 220f);
 
         public readonly struct SceneButton
         {
@@ -65,13 +65,16 @@ namespace PeopleOfMath.Editor
             "LightThemeButton", new Vector2(40f, -960f), new Vector2(400f, 64f), "btn_theme_light", UiButtonStyle.Secondary);
 
         public static readonly SceneButton BottomBrowse = new(
-            "BrowseTab", new Vector2(19f, -22f), new Vector2(347f, 72f), "tab_browse", UiButtonStyle.Secondary);
+            "BrowseTab", new Vector2(19f, -110f), new Vector2(347f, 72f), "tab_browse", UiButtonStyle.Secondary);
 
         public static readonly SceneButton BottomIndex = new(
-            "IndexTab", new Vector2(366f, -22f), new Vector2(347f, 72f), "tab_index", UiButtonStyle.Secondary);
+            "IndexTab", new Vector2(366f, -110f), new Vector2(347f, 72f), "tab_index", UiButtonStyle.Secondary);
 
         public static readonly SceneButton BottomSettings = new(
-            "SettingsTab", new Vector2(713f, -22f), new Vector2(347f, 72f), "tab_settings", UiButtonStyle.Secondary);
+            "SettingsTab", new Vector2(713f, -110f), new Vector2(347f, 72f), "tab_settings", UiButtonStyle.Secondary);
+
+        public static readonly SceneButton BottomFavorites = new(
+            "FavoritesTab", new Vector2(19f, -22f), new Vector2(1042f, 72f), "btn_favorites", UiButtonStyle.Secondary);
 
         public static void ApplyTopLeftAnchoredRect(RectTransform rt, Vector2 position, Vector2 size)
         {

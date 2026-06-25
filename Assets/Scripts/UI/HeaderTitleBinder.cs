@@ -14,6 +14,7 @@ namespace PeopleOfMath.UI
         [SerializeField] LocalizeStringEvent homeTitleEvent;
         [SerializeField] LocalizeStringEvent indexTitleEvent;
         [SerializeField] LocalizeStringEvent settingsTitleEvent;
+        [SerializeField] LocalizeStringEvent favoritesTitleEvent;
         [SerializeField] LocalizedString detailTitle;
 
         void OnEnable()
@@ -41,7 +42,8 @@ namespace PeopleOfMath.UI
             Settings,
             Filter,
             Search,
-            Detail
+            Detail,
+            Favorites
         }
 
         public void SetHomeTitle()
@@ -50,6 +52,7 @@ namespace PeopleOfMath.UI
             homeTitleEvent?.gameObject.SetActive(true);
             indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
+            favoritesTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             if (homeTitleEvent != null)
@@ -65,6 +68,7 @@ namespace PeopleOfMath.UI
             homeTitleEvent?.gameObject.SetActive(false);
             indexTitleEvent?.gameObject.SetActive(true);
             settingsTitleEvent?.gameObject.SetActive(false);
+            favoritesTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             indexTitleEvent?.RefreshString();
@@ -76,9 +80,22 @@ namespace PeopleOfMath.UI
             homeTitleEvent?.gameObject.SetActive(false);
             indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(true);
+            favoritesTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             settingsTitleEvent?.RefreshString();
+        }
+
+        public void SetFavoritesTitle()
+        {
+            _mode = TitleMode.Favorites;
+            homeTitleEvent?.gameObject.SetActive(false);
+            indexTitleEvent?.gameObject.SetActive(false);
+            settingsTitleEvent?.gameObject.SetActive(false);
+            favoritesTitleEvent?.gameObject.SetActive(true);
+            if (titleText != null)
+                titleText.gameObject.SetActive(false);
+            favoritesTitleEvent?.RefreshString();
         }
 
         public void SetFilterTitle(FilterKind kind, string key)
@@ -89,6 +106,7 @@ namespace PeopleOfMath.UI
             homeTitleEvent?.gameObject.SetActive(false);
             indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
+            favoritesTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
             RefreshFilterTitle();
@@ -102,6 +120,7 @@ namespace PeopleOfMath.UI
             homeTitleEvent?.gameObject.SetActive(false);
             indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
+            favoritesTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
             RefreshSearchTitle();
@@ -113,6 +132,7 @@ namespace PeopleOfMath.UI
             homeTitleEvent?.gameObject.SetActive(false);
             indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
+            favoritesTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
             if (detailTitle != null && titleText != null)
@@ -125,6 +145,7 @@ namespace PeopleOfMath.UI
             homeTitleEvent?.gameObject.SetActive(false);
             indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
+            favoritesTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
             {
                 titleText.gameObject.SetActive(true);
@@ -144,6 +165,9 @@ namespace PeopleOfMath.UI
                     break;
                 case TitleMode.Settings:
                     SetSettingsTitle();
+                    break;
+                case TitleMode.Favorites:
+                    SetFavoritesTitle();
                     break;
                 case TitleMode.Filter:
                     if (_pendingKind.HasValue && _pendingKey != null)

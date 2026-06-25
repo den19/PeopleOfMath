@@ -263,6 +263,18 @@ MonoBehaviour:
     m_Key: empty_index
     m_Metadata:
       m_Items: []
+  - m_Id: 7800216085323778
+    m_Key: title_favorites
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7800216085323779
+    m_Key: btn_favorites
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7800216085323780
+    m_Key: empty_favorites
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

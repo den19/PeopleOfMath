@@ -370,6 +370,18 @@ MonoBehaviour:
     m_Localized: No mathematicians for this letter
     m_Metadata:
       m_Items: []
+  - m_Id: 7800216085323778
+    m_Localized: Favorites
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7800216085323779
+    m_Localized: Favorites
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7800216085323780
+    m_Localized: "No favorites yet. Tap \u2665 on a card to add one."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

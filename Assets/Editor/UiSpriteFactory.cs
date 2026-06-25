@@ -10,6 +10,8 @@ namespace PeopleOfMath.Editor
         const string RoundedRectPath = SpriteFolder + "/RoundedRect.png";
         const string ButtonGradientPath = SpriteFolder + "/ButtonGradient.png";
         const string ShareIconPath = "Assets/Resources/UI/ShareIcon.png";
+        const string HeartOutlinePath = "Assets/Resources/UI/HeartOutline.png";
+        const string HeartFilledPath = "Assets/Resources/UI/HeartFilled.png";
         const int TextureSize = 64;
         const int CornerRadius = 18;
         const int Border = 22;
@@ -17,6 +19,8 @@ namespace PeopleOfMath.Editor
         static Sprite _roundedRect;
         static Sprite _buttonGradient;
         static Sprite _shareIcon;
+        static Sprite _heartOutline;
+        static Sprite _heartFilled;
 
         public static Sprite RoundedRect
         {
@@ -45,6 +49,24 @@ namespace PeopleOfMath.Editor
             }
         }
 
+        public static Sprite HeartOutline
+        {
+            get
+            {
+                EnsureSprites();
+                return _heartOutline;
+            }
+        }
+
+        public static Sprite HeartFilled
+        {
+            get
+            {
+                EnsureSprites();
+                return _heartFilled;
+            }
+        }
+
         public static void EnsureSprites()
         {
             if (!Directory.Exists(SpriteFolder))
@@ -62,6 +84,12 @@ namespace PeopleOfMath.Editor
 
             if (_shareIcon == null)
                 _shareIcon = LoadOrCreateShareIcon();
+
+            if (_heartOutline == null)
+                _heartOutline = LoadOrCreateHeartIcon(HeartOutlinePath, filled: false);
+
+            if (_heartFilled == null)
+                _heartFilled = LoadOrCreateHeartIcon(HeartFilledPath, filled: true);
         }
 
         static Sprite LoadOrCreateRoundedRect()
@@ -162,6 +190,74 @@ namespace PeopleOfMath.Editor
             AssetDatabase.ImportAsset(ShareIconPath);
             ConfigureSpriteImporter(ShareIconPath, 0);
             return AssetDatabase.LoadAssetAtPath<Sprite>(ShareIconPath);
+        }
+
+        static Sprite LoadOrCreateHeartIcon(string path, bool filled)
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (existing != null)
+                return existing;
+
+            const int size = 64;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            tex.filterMode = FilterMode.Bilinear;
+            tex.wrapMode = TextureWrapMode.Clamp;
+
+            var pixels = new Color32[size * size];
+            for (var i = 0; i < pixels.Length; i++)
+                pixels[i] = new Color32(0, 0, 0, 0);
+
+            DrawHeartIcon(pixels, size, filled);
+            tex.SetPixels32(pixels);
+            tex.Apply();
+
+            var png = tex.EncodeToPNG();
+            File.WriteAllBytes(path, png);
+            Object.DestroyImmediate(tex);
+
+            AssetDatabase.ImportAsset(path);
+            ConfigureSpriteImporter(path, 0);
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+
+        static void DrawHeartIcon(Color32[] pixels, int size, bool filled)
+        {
+            var white = new Color32(255, 255, 255, 255);
+            const float stroke = 3.5f;
+
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var inside = IsInsideHeart(x, y, size);
+                    if (filled)
+                    {
+                        if (inside)
+                            pixels[y * size + x] = white;
+                    }
+                    else
+                    {
+                        var outline = inside && !IsInsideHeart(x, y, size, stroke);
+                        if (outline)
+                            pixels[y * size + x] = white;
+                    }
+                }
+            }
+        }
+
+        static bool IsInsideHeart(float x, float y, int size, float shrink = 0f)
+        {
+            var nx = (x - size * 0.5f) / (size * 0.22f);
+            var ny = -(y - size * 0.46f) / (size * 0.22f);
+            if (shrink > 0f)
+            {
+                var scale = 1f - shrink / (size * 0.22f);
+                nx /= scale;
+                ny /= scale;
+            }
+
+            var a = nx * nx + ny * ny - 1f;
+            return a * a * a - nx * nx * ny * ny * ny <= 0f;
         }
 
         static void DrawShareIcon(Color32[] pixels, int size)

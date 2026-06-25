@@ -1,4 +1,5 @@
 using System.Collections;
+using PeopleOfMath.Data;
 using PeopleOfMath.Localization;
 using PeopleOfMath.UI;
 using UnityEngine;
@@ -24,6 +25,7 @@ namespace PeopleOfMath.Core
             yield return LocaleHelper.InitializeLocale();
             FontSizeHelper.Initialize();
             ThemeHelper.Initialize();
+            FavoritesHelper.Initialize();
             navigation?.ShowHome();
         }
     }
