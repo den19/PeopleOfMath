@@ -12,7 +12,8 @@ namespace PeopleOfMath.Editor
             "Assets/Prefabs/UI/FilterButton.prefab",
             "Assets/Prefabs/UI/SearchBar.prefab",
             "Assets/Prefabs/UI/MathematicianListItem.prefab",
-            "Assets/Resources/MathematicianListItem.prefab"
+            "Assets/Resources/MathematicianListItem.prefab",
+            "Assets/Prefabs/UI/Detail/DetailSection_Identity.prefab"
         };
 
         [MenuItem("PeopleOfMath/Apply Home & List Panel Layout (+100%)")]
@@ -46,6 +47,8 @@ namespace PeopleOfMath.Editor
                     PeopleOfMathProjectSetup.ConfigureFilterButton(root);
                 else if (path.EndsWith("SearchBar.prefab", System.StringComparison.OrdinalIgnoreCase))
                     PeopleOfMathProjectSetup.ConfigureSearchBar(root);
+                else if (path.EndsWith("DetailSection_Identity.prefab", System.StringComparison.OrdinalIgnoreCase))
+                    PeopleOfMathProjectSetup.ConfigureIdentitySection(root);
                 else
                     PeopleOfMathProjectSetup.ConfigureListItem(root);
 

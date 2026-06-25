@@ -56,10 +56,11 @@ namespace PeopleOfMath.Editor
         public const float ListItemThumbnailGap = 20f;
         public const float ListItemLeftPadding = 20f;
         public const float ListItemTextRightInset = 20f;
+        public const float ListItemShareButtonWidth = 72f;
         public static float ListItemTextColumnLeft =>
             ListItemLeftPadding + ListItemThumbnailSize + ListItemThumbnailGap;
         public static float ListItemTextWidthInset =>
-            ListItemTextColumnLeft + ListItemTextRightInset;
+            ListItemTextColumnLeft + ListItemTextRightInset + ListItemShareButtonWidth;
         public const float ListItemNameBaseFontSize = 20f;
         public const float ListItemDatesBaseFontSize = 14f;
         public const float ListItemBioBaseFontSize = 13f;

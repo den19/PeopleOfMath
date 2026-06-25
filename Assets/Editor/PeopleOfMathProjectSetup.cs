@@ -134,6 +134,89 @@ namespace PeopleOfMath.Editor
             Debug.Log("Detail swipe navigation patched in Main scene.");
         }
 
+        [MenuItem("PeopleOfMath/Patch Share Buttons")]
+        public static void PatchShareButtons()
+        {
+            if (DeferUntilEditMode(PatchShareButtons))
+                return;
+
+            UiSpriteFactory.EnsureSprites();
+            SetupLocalization();
+            AssetDatabase.SaveAssets();
+
+            PatchShareListItemPrefab($"{PrefabFolder}/MathematicianListItem.prefab");
+            PatchShareListItemPrefab("Assets/Resources/MathematicianListItem.prefab");
+            PatchIdentitySectionPrefab();
+
+            if (File.Exists(ScenePath))
+            {
+                var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+                PatchShareButtonsInScene();
+                EditorSceneManager.SaveScene(scene);
+            }
+
+            AssetDatabase.SaveAssets();
+            Debug.Log("Share buttons patched.");
+        }
+
+        static void PatchShareListItemPrefab(string path)
+        {
+            if (!File.Exists(path))
+                return;
+
+            var root = PrefabUtility.LoadPrefabContents(path);
+            try
+            {
+                ConfigureListItem(root);
+                PrefabUtility.SaveAsPrefabAsset(root, path);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        static void PatchIdentitySectionPrefab()
+        {
+            if (!Directory.Exists(DetailPrefabFolder))
+                Directory.CreateDirectory(DetailPrefabFolder);
+
+            var path = $"{DetailPrefabFolder}/DetailSection_Identity.prefab";
+            if (!File.Exists(path))
+            {
+                var root = BuildIdentitySectionPrefab();
+                SaveDetailSectionPrefab(root, path);
+                Object.DestroyImmediate(root);
+                return;
+            }
+
+            var existing = PrefabUtility.LoadPrefabContents(path);
+            try
+            {
+                ConfigureIdentitySection(existing);
+                PrefabUtility.SaveAsPrefabAsset(existing, path);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(existing);
+            }
+        }
+
+        static void PatchShareButtonsInScene()
+        {
+            var listPanel = GameObject.Find("ListPanel");
+            if (listPanel != null)
+            {
+                var listItem = listPanel.GetComponentInChildren<MathematicianListItem>(true);
+                if (listItem != null)
+                    ConfigureListItem(listItem.gameObject);
+            }
+
+            var identitySection = Object.FindAnyObjectByType<IdentityDetailSection>(FindObjectsInactive.Include);
+            if (identitySection != null)
+                ConfigureIdentitySection(identitySection.gameObject);
+        }
+
         [MenuItem("PeopleOfMath/Patch Theme Support")]
         public static void PatchThemeSupport()
         {
@@ -384,6 +467,7 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "gallery_license", "Лицензия", "License");
             AddUiEntry(collection, "gallery_source", "Источник", "Source");
             AddUiEntry(collection, "gallery_no_images", "Изображения недоступны", "No images available");
+            AddUiEntry(collection, "share_chooser_title", "Поделиться", "Share");
 
             if (!LocalizationEditorSettings.GetLocales().Contains(ru))
                 LocalizationEditorSettings.AddLocale(ru);
@@ -532,6 +616,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("bioText").objectReferenceValue = root.transform.Find("Bio").GetComponent<TMP_Text>();
             so.FindProperty("portraitImage").objectReferenceValue = root.transform.Find("Portrait").GetComponent<Image>();
             so.FindProperty("button").objectReferenceValue = root.GetComponent<Button>();
+            so.FindProperty("shareButton").objectReferenceValue = ConfigureShareButton(root.transform);
             so.ApplyModifiedPropertiesWithoutUndo();
             return root;
         }
@@ -572,6 +657,79 @@ namespace PeopleOfMath.Editor
             UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.ListItem);
             ConfigureLayoutRect(go.GetComponent<RectTransform>(), UiLayoutMetrics.ListItemRowHeight);
             EnsureThemedCard(go, UiCardVariant.ListItem);
+            ConfigureListItemShareButton(go);
+        }
+
+        static void ConfigureListItemShareButton(GameObject root)
+        {
+            var shareButton = ConfigureShareButton(root.transform);
+            var item = root.GetComponent<MathematicianListItem>();
+            if (item == null)
+                return;
+
+            var so = new SerializedObject(item);
+            so.FindProperty("shareButton").objectReferenceValue = shareButton;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        public static ShareIconButton ConfigureShareButton(Transform parent, Vector2? anchoredPosition = null)
+        {
+            var shareSize = UiLayoutMetrics.SearchBarClearButtonWidth;
+            var position = anchoredPosition ?? new Vector2(-12f, -12f);
+
+            var existing = parent.Find("ShareButton");
+            GameObject shareGo;
+            if (existing != null)
+                shareGo = existing.gameObject;
+            else
+            {
+                shareGo = new GameObject(
+                    "ShareButton",
+                    typeof(RectTransform),
+                    typeof(Image),
+                    typeof(Button),
+                    typeof(ShareIconButton));
+                shareGo.transform.SetParent(parent, false);
+            }
+
+            shareGo.transform.SetAsLastSibling();
+
+            var rt = shareGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(1f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot = new Vector2(1f, 1f);
+            rt.anchoredPosition = position;
+            rt.sizeDelta = new Vector2(shareSize, shareSize);
+
+            var iconTransform = shareGo.transform.Find("Icon");
+            GameObject iconGo;
+            if (iconTransform == null)
+            {
+                iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+                iconGo.transform.SetParent(shareGo.transform, false);
+            }
+            else
+            {
+                iconGo = iconTransform.gameObject;
+            }
+
+            var iconRt = iconGo.GetComponent<RectTransform>();
+            StretchToParent(iconRt);
+            iconRt.offsetMin = new Vector2(8f, 8f);
+            iconRt.offsetMax = new Vector2(-8f, -8f);
+
+            var layoutElement = shareGo.GetComponent<LayoutElement>() ?? shareGo.AddComponent<LayoutElement>();
+            layoutElement.ignoreLayout = true;
+            layoutElement.minWidth = shareSize;
+            layoutElement.minHeight = shareSize;
+            layoutElement.preferredWidth = shareSize;
+            layoutElement.preferredHeight = shareSize;
+
+            var shareButton = shareGo.GetComponent<ShareIconButton>();
+            var so = new SerializedObject(shareButton);
+            so.FindProperty("iconImage").objectReferenceValue = iconGo.GetComponent<Image>();
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return shareButton;
         }
 
         static void CreateListItemPortrait(GameObject root)
@@ -1383,17 +1541,57 @@ namespace PeopleOfMath.Editor
             rt.offsetMax = Vector2.zero;
         }
 
-        static void AddSectionVerticalLayout(GameObject root)
+        static void AddSectionVerticalLayout(GameObject root, int extraRightPadding = 0)
         {
-            var vlg = root.AddComponent<VerticalLayoutGroup>();
+            var vlg = root.GetComponent<VerticalLayoutGroup>() ?? root.AddComponent<VerticalLayoutGroup>();
+            ApplySectionVerticalLayout(vlg, extraRightPadding);
+        }
+
+        static void ApplySectionVerticalLayout(VerticalLayoutGroup vlg, int extraRightPadding = 0)
+        {
             var pad = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailSectionPadding);
-            vlg.padding = new RectOffset(pad, pad, pad, pad);
+            vlg.padding = new RectOffset(pad, pad + extraRightPadding, pad, pad);
             vlg.spacing = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailSectionSpacing);
             vlg.childAlignment = TextAnchor.UpperLeft;
             vlg.childForceExpandWidth = true;
             vlg.childForceExpandHeight = false;
             vlg.childControlWidth = true;
             vlg.childControlHeight = true;
+        }
+
+        static int IdentityShareLayoutRightInset =>
+            (int)UiLayoutMetrics.SearchBarClearButtonWidth + 16;
+
+        static void EnsureIdentityContentStructure(GameObject root)
+        {
+            var contentTransform = root.transform.Find("Content");
+            GameObject contentGo;
+            if (contentTransform == null)
+            {
+                contentGo = new GameObject("Content", typeof(RectTransform));
+                contentGo.transform.SetParent(root.transform, false);
+                contentGo.transform.SetAsFirstSibling();
+                StretchToParent(contentGo.GetComponent<RectTransform>());
+            }
+            else
+            {
+                contentGo = contentTransform.gameObject;
+            }
+
+            var rootVlg = root.GetComponent<VerticalLayoutGroup>();
+            if (rootVlg != null)
+                Object.DestroyImmediate(rootVlg);
+
+            ReparentIdentityField(root.transform, "Name", contentGo.transform);
+            ReparentIdentityField(root.transform, "Dates", contentGo.transform);
+            AddSectionVerticalLayout(contentGo, IdentityShareLayoutRightInset);
+        }
+
+        static void ReparentIdentityField(Transform root, string childName, Transform content)
+        {
+            var child = root.Find(childName);
+            if (child != null && child.parent != content)
+                child.SetParent(content, false);
         }
 
         static GameObject BuildPortraitSectionPrefab()
@@ -1410,15 +1608,42 @@ namespace PeopleOfMath.Editor
         static GameObject BuildIdentitySectionPrefab()
         {
             var root = CreateStretchSectionRoot("DetailSection_Identity");
-            AddSectionVerticalLayout(root);
-            var name = AddDetailField(root.transform, "Name", 26, FontStyles.Bold, autoHeight: true, autoMinHeightBase: 48f, useContentSizeFitter: false, textColor: UiTheme.TextPrimary);
-            var dates = AddDetailField(root.transform, "Dates", 16, FontStyles.Normal, height: 40, textColor: UiTheme.TextSecondary);
+            var content = new GameObject("Content", typeof(RectTransform));
+            content.transform.SetParent(root.transform, false);
+            StretchToParent(content.GetComponent<RectTransform>());
+            AddSectionVerticalLayout(content, IdentityShareLayoutRightInset);
+            var name = AddDetailField(content.transform, "Name", 26, FontStyles.Bold, autoHeight: true, autoMinHeightBase: 48f, useContentSizeFitter: false, textColor: UiTheme.TextPrimary);
+            var dates = AddDetailField(content.transform, "Dates", 16, FontStyles.Normal, height: 40, textColor: UiTheme.TextSecondary);
+            var shareButton = ConfigureShareButton(root.transform, new Vector2(-16f, -16f));
             var section = root.AddComponent<IdentityDetailSection>();
             var so = new SerializedObject(section);
             so.FindProperty("nameText").objectReferenceValue = name;
             so.FindProperty("datesText").objectReferenceValue = dates;
+            so.FindProperty("shareButton").objectReferenceValue = shareButton;
             so.ApplyModifiedPropertiesWithoutUndo();
             return root;
+        }
+
+        public static void ConfigureIdentitySection(GameObject root)
+        {
+            if (root == null)
+                return;
+
+            EnsureIdentityContentStructure(root);
+            var shareButton = ConfigureShareButton(root.transform, new Vector2(-16f, -16f));
+            var section = root.GetComponent<IdentityDetailSection>();
+            if (section == null)
+                return;
+
+            var so = new SerializedObject(section);
+            so.FindProperty("shareButton").objectReferenceValue = shareButton;
+            var name = root.transform.Find("Content/Name")?.GetComponent<TMP_Text>()
+                ?? root.transform.Find("Name")?.GetComponent<TMP_Text>();
+            var dates = root.transform.Find("Content/Dates")?.GetComponent<TMP_Text>()
+                ?? root.transform.Find("Dates")?.GetComponent<TMP_Text>();
+            so.FindProperty("nameText").objectReferenceValue = name;
+            so.FindProperty("datesText").objectReferenceValue = dates;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static GameObject BuildExternalLinksSectionPrefab()

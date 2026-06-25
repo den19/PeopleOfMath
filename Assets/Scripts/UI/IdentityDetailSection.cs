@@ -1,5 +1,6 @@
 using System.Collections;
 using PeopleOfMath.Data;
+using PeopleOfMath.Sharing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,10 @@ namespace PeopleOfMath.UI
     {
         [SerializeField] TMP_Text nameText;
         [SerializeField] TMP_Text datesText;
+        [SerializeField] ShareIconButton shareButton;
+
+        MathematicianData _data;
+        bool _english;
 
         Coroutine _heightRefreshRoutine;
         bool _pendingHeightRefresh;
@@ -27,12 +32,32 @@ namespace PeopleOfMath.UI
             if (data == null)
                 return;
 
+            _data = data;
+            _english = english;
+
             if (nameText != null)
                 nameText.text = data.GetFullName(english);
             if (datesText != null)
                 datesText.text = data.GetLifeDatesLabel(english);
 
+            BindShareButton();
             ScheduleNameHeightRefresh();
+        }
+
+        void BindShareButton()
+        {
+            if (shareButton == null)
+                return;
+
+            shareButton.SetVisible(true);
+            shareButton.SetClickHandler(() =>
+            {
+                if (_data == null)
+                    return;
+
+                var text = MathematicianShareText.BuildProfileShare(_data, _english);
+                NativeShare.ShareText(text);
+            });
         }
 
         public override string GetSectionTitle(bool english) =>

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using PeopleOfMath.Data;
 using PeopleOfMath.Localization;
+using PeopleOfMath.Sharing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,9 +16,11 @@ namespace PeopleOfMath.UI
         [SerializeField] TMP_Text bioText;
         [SerializeField] Image portraitImage;
         [SerializeField] Button button;
+        [SerializeField] ShareIconButton shareButton;
 
         string _id;
         Action<string> _onSelected;
+        MathematicianData _data;
         Coroutine _layoutRefreshRoutine;
 
         void Awake() => ConfigureBioText();
@@ -38,15 +41,34 @@ namespace PeopleOfMath.UI
         public void Bind(MathematicianData data, Action<string> onSelected)
         {
             _id = data.id;
+            _data = data;
             _onSelected = onSelected;
             var english = LocaleHelper.IsEnglish;
             nameText.text = data.GetFullName(english);
             datesText.text = data.GetLifeDatesLabel(english);
             bioText.text = data.GetShortBio(english);
             BindPortrait(data);
+            BindShareButton(data, english);
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => _onSelected?.Invoke(_id));
             ScheduleLayoutRefresh();
+        }
+
+        void BindShareButton(MathematicianData data, bool english)
+        {
+            if (shareButton == null)
+                return;
+
+            var hasWiki = !string.IsNullOrWhiteSpace(data.GetWikipediaUrl(english));
+            shareButton.SetVisible(hasWiki);
+            if (!hasWiki)
+                return;
+
+            shareButton.SetClickHandler(() =>
+            {
+                var text = MathematicianShareText.BuildListShare(_data, LocaleHelper.IsEnglish);
+                NativeShare.ShareText(text);
+            });
         }
 
         public void RefreshLayout()
