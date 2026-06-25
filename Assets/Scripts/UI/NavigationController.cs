@@ -149,6 +149,9 @@ namespace PeopleOfMath.Core
                     else
                         ShowList(_filterKind, _filterKey);
                     break;
+                case AppScreen.Settings:
+                    ShowHome();
+                    break;
             }
         }
 

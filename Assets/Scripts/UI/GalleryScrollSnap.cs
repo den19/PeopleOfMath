@@ -18,6 +18,8 @@ namespace PeopleOfMath.UI
 
         public int CurrentIndex { get; private set; }
 
+        public int PageCount => _pageCount;
+
         public event System.Action<int> PageChanged;
 
         void Awake() => EnsureInitialized();

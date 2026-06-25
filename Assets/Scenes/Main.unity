@@ -9256,6 +9256,7 @@ GameObject:
   - component: {fileID: 1661791467}
   - component: {fileID: 1661791466}
   - component: {fileID: 1661791465}
+  - component: {fileID: 1661791468}
   m_Layer: 0
   m_Name: SectionContainer
   m_TagString: Untagged
@@ -9342,6 +9343,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1661791463}
   m_CullTransparentMesh: 1
+--- !u!114 &1661791468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1661791463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7e3a1f42c8d4e59a6f2038c5d91e4b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.DetailSectionSwipeNavigator
+  detailPanel: {fileID: 1704949322}
+  swipeThreshold: 60
+  horizontalDominanceRatio: 1.5
 --- !u!1 &1685407800
 GameObject:
   m_ObjectHideFlags: 0

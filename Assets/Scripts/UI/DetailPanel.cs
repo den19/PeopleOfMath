@@ -23,6 +23,8 @@ namespace PeopleOfMath.UI
         public bool CanGoNext =>
             _visibleIndices.Count > 0 && _visibleSectionIndex < _visibleIndices.Count - 1;
 
+        public bool CanGoPrevious => _visibleSectionIndex > 0;
+
         void OnEnable()
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
@@ -62,6 +64,12 @@ namespace PeopleOfMath.UI
         {
             if (CanGoNext)
                 ShowVisibleSection(_visibleSectionIndex + 1);
+        }
+
+        public void GoPrevious()
+        {
+            if (CanGoPrevious)
+                ShowVisibleSection(_visibleSectionIndex - 1);
         }
 
         void Refresh()

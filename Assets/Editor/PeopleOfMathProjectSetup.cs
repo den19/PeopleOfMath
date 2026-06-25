@@ -93,6 +93,47 @@ namespace PeopleOfMath.Editor
             Debug.Log("Search support patched in Main scene.");
         }
 
+        [MenuItem("PeopleOfMath/Patch Detail Swipe Navigation")]
+        public static void PatchDetailSwipeNavigation()
+        {
+            if (DeferUntilEditMode(PatchDetailSwipeNavigation))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var detailPanel = Object.FindFirstObjectByType<DetailPanel>();
+            if (detailPanel == null)
+            {
+                Debug.LogError("DetailPanel not found in Main scene.");
+                return;
+            }
+
+            var container = detailPanel.transform.Find("SectionContainer");
+            if (container == null)
+            {
+                Debug.LogError("SectionContainer not found under DetailPanel.");
+                return;
+            }
+
+            var swipeNav = container.GetComponent<DetailSectionSwipeNavigator>();
+            if (swipeNav == null)
+            {
+                swipeNav = container.gameObject.AddComponent<DetailSectionSwipeNavigator>();
+                var swipeSo = new SerializedObject(swipeNav);
+                swipeSo.FindProperty("detailPanel").objectReferenceValue = detailPanel;
+                swipeSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Detail swipe navigation patched in Main scene.");
+        }
+
         [MenuItem("PeopleOfMath/Patch Theme Support")]
         public static void PatchThemeSupport()
         {
@@ -1241,6 +1282,11 @@ namespace PeopleOfMath.Editor
             so.FindProperty("sectionNextButton").objectReferenceValue = navBar.nextButton.GetComponent<Button>();
             so.FindProperty("pageIndicator").objectReferenceValue = navBar.pageIndicator;
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            var swipeNav = container.AddComponent<DetailSectionSwipeNavigator>();
+            var swipeSo = new SerializedObject(swipeNav);
+            swipeSo.FindProperty("detailPanel").objectReferenceValue = detail;
+            swipeSo.ApplyModifiedPropertiesWithoutUndo();
 
             WireButtonClick(navBar.backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
             WireButtonClick(navBar.nextButton.GetComponent<Button>(), detail.GoNext);
