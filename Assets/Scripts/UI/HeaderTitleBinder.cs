@@ -12,6 +12,7 @@ namespace PeopleOfMath.UI
     {
         [SerializeField] TMP_Text titleText;
         [SerializeField] LocalizeStringEvent homeTitleEvent;
+        [SerializeField] LocalizeStringEvent indexTitleEvent;
         [SerializeField] LocalizeStringEvent settingsTitleEvent;
         [SerializeField] LocalizedString detailTitle;
 
@@ -36,6 +37,7 @@ namespace PeopleOfMath.UI
         enum TitleMode
         {
             Home,
+            Index,
             Settings,
             Filter,
             Search,
@@ -46,6 +48,7 @@ namespace PeopleOfMath.UI
         {
             _mode = TitleMode.Home;
             homeTitleEvent?.gameObject.SetActive(true);
+            indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
@@ -56,10 +59,22 @@ namespace PeopleOfMath.UI
             }
         }
 
+        public void SetIndexTitle()
+        {
+            _mode = TitleMode.Index;
+            homeTitleEvent?.gameObject.SetActive(false);
+            indexTitleEvent?.gameObject.SetActive(true);
+            settingsTitleEvent?.gameObject.SetActive(false);
+            if (titleText != null)
+                titleText.gameObject.SetActive(false);
+            indexTitleEvent?.RefreshString();
+        }
+
         public void SetSettingsTitle()
         {
             _mode = TitleMode.Settings;
             homeTitleEvent?.gameObject.SetActive(false);
+            indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(true);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
@@ -72,6 +87,7 @@ namespace PeopleOfMath.UI
             _pendingKind = kind;
             _pendingKey = key;
             homeTitleEvent?.gameObject.SetActive(false);
+            indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
@@ -84,6 +100,7 @@ namespace PeopleOfMath.UI
             _pendingSearchQuery = query;
             _pendingSearchCount = count;
             homeTitleEvent?.gameObject.SetActive(false);
+            indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
@@ -94,6 +111,7 @@ namespace PeopleOfMath.UI
         {
             _mode = TitleMode.Detail;
             homeTitleEvent?.gameObject.SetActive(false);
+            indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
@@ -105,6 +123,7 @@ namespace PeopleOfMath.UI
         {
             _mode = TitleMode.Detail;
             homeTitleEvent?.gameObject.SetActive(false);
+            indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
             {
@@ -119,6 +138,9 @@ namespace PeopleOfMath.UI
             {
                 case TitleMode.Home:
                     SetHomeTitle();
+                    break;
+                case TitleMode.Index:
+                    SetIndexTitle();
                     break;
                 case TitleMode.Settings:
                     SetSettingsTitle();

@@ -10,6 +10,7 @@ namespace PeopleOfMath.Editor
         static readonly string[] PrefabPaths =
         {
             "Assets/Prefabs/UI/FilterButton.prefab",
+            "Assets/Prefabs/UI/LetterButton.prefab",
             "Assets/Prefabs/UI/SearchBar.prefab",
             "Assets/Prefabs/UI/MathematicianListItem.prefab",
             "Assets/Resources/MathematicianListItem.prefab",
@@ -26,10 +27,13 @@ namespace PeopleOfMath.Editor
 
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
             var home = GameObject.Find("HomePanel");
+            var index = GameObject.Find("IndexPanel");
             var list = GameObject.Find("ListPanel");
 
             if (home != null)
                 HomeListPanelLayout.ApplyToPanel(home);
+            if (index != null)
+                HomeListPanelLayout.ApplyToIndexPanel(index);
             if (list != null)
                 HomeListPanelLayout.ApplyToPanel(list);
 
@@ -45,6 +49,8 @@ namespace PeopleOfMath.Editor
             {
                 if (path.EndsWith("FilterButton.prefab", System.StringComparison.OrdinalIgnoreCase))
                     PeopleOfMathProjectSetup.ConfigureFilterButton(root);
+                else if (path.EndsWith("LetterButton.prefab", System.StringComparison.OrdinalIgnoreCase))
+                    PeopleOfMathProjectSetup.ConfigureLetterButton(root);
                 else if (path.EndsWith("SearchBar.prefab", System.StringComparison.OrdinalIgnoreCase))
                     PeopleOfMathProjectSetup.ConfigureSearchBar(root);
                 else if (path.EndsWith("DetailSection_Identity.prefab", System.StringComparison.OrdinalIgnoreCase))

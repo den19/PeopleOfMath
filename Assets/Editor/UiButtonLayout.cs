@@ -65,10 +65,13 @@ namespace PeopleOfMath.Editor
             "LightThemeButton", new Vector2(40f, -960f), new Vector2(400f, 64f), "btn_theme_light", UiButtonStyle.Secondary);
 
         public static readonly SceneButton BottomBrowse = new(
-            "BrowseTab", new Vector2(19f, -22f), new Vector2(440f, 72f), "tab_browse", UiButtonStyle.Secondary);
+            "BrowseTab", new Vector2(19f, -22f), new Vector2(347f, 72f), "tab_browse", UiButtonStyle.Secondary);
+
+        public static readonly SceneButton BottomIndex = new(
+            "IndexTab", new Vector2(366f, -22f), new Vector2(347f, 72f), "tab_index", UiButtonStyle.Secondary);
 
         public static readonly SceneButton BottomSettings = new(
-            "SettingsTab", new Vector2(520f, -22f), new Vector2(440f, 72f), "tab_settings", UiButtonStyle.Secondary);
+            "SettingsTab", new Vector2(713f, -22f), new Vector2(347f, 72f), "tab_settings", UiButtonStyle.Secondary);
 
         public static void ApplyTopLeftAnchoredRect(RectTransform rt, Vector2 position, Vector2 size)
         {

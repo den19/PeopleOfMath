@@ -251,6 +251,18 @@ MonoBehaviour:
     m_Key: share_chooser_title
     m_Metadata:
       m_Items: []
+  - m_Id: 7800216039186432
+    m_Key: title_index
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7800216085323776
+    m_Key: tab_index
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7800216085323777
+    m_Key: empty_index
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

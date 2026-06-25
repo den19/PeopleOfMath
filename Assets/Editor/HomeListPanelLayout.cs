@@ -93,6 +93,37 @@ namespace PeopleOfMath.Editor
             PeopleOfMathProjectSetup.ConfigureSearchBar(go);
         }
 
+        public static void ApplyToIndexPanel(GameObject panel)
+        {
+            if (panel == null)
+                return;
+
+            var letterScroll = panel.transform.Find("LetterScroll")?.GetComponent<ScrollRect>();
+            var listScroll = panel.transform.Find("ListScroll")?.GetComponent<ScrollRect>();
+            if (letterScroll != null && listScroll != null)
+                PeopleOfMathProjectSetup.PinIndexLetterAndList(letterScroll, listScroll);
+
+            foreach (var scroll in panel.GetComponentsInChildren<ScrollRect>(true))
+            {
+                var content = scroll.content;
+                if (content == null)
+                    continue;
+
+                var vlg = content.GetComponent<VerticalLayoutGroup>();
+                if (vlg != null)
+                    ConfigureBrowseScrollContent(vlg);
+            }
+
+            foreach (var tmp in panel.GetComponentsInChildren<TextMeshProUGUI>(true))
+            {
+                if (tmp.gameObject.name == "Empty")
+                    ConfigureEmptyState(tmp.gameObject);
+            }
+
+            letterScroll?.transform.SetAsLastSibling();
+            EditorUtility.SetDirty(panel);
+        }
+
         public static void ApplyToPanel(GameObject panel)
         {
             if (panel == null)

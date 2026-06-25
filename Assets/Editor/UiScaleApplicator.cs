@@ -13,6 +13,7 @@ namespace PeopleOfMath.Editor
         static readonly string[] PrefabPaths =
         {
             "Assets/Prefabs/UI/FilterButton.prefab",
+            "Assets/Prefabs/UI/LetterButton.prefab",
             "Assets/Prefabs/UI/MathematicianListItem.prefab",
             "Assets/Resources/MathematicianListItem.prefab"
         };
@@ -201,9 +202,14 @@ namespace PeopleOfMath.Editor
             try
             {
                 var isFilter = path.EndsWith("FilterButton.prefab", System.StringComparison.OrdinalIgnoreCase);
+                var isLetter = path.EndsWith("LetterButton.prefab", System.StringComparison.OrdinalIgnoreCase);
                 if (isFilter)
                 {
                     PeopleOfMathProjectSetup.ConfigureFilterButton(root);
+                }
+                else if (isLetter)
+                {
+                    PeopleOfMathProjectSetup.ConfigureLetterButton(root);
                 }
                 else
                     PeopleOfMathProjectSetup.ConfigureListItem(root);

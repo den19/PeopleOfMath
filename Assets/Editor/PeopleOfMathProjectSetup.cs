@@ -238,6 +238,28 @@ namespace PeopleOfMath.Editor
             Debug.Log("Theme support patched in Main scene.");
         }
 
+        [MenuItem("PeopleOfMath/Patch Index Tab")]
+        public static void PatchIndexTab()
+        {
+            if (DeferUntilEditMode(PatchIndexTab))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var loc = SetupLocalization();
+            CreateLetterButtonPrefab();
+            AssetDatabase.SaveAssets();
+            EditorSceneManager.OpenScene(ScenePath);
+            PatchIndexInOpenScene(loc);
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+            AssetDatabase.SaveAssets();
+            Debug.Log("Index tab patched in Main scene.");
+        }
+
         public static void Run(bool manual = false)
         {
             if (EditorApplication.isCompiling || EditorApplication.isUpdating)
@@ -404,6 +426,7 @@ namespace PeopleOfMath.Editor
             public Locale English;
             public StringTableCollection UiCollection;
             public LocalizedString HomeTitle;
+            public LocalizedString IndexTitle;
             public LocalizedString SettingsTitle;
             public LocalizedString DetailTitle;
         }
@@ -438,6 +461,7 @@ namespace PeopleOfMath.Editor
                 "Математики: века, страны, разделы математики",
                 "Mathematicians: centuries, countries, branches of mathematics");
             AddUiEntry(collection, "title_settings", "Настройки", "Settings");
+            AddUiEntry(collection, "title_index", "Все математики A–Я", "All mathematicians A–Z");
             AddUiEntry(collection, "title_detail", "Карточка", "Profile");
             AddUiEntry(collection, "section_century", "По веку", "By century");
             AddUiEntry(collection, "section_country", "По стране", "By country");
@@ -446,6 +470,7 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "filter_country", "{0}", "{0}");
             AddUiEntry(collection, "filter_branch", "{0}", "{0}");
             AddUiEntry(collection, "tab_browse", "Справочник", "Browse");
+            AddUiEntry(collection, "tab_index", "Индекс", "Index");
             AddUiEntry(collection, "tab_settings", "Настройки", "Settings");
             AddUiEntry(collection, "btn_back", "Назад", "Back");
             AddUiEntry(collection, "btn_next", "Далее", "Next");
@@ -460,6 +485,7 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "btn_theme_dark", "Тёмная", "Dark");
             AddUiEntry(collection, "btn_theme_light", "Светлая", "Light");
             AddUiEntry(collection, "empty_list", "Нет математиков по выбранному фильтру", "No mathematicians for this filter");
+            AddUiEntry(collection, "empty_index", "Нет математиков на эту букву", "No mathematicians for this letter");
             AddUiEntry(collection, "search_placeholder", "Имя, биография, раздел…", "Name, bio, branch…");
             AddUiEntry(collection, "search_results_title", "Поиск: {0}", "Search: {0}");
             AddUiEntry(collection, "search_results_count", "{0} найдено", "{0} found");
@@ -490,6 +516,7 @@ namespace PeopleOfMath.Editor
                 English = en,
                 UiCollection = collection,
                 HomeTitle = MakeLocalized(collection, "title_home"),
+                IndexTitle = MakeLocalized(collection, "title_index"),
                 SettingsTitle = MakeLocalized(collection, "title_settings"),
                 DetailTitle = MakeLocalized(collection, "title_detail"),
             };
@@ -866,13 +893,14 @@ namespace PeopleOfMath.Editor
             var header = CreateHeader(canvasGo.transform, loc);
             var content = CreateContentArea(canvasGo.transform);
             var home = CreateHomePanel(content.transform, navigation, loc);
+            var index = CreateIndexPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var list = CreateListPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var headerBinder = header.root.GetComponent<HeaderTitleBinder>();
             var detail = CreateDetailPanel(content.transform, repository, navigation, headerBinder, loc);
             var settings = CreateSettingsPanel(content.transform, loc);
             var bottom = CreateBottomBar(canvasGo.transform, navigation, loc);
 
-            WireNavigation(navigation, home, list, detail, settings, header.backButton, headerBinder, bottom);
+            WireNavigation(navigation, home, index, list, detail, settings, header.backButton, headerBinder, bottom);
             WireBootstrap(bootstrap, navigation);
             WireBackHandler(app.GetComponent<BackButtonHandler>(), navigation);
             WireThemeScope(canvasGo, cam, navigation, settings, detail);
@@ -909,6 +937,8 @@ namespace PeopleOfMath.Editor
             ConfigureHomeTitle(homeTitle);
             var settingsTitle = CreateLocalizedTitle(header.transform, "SettingsTitle", loc.SettingsTitle);
             settingsTitle.SetActive(false);
+            var indexTitle = CreateLocalizedTitle(header.transform, "IndexTitle", loc.IndexTitle);
+            indexTitle.SetActive(false);
 
             var plainTitle = CreateTmpChild(header.transform, "PlainTitle", 22, FontStyles.Bold, new Vector2(180, -50));
             plainTitle.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, 40);
@@ -923,6 +953,7 @@ namespace PeopleOfMath.Editor
             var so = new SerializedObject(binder);
             so.FindProperty("titleText").objectReferenceValue = plainTitle.GetComponent<TMP_Text>();
             so.FindProperty("homeTitleEvent").objectReferenceValue = homeTitle.GetComponent<LocalizeStringEvent>();
+            so.FindProperty("indexTitleEvent").objectReferenceValue = indexTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("settingsTitleEvent").objectReferenceValue = settingsTitle.GetComponent<LocalizeStringEvent>();
             AssignLocalized(so.FindProperty("detailTitle"), loc.DetailTitle);
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -1804,6 +1835,170 @@ namespace PeopleOfMath.Editor
             return panel;
         }
 
+        static GameObject CreateIndexPanel(
+            Transform parent,
+            NavigationController nav,
+            MathematicianRepository repo,
+            MathematicianListItem prefab,
+            LocalizationRefs loc)
+        {
+            var panel = CreatePanel(parent, "IndexPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            panel.SetActive(false);
+
+            var letterScroll = CreateHorizontalLetterScroll(panel.transform, "LetterScroll");
+            var listScroll = CreateScrollView(panel.transform, "ListScroll");
+            listScroll.gameObject.AddComponent<FontSizeScope>();
+            PinIndexLetterAndList(letterScroll, listScroll);
+            letterScroll.transform.SetAsLastSibling();
+
+            var empty = CreateTmpChild(panel.transform, "Empty", UiLayoutMetrics.EmptyStateBaseFontSize, FontStyles.Italic, UiLayoutMetrics.EmptyStatePosition);
+            HomeListPanelLayout.ConfigureEmptyState(empty);
+            empty.SetActive(false);
+            var emptyLse = empty.AddComponent<LocalizeStringEvent>();
+            var emptyLseSo = new SerializedObject(emptyLse);
+            AssignLocalized(emptyLseSo.FindProperty("m_StringReference"), MakeLocalized(loc.UiCollection, "empty_index"));
+            emptyLseSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var index = panel.AddComponent<IndexPanel>();
+            var prefabRef = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab") ?? prefab;
+            var letterPrefab = CreateLetterButtonPrefab();
+            var so = new SerializedObject(index);
+            so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("repository").objectReferenceValue = repo;
+            so.FindProperty("letterContainer").objectReferenceValue = letterScroll.content;
+            so.FindProperty("listContent").objectReferenceValue = listScroll.content;
+            so.FindProperty("letterButtonPrefab").objectReferenceValue = letterPrefab;
+            so.FindProperty("itemPrefab").objectReferenceValue = prefabRef;
+            so.FindProperty("emptyState").objectReferenceValue = empty;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return panel;
+        }
+
+        static ScrollRect CreateHorizontalLetterScroll(Transform parent, string name)
+        {
+            var root = CreatePanel(parent, name, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var viewport = CreatePanel(root.transform, "Viewport", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var mask = viewport.AddComponent<Mask>();
+            mask.showMaskGraphic = false;
+            viewport.GetComponent<Image>().color = UiTheme.ViewportMask;
+
+            var content = CreatePanel(viewport.transform, "Content", new Vector2(0, 0), new Vector2(0, 1), Vector2.zero, Vector2.zero);
+            var contentRt = content.GetComponent<RectTransform>();
+            contentRt.pivot = new Vector2(0, 0.5f);
+            contentRt.anchorMin = new Vector2(0, 0);
+            contentRt.anchorMax = new Vector2(0, 1);
+            var hlg = content.AddComponent<HorizontalLayoutGroup>();
+            hlg.padding = new RectOffset(
+                UiLayoutMetrics.LetterStripPaddingLeft,
+                UiLayoutMetrics.LetterStripPaddingRight,
+                0,
+                0);
+            hlg.spacing = UiLayoutMetrics.LetterStripSpacing;
+            hlg.childAlignment = TextAnchor.MiddleLeft;
+            hlg.childControlWidth = false;
+            hlg.childControlHeight = true;
+            hlg.childForceExpandWidth = false;
+            hlg.childForceExpandHeight = false;
+            var fitter = content.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+            var scroll = root.AddComponent<ScrollRect>();
+            scroll.viewport = viewport.GetComponent<RectTransform>();
+            scroll.content = contentRt;
+            scroll.horizontal = true;
+            scroll.vertical = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            return scroll;
+        }
+
+        public static void PinIndexLetterAndList(ScrollRect letterScroll, ScrollRect listScroll)
+        {
+            var topInset = UiLayoutMetrics.LetterStripMarginTop
+                + UiLayoutMetrics.LetterStripHeight
+                + UiLayoutMetrics.LetterStripMarginBottom;
+
+            var letterRt = letterScroll.GetComponent<RectTransform>();
+            letterRt.anchorMin = new Vector2(0, 1);
+            letterRt.anchorMax = new Vector2(1, 1);
+            letterRt.pivot = new Vector2(0.5f, 1);
+            letterRt.anchoredPosition = new Vector2(0, -UiLayoutMetrics.LetterStripMarginTop);
+            letterRt.sizeDelta = new Vector2(0, UiLayoutMetrics.LetterStripHeight);
+
+            var listRt = listScroll.GetComponent<RectTransform>();
+            listRt.anchorMin = Vector2.zero;
+            listRt.anchorMax = Vector2.one;
+            listRt.pivot = new Vector2(0.5f, 1f);
+            listRt.offsetMin = Vector2.zero;
+            listRt.offsetMax = new Vector2(0f, -topInset);
+        }
+
+        public static void ConfigureLetterButton(GameObject go)
+        {
+            var width = UiLayoutMetrics.LetterButtonWidth;
+            var height = UiLayoutMetrics.LetterButtonHeight;
+            var rt = go.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchorMin = new Vector2(0f, 0.5f);
+                rt.anchorMax = new Vector2(0f, 0.5f);
+                rt.pivot = new Vector2(0f, 0.5f);
+                rt.anchoredPosition = Vector2.zero;
+                rt.sizeDelta = new Vector2(width, height);
+            }
+
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.preferredWidth = width;
+            le.preferredHeight = height;
+            le.minWidth = width;
+            le.minHeight = height;
+
+            var label = go.transform.Find("Label")?.GetComponent<TextMeshProUGUI>();
+            if (label != null)
+            {
+                label.fontSize = UiLayoutMetrics.LetterButtonFontSize;
+                label.alignment = TextAlignmentOptions.Center;
+                var labelRt = label.GetComponent<RectTransform>();
+                if (labelRt != null)
+                {
+                    labelRt.anchorMin = Vector2.zero;
+                    labelRt.anchorMax = Vector2.one;
+                    labelRt.offsetMin = Vector2.zero;
+                    labelRt.offsetMax = Vector2.zero;
+                }
+            }
+
+            UiStyleBuilder.ApplySecondaryButton(go);
+        }
+
+        static Button CreateLetterButtonPrefab()
+        {
+            var path = $"{PrefabFolder}/LetterButton.prefab";
+            var existing = AssetDatabase.LoadAssetAtPath<Button>(path);
+            if (existing != null)
+            {
+                EditPrefabContents(path, ConfigureLetterButton);
+                return existing;
+            }
+
+            var go = BuildLetterButtonRoot();
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
+            Object.DestroyImmediate(go);
+            EnsureThemedCardOnPrefab(path, UiCardVariant.Filter);
+            return prefab.GetComponent<Button>();
+        }
+
+        static GameObject BuildLetterButtonRoot()
+        {
+            var go = new GameObject("LetterButton", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            go.GetComponent<Image>().color = UiTheme.CardFill;
+            var label = CreateTmpChild(go.transform, "Label", UiLayoutMetrics.LetterButtonBaseFontSize, FontStyles.Bold, Vector2.zero);
+            label.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+            ConfigureLetterButton(go);
+            return go;
+        }
+
         static PortraitGalleryView CreatePortraitGallery(Transform contentParent, bool fillParent = false)
         {
             var block = new GameObject("PortraitGallery", typeof(RectTransform));
@@ -2044,6 +2239,7 @@ namespace PeopleOfMath.Editor
         struct BottomBarResult
         {
             public Button browseTab;
+            public Button indexTab;
             public Button settingsTab;
         }
 
@@ -2056,12 +2252,15 @@ namespace PeopleOfMath.Editor
                 UiButtonLayout.BottomBarSize);
             UiStyleBuilder.ApplyNavBarStyle(bar);
             var browse = CreateSceneButton(bar.transform, UiButtonLayout.BottomBrowse, loc.UiCollection);
+            var index = CreateSceneButton(bar.transform, UiButtonLayout.BottomIndex, loc.UiCollection);
             var settings = CreateSceneButton(bar.transform, UiButtonLayout.BottomSettings, loc.UiCollection);
             WireButtonClick(browse.GetComponent<Button>(), nav.OnBrowseTabClicked);
+            WireButtonClick(index.GetComponent<Button>(), nav.OnIndexTabClicked);
             WireButtonClick(settings.GetComponent<Button>(), nav.OnSettingsTabClicked);
             return new BottomBarResult
             {
                 browseTab = browse.GetComponent<Button>(),
+                indexTab = index.GetComponent<Button>(),
                 settingsTab = settings.GetComponent<Button>()
             };
         }
@@ -2115,6 +2314,7 @@ namespace PeopleOfMath.Editor
         static void WireNavigation(
             NavigationController nav,
             GameObject home,
+            GameObject index,
             GameObject list,
             GameObject detail,
             GameObject settings,
@@ -2124,12 +2324,14 @@ namespace PeopleOfMath.Editor
         {
             var so = new SerializedObject(nav);
             so.FindProperty("homePanel").objectReferenceValue = home.GetComponent<HomePanel>();
+            so.FindProperty("indexPanel").objectReferenceValue = index.GetComponent<IndexPanel>();
             so.FindProperty("listPanel").objectReferenceValue = list.GetComponent<ListPanel>();
             so.FindProperty("detailPanel").objectReferenceValue = detail.GetComponent<DetailPanel>();
             so.FindProperty("settingsPanel").objectReferenceValue = settings.GetComponent<SettingsPanel>();
             so.FindProperty("headerBackButton").objectReferenceValue = backButton;
             so.FindProperty("headerTitle").objectReferenceValue = header;
             so.FindProperty("browseTab").objectReferenceValue = bottomBar.browseTab;
+            so.FindProperty("indexTab").objectReferenceValue = bottomBar.indexTab;
             so.FindProperty("settingsTab").objectReferenceValue = bottomBar.settingsTab;
             so.ApplyModifiedPropertiesWithoutUndo();
             WireButtonClick(backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
@@ -2225,7 +2427,7 @@ namespace PeopleOfMath.Editor
                     AddThemeBinding(text.gameObject, UiThemeToken.TextSecondary);
                 else if (name is "LangLabel" or "FontSizeLabel" or "ThemeLabel"
                          || name.StartsWith("section_")
-                         || name is "Name" or "Label" or "HomeTitle" or "SettingsTitle" or "PlainTitle")
+                         || name is "Name" or "Label" or "HomeTitle" or "IndexTitle" or "SettingsTitle" or "PlainTitle")
                     AddThemeBinding(text.gameObject, UiThemeToken.TextPrimary);
                 else if (name is "Dates" or "Bio" or "Body")
                     AddThemeBinding(text.gameObject, UiThemeToken.TextSecondary);
@@ -2323,6 +2525,144 @@ namespace PeopleOfMath.Editor
             EnsureThemedCardOnPrefab($"{PrefabFolder}/SearchBar.prefab", UiCardVariant.Filter);
             EnsureThemedCardOnPrefab($"{PrefabFolder}/MathematicianListItem.prefab", UiCardVariant.ListItem);
             EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
+        }
+
+        static void PatchIndexInOpenScene(LocalizationRefs loc)
+        {
+            var navigation = Object.FindFirstObjectByType<NavigationController>();
+            var repository = Object.FindFirstObjectByType<MathematicianRepository>();
+            if (navigation == null || repository == null)
+            {
+                Debug.LogError("NavigationController or MathematicianRepository not found in Main scene.");
+                return;
+            }
+
+            var contentArea = GameObject.Find("ContentArea")?.transform;
+            if (contentArea == null)
+            {
+                Debug.LogError("ContentArea not found in Main scene.");
+                return;
+            }
+
+            var listItemPrefab = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab");
+
+            GameObject indexPanelGo = contentArea.Find("IndexPanel")?.gameObject;
+            if (indexPanelGo == null)
+            {
+                indexPanelGo = CreateIndexPanel(contentArea, navigation, repository, listItemPrefab, loc);
+                indexPanelGo.transform.SetSiblingIndex(contentArea.Find("ListPanel")?.GetSiblingIndex() ?? 1);
+            }
+            else
+            {
+                HomeListPanelLayout.ApplyToIndexPanel(indexPanelGo);
+                var listScrollGo = indexPanelGo.transform.Find("ListScroll")?.gameObject;
+                var panelFontScope = indexPanelGo.GetComponent<FontSizeScope>();
+                if (panelFontScope != null)
+                {
+                    Object.DestroyImmediate(panelFontScope);
+                    if (listScrollGo != null && listScrollGo.GetComponent<FontSizeScope>() == null)
+                        listScrollGo.AddComponent<FontSizeScope>();
+                }
+                else if (listScrollGo != null && listScrollGo.GetComponent<FontSizeScope>() == null)
+                {
+                    listScrollGo.AddComponent<FontSizeScope>();
+                }
+            }
+
+            var header = GameObject.Find("Header");
+            if (header != null)
+            {
+                var binder = header.GetComponent<HeaderTitleBinder>();
+                var indexTitle = header.transform.Find("IndexTitle")?.gameObject;
+                if (indexTitle == null)
+                {
+                    indexTitle = CreateLocalizedTitle(header.transform, "IndexTitle", loc.IndexTitle);
+                    indexTitle.SetActive(false);
+                }
+
+                if (binder != null)
+                {
+                    var binderSo = new SerializedObject(binder);
+                    binderSo.FindProperty("indexTitleEvent").objectReferenceValue =
+                        indexTitle.GetComponent<LocalizeStringEvent>();
+                    binderSo.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+
+            var bottomBar = GameObject.Find("BottomBar")?.transform;
+            Button browseTab = null;
+            Button indexTab = null;
+            Button settingsTab = null;
+            if (bottomBar != null)
+            {
+                var browseGo = bottomBar.Find("BrowseTab")?.gameObject;
+                var settingsGo = bottomBar.Find("SettingsTab")?.gameObject;
+                if (browseGo != null)
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        browseGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomBrowse.Position,
+                        UiButtonLayout.BottomBrowse.Size);
+                    browseTab = browseGo.GetComponent<Button>();
+                }
+
+                if (settingsGo != null)
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        settingsGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomSettings.Position,
+                        UiButtonLayout.BottomSettings.Size);
+                    settingsTab = settingsGo.GetComponent<Button>();
+                }
+
+                var indexGo = bottomBar.Find("IndexTab")?.gameObject;
+                if (indexGo == null)
+                {
+                    indexGo = CreateSceneButton(bottomBar, UiButtonLayout.BottomIndex, loc.UiCollection);
+                    WireButtonClick(indexGo.GetComponent<Button>(), navigation.OnIndexTabClicked);
+                }
+
+                indexTab = indexGo.GetComponent<Button>();
+            }
+
+            var home = contentArea.Find("HomePanel")?.gameObject;
+            var list = contentArea.Find("ListPanel")?.gameObject;
+            var detail = contentArea.Find("DetailPanel")?.gameObject;
+            var settings = contentArea.Find("SettingsPanel")?.gameObject;
+            var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
+            var headerBinder = header != null ? header.GetComponent<HeaderTitleBinder>() : null;
+
+            if (home != null && list != null && detail != null && settings != null && backButton != null && headerBinder != null
+                && browseTab != null && indexTab != null && settingsTab != null)
+            {
+                WireNavigation(
+                    navigation,
+                    home,
+                    indexPanelGo,
+                    list,
+                    detail,
+                    settings,
+                    backButton,
+                    headerBinder,
+                    new BottomBarResult
+                    {
+                        browseTab = browseTab,
+                        indexTab = indexTab,
+                        settingsTab = settingsTab
+                    });
+            }
+            else
+            {
+                var navSo = new SerializedObject(navigation);
+                navSo.FindProperty("indexPanel").objectReferenceValue = indexPanelGo.GetComponent<IndexPanel>();
+                if (indexTab != null)
+                    navSo.FindProperty("indexTab").objectReferenceValue = indexTab;
+                navSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/LetterButton.prefab", UiCardVariant.Filter);
+            CreateLetterButtonPrefab();
         }
 
         static void EnsureThemedCardOnPrefab(string path, UiCardVariant variant)

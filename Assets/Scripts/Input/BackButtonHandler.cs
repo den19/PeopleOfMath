@@ -60,6 +60,7 @@ namespace PeopleOfMath.Input
                     Application.Quit();
                     break;
                 case AppScreen.Settings:
+                case AppScreen.Index:
                     navigation.ShowHome();
                     break;
                 default:

@@ -358,6 +358,18 @@ MonoBehaviour:
     m_Localized: Share
     m_Metadata:
       m_Items: []
+  - m_Id: 7800216039186432
+    m_Localized: "All mathematicians A\u2013Z"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7800216085323776
+    m_Localized: Index
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7800216085323777
+    m_Localized: No mathematicians for this letter
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

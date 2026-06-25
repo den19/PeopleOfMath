@@ -77,6 +77,18 @@ namespace PeopleOfMath.Editor
             -(ListItemTopPadding + ListItemNameHeight + ListItemVerticalGap
               + ListItemTextLineHeight + ListItemVerticalGap));
 
+        public static float LetterButtonWidth => ScaleFont(64f);
+        public static float LetterButtonHeight => ScaleFont(64f);
+        public const float LetterButtonBaseFontSize = 18f;
+        public static int LetterStripHeight => Mathf.RoundToInt(ScaleFont(88f));
+        public static int LetterStripMarginTop => Mathf.RoundToInt(ScaleFont(16f));
+        public static int LetterStripMarginBottom => Mathf.RoundToInt(ScaleFont(12f));
+        public static float LetterStripSpacing => ScaleFont(8f);
+        public static int LetterStripPaddingLeft => Mathf.RoundToInt(ScaleFont(24f));
+        public static int LetterStripPaddingRight => Mathf.RoundToInt(ScaleFont(24f));
+
+        public static float LetterButtonFontSize => ScaleFont(LetterButtonBaseFontSize) * 2f;
+
         public const float EmptyStateBaseFontSize = 16f;
         public static float EmptyStateFontSize => ScaleFont(EmptyStateBaseFontSize) * 2f;
         public static Vector2 EmptyStatePosition => new Vector2(80f, -400f);
