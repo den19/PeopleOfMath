@@ -77,7 +77,10 @@ namespace PeopleOfMath.Editor
             "SettingsTab", new Vector2(713f, -110f), new Vector2(347f, 72f), "tab_settings", UiButtonStyle.Secondary);
 
         public static readonly SceneButton BottomFavorites = new(
-            "FavoritesTab", new Vector2(19f, -22f), new Vector2(1042f, 72f), "btn_favorites", UiButtonStyle.Secondary);
+            "FavoritesTab", new Vector2(19f, -22f), new Vector2(511f, 72f), "btn_favorites", UiButtonStyle.Secondary);
+
+        public static readonly SceneButton BottomQuiz = new(
+            "QuizTab", new Vector2(537f, -22f), new Vector2(524f, 72f), "tab_quiz", UiButtonStyle.Secondary);
 
         public static void ApplyTopLeftAnchoredRect(RectTransform rt, Vector2 position, Vector2 size)
         {

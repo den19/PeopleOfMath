@@ -13,7 +13,8 @@ namespace PeopleOfMath.Core
         List,
         Detail,
         Settings,
-        Favorites
+        Favorites,
+        Quiz
     }
 
     public class NavigationController : MonoBehaviour
@@ -24,6 +25,7 @@ namespace PeopleOfMath.Core
         [SerializeField] DetailPanel detailPanel;
         [SerializeField] SettingsPanel settingsPanel;
         [SerializeField] FavoritesPanel favoritesPanel;
+        [SerializeField] QuizPanel quizPanel;
         [SerializeField] UiPanelSlideTransition favoritesTransition;
         [SerializeField] GameObject headerBackButton;
         [SerializeField] HeaderTitleBinder headerTitle;
@@ -31,6 +33,7 @@ namespace PeopleOfMath.Core
         [SerializeField] Button indexTab;
         [SerializeField] Button settingsTab;
         [SerializeField] Button favoritesButton;
+        [SerializeField] Button quizTab;
 
         AppScreen _screen = AppScreen.Home;
         FilterKind _filterKind;
@@ -40,12 +43,14 @@ namespace PeopleOfMath.Core
         bool _listFromDetail;
         bool _detailFromIndex;
         bool _detailFromFavorites;
+        bool _detailFromQuiz;
         string _selectedMathematicianId;
         int _lastBackFrame = -1;
 
         bool _detailReturnFromHome;
         bool _detailReturnFromIndex;
         bool _detailReturnFromFavorites;
+        bool _detailReturnFromQuiz;
         bool _detailReturnFromSearch;
         string _detailReturnSearchQuery;
         bool _detailReturnFromFilterList;
@@ -81,6 +86,7 @@ namespace PeopleOfMath.Core
             detailPanel?.gameObject.SetActive(false);
             settingsPanel?.gameObject.SetActive(false);
             favoritesPanel?.gameObject.SetActive(false);
+            quizPanel?.gameObject.SetActive(false);
         }
 
         void HideAllPanelsExceptFavorites()
@@ -90,6 +96,7 @@ namespace PeopleOfMath.Core
             listPanel?.gameObject.SetActive(false);
             detailPanel?.gameObject.SetActive(false);
             settingsPanel?.gameObject.SetActive(false);
+            quizPanel?.gameObject.SetActive(false);
         }
 
         UiPanelSlideTransition GetFavoritesTransition()
@@ -181,6 +188,7 @@ namespace PeopleOfMath.Core
             {
                 _detailFromIndex = _detailReturnFromIndex;
                 _detailFromFavorites = _detailReturnFromFavorites;
+                _detailFromQuiz = _detailReturnFromQuiz;
                 _listFromSearch = _detailReturnFromSearch;
                 _searchQuery = _detailReturnSearchQuery;
                 if (_detailReturnFromFilterList)
@@ -194,6 +202,7 @@ namespace PeopleOfMath.Core
                 _detailReturnFromHome = _screen == AppScreen.Home;
                 _detailReturnFromIndex = _screen == AppScreen.Index;
                 _detailReturnFromFavorites = _screen == AppScreen.Favorites;
+                _detailReturnFromQuiz = _screen == AppScreen.Quiz;
                 _detailReturnFromSearch = _screen == AppScreen.List && _listFromSearch;
                 _detailReturnSearchQuery = _searchQuery;
                 _detailReturnFromFilterList = _screen == AppScreen.List && !_listFromSearch;
@@ -202,6 +211,7 @@ namespace PeopleOfMath.Core
 
                 _detailFromIndex = _detailReturnFromIndex;
                 _detailFromFavorites = _detailReturnFromFavorites;
+                _detailFromQuiz = _detailReturnFromQuiz;
             }
 
             _listFromDetail = false;
@@ -249,6 +259,19 @@ namespace PeopleOfMath.Core
             transition.PlayOpen(() => favoritesPanel.RevealListItemsStaggered());
         }
 
+        public void ShowQuiz()
+        {
+            _listFromSearch = false;
+            _listFromDetail = false;
+            _screen = AppScreen.Quiz;
+            HideAllPanels();
+            quizPanel.gameObject.SetActive(true);
+            quizPanel.ShowMenu();
+            headerBackButton.SetActive(true);
+            headerTitle?.SetQuizTitle();
+            RefreshTabStyles();
+        }
+
         public void RefreshTabStyles()
         {
             var browseActive = _screen == AppScreen.Home
@@ -259,11 +282,15 @@ namespace PeopleOfMath.Core
             var settingsActive = _screen == AppScreen.Settings;
             var favoritesActive = _screen == AppScreen.Favorites
                 || (_screen == AppScreen.Detail && _detailFromFavorites);
+            var quizActive = _screen == AppScreen.Quiz
+                || (_screen == AppScreen.Detail && _detailFromQuiz);
             UiButtonStyler.Apply(browseTab, browseActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
             UiButtonStyler.Apply(indexTab, indexActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
             UiButtonStyler.Apply(settingsTab, settingsActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
             if (favoritesButton != null)
                 UiButtonStyler.Apply(favoritesButton, favoritesActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            if (quizTab != null)
+                UiButtonStyler.Apply(quizTab, quizActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
             EventSystem.current?.SetSelectedGameObject(null);
         }
 
@@ -287,6 +314,8 @@ namespace PeopleOfMath.Core
                         ShowIndex();
                     else if (_detailFromFavorites)
                         ShowFavorites();
+                    else if (_detailFromQuiz)
+                        ShowQuiz();
                     else if (_listFromSearch)
                         ShowSearch(_searchQuery);
                     else if (_detailReturnFromFilterList)
@@ -299,6 +328,11 @@ namespace PeopleOfMath.Core
                 case AppScreen.Index:
                 case AppScreen.Settings:
                 case AppScreen.Favorites:
+                    ShowHome();
+                    break;
+                case AppScreen.Quiz:
+                    if (quizPanel != null && quizPanel.TryHandleBack())
+                        break;
                     ShowHome();
                     break;
             }
@@ -326,5 +360,7 @@ namespace PeopleOfMath.Core
 
             ShowFavorites();
         }
+
+        public void OnQuizTabClicked() => ShowQuiz();
     }
 }

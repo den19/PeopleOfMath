@@ -17,8 +17,18 @@ namespace PeopleOfMath.UI
         [SerializeField] Transform countryContainer;
         [SerializeField] Transform branchContainer;
         [SerializeField] Button filterButtonPrefab;
+        [SerializeField] Button quizButton;
 
         readonly List<Button> _spawned = new();
+
+        void Awake()
+        {
+            if (quizButton != null)
+            {
+                quizButton.onClick.RemoveAllListeners();
+                quizButton.onClick.AddListener(() => navigation?.ShowQuiz());
+            }
+        }
 
         void OnEnable()
         {

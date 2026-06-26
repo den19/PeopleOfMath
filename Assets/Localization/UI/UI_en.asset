@@ -386,6 +386,90 @@ MonoBehaviour:
     m_Localized: Glass
     m_Metadata:
       m_Items: []
+  - m_Id: 8379492715192320
+    m_Localized: Quiz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135360
+    m_Localized: Quiz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135361
+    m_Localized: Guess the mathematician
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135362
+    m_Localized: By portrait or fact
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135363
+    m_Localized: By portrait
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135364
+    m_Localized: By fact
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135365
+    m_Localized: Mixed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135366
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135367
+    m_Localized: '{0} / {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135368
+    m_Localized: Correct!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135369
+    m_Localized: Wrong
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135370
+    m_Localized: 'Correct answer: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135371
+    m_Localized: Next
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135372
+    m_Localized: View profile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135373
+    m_Localized: Results
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135374
+    m_Localized: '{0} of {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135375
+    m_Localized: 'Best score: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135376
+    m_Localized: Play again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135377
+    m_Localized: Not enough data for this mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135378
+    m_Localized: New record!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135379
+    m_Localized: Back to home
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

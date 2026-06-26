@@ -279,6 +279,90 @@ MonoBehaviour:
     m_Key: btn_theme_glass
     m_Metadata:
       m_Items: []
+  - m_Id: 8379492715192320
+    m_Key: title_quiz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135360
+    m_Key: tab_quiz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135361
+    m_Key: quiz_home_card_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135362
+    m_Key: quiz_home_card_subtitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135363
+    m_Key: quiz_mode_portrait
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135364
+    m_Key: quiz_mode_fact
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135365
+    m_Key: quiz_mode_mixed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135366
+    m_Key: quiz_start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135367
+    m_Key: quiz_progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135368
+    m_Key: quiz_correct
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135369
+    m_Key: quiz_wrong
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135370
+    m_Key: quiz_correct_answer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135371
+    m_Key: quiz_next
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135372
+    m_Key: quiz_view_profile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135373
+    m_Key: quiz_results_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135374
+    m_Key: quiz_results_score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135375
+    m_Key: quiz_best_score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135376
+    m_Key: quiz_play_again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135377
+    m_Key: quiz_not_enough_data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135378
+    m_Key: quiz_new_record
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8379492757135379
+    m_Key: quiz_go_home
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

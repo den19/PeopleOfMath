@@ -108,7 +108,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2392783530408693655}
+  - {fileID: 8878662997555298521}
   m_Father: {fileID: 1146025523540716146}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b1146f3c7c89df4a96f0f1c1fffebfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.FavoriteIconButton
-  iconImage: {fileID: 3753518562586774236}
+  iconImage: {fileID: 3385352809696074751}
 --- !u!114 &6029785508382777641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -535,7 +535,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 548552090286043592}
+  m_Father: {fileID: 1788689959721843941}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -926,7 +926,6 @@ GameObject:
   - component: {fileID: 9156533829303293770}
   - component: {fileID: 3149860415039092541}
   - component: {fileID: 3556126201590593174}
-  - component: {fileID: 1717825933549741550}
   m_Layer: 0
   m_Name: Fill
   m_TagString: Untagged
@@ -1006,21 +1005,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0.749, g: 0.353, b: 0.949, a: 0.45}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
---- !u!114 &1717825933549741550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6130641503818046434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 998db1b2d92812b428ed635ce79d1e88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiGlassSurface
-  targetImage: {fileID: 3149860415039092541}
-  useFrostedMaterial: 1
-  tintToken: 3
 --- !u!1 &6441954387902694553
 GameObject:
   m_ObjectHideFlags: 0
@@ -1054,7 +1038,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4892880223244726429}
+  - {fileID: 2392783530408693655}
   m_Father: {fileID: 1146025523540716146}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
@@ -1156,7 +1140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a07bc97809c27ae4688761431dbfc43f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.ShareIconButton
-  iconImage: {fileID: 2985972348458835564}
+  iconImage: {fileID: 3753518562586774236}
 --- !u!114 &6769374623248690511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1177,7 +1161,7 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!1 &8450622252843064277
+--- !u!1 &7721396716589193814
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1185,9 +1169,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4892880223244726429}
-  - component: {fileID: 8299770322314968801}
-  - component: {fileID: 2985972348458835564}
+  - component: {fileID: 8878662997555298521}
+  - component: {fileID: 6127408261420955012}
+  - component: {fileID: 3385352809696074751}
   m_Layer: 0
   m_Name: Icon
   m_TagString: Untagged
@@ -1195,40 +1179,40 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &4892880223244726429
+--- !u!224 &8878662997555298521
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8450622252843064277}
+  m_GameObject: {fileID: 7721396716589193814}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1788689959721843941}
+  m_Father: {fileID: 548552090286043592}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -16, y: -16}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &8299770322314968801
+--- !u!222 &6127408261420955012
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8450622252843064277}
+  m_GameObject: {fileID: 7721396716589193814}
   m_CullTransparentMesh: 1
---- !u!114 &2985972348458835564
+--- !u!114 &3385352809696074751
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8450622252843064277}
+  m_GameObject: {fileID: 7721396716589193814}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}

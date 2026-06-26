@@ -451,6 +451,7 @@ namespace PeopleOfMath.Editor
             public LocalizedString IndexTitle;
             public LocalizedString SettingsTitle;
             public LocalizedString FavoritesTitle;
+            public LocalizedString QuizTitle;
             public LocalizedString DetailTitle;
         }
 
@@ -523,6 +524,27 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "empty_favorites",
                 "Пока нет избранных математиков. Нажмите ♥ на карточке, чтобы добавить.",
                 "No favorites yet. Tap ♥ on a card to add one.");
+            AddUiEntry(collection, "title_quiz", "Квиз", "Quiz");
+            AddUiEntry(collection, "tab_quiz", "Квиз", "Quiz");
+            AddUiEntry(collection, "quiz_home_card_title", "Угадай математика", "Guess the mathematician");
+            AddUiEntry(collection, "quiz_home_card_subtitle", "По портрету или факту", "By portrait or fact");
+            AddUiEntry(collection, "quiz_mode_portrait", "По портрету", "By portrait");
+            AddUiEntry(collection, "quiz_mode_fact", "По факту", "By fact");
+            AddUiEntry(collection, "quiz_mode_mixed", "Смешанный", "Mixed");
+            AddUiEntry(collection, "quiz_start", "Начать", "Start");
+            AddUiEntry(collection, "quiz_progress", "{0} / {1}", "{0} / {1}");
+            AddUiEntry(collection, "quiz_correct", "Верно!", "Correct!");
+            AddUiEntry(collection, "quiz_wrong", "Неверно", "Wrong");
+            AddUiEntry(collection, "quiz_correct_answer", "Правильный ответ: {0}", "Correct answer: {0}");
+            AddUiEntry(collection, "quiz_next", "Далее", "Next");
+            AddUiEntry(collection, "quiz_view_profile", "Открыть профиль", "View profile");
+            AddUiEntry(collection, "quiz_results_title", "Результат", "Results");
+            AddUiEntry(collection, "quiz_results_score", "{0} из {1}", "{0} of {1}");
+            AddUiEntry(collection, "quiz_best_score", "Лучший результат: {0}", "Best score: {0}");
+            AddUiEntry(collection, "quiz_play_again", "Ещё раз", "Play again");
+            AddUiEntry(collection, "quiz_not_enough_data", "Недостаточно данных для этого режима", "Not enough data for this mode");
+            AddUiEntry(collection, "quiz_new_record", "Новый рекорд!", "New record!");
+            AddUiEntry(collection, "quiz_go_home", "На главную", "Back to home");
 
             if (!LocalizationEditorSettings.GetLocales().Contains(ru))
                 LocalizationEditorSettings.AddLocale(ru);
@@ -548,6 +570,7 @@ namespace PeopleOfMath.Editor
                 IndexTitle = MakeLocalized(collection, "title_index"),
                 SettingsTitle = MakeLocalized(collection, "title_settings"),
                 FavoritesTitle = MakeLocalized(collection, "title_favorites"),
+                QuizTitle = MakeLocalized(collection, "title_quiz"),
                 DetailTitle = MakeLocalized(collection, "title_detail"),
             };
         }
@@ -1004,12 +1027,13 @@ namespace PeopleOfMath.Editor
             var index = CreateIndexPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var list = CreateListPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var favorites = CreateFavoritesPanel(content.transform, navigation, repository, listItemPrefab, loc);
+            var quiz = CreateQuizPanel(content.transform, navigation, repository, loc);
             var headerBinder = header.root.GetComponent<HeaderTitleBinder>();
             var detail = CreateDetailPanel(content.transform, repository, navigation, headerBinder, loc);
             var settings = CreateSettingsPanel(content.transform, loc);
             var bottom = CreateBottomBar(canvasGo.transform, navigation, loc);
 
-            WireNavigation(navigation, home, index, list, favorites, detail, settings, header.backButton, headerBinder, bottom);
+            WireNavigation(navigation, home, index, list, favorites, quiz, detail, settings, header.backButton, headerBinder, bottom);
             WireBootstrap(bootstrap, navigation);
             WireBackHandler(app.GetComponent<BackButtonHandler>(), navigation);
             WireThemeScope(canvasGo, cam, navigation, settings, detail);
@@ -1050,6 +1074,8 @@ namespace PeopleOfMath.Editor
             indexTitle.SetActive(false);
             var favoritesTitle = CreateLocalizedTitle(header.transform, "FavoritesTitle", loc.FavoritesTitle);
             favoritesTitle.SetActive(false);
+            var quizTitle = CreateLocalizedTitle(header.transform, "QuizTitle", loc.QuizTitle);
+            quizTitle.SetActive(false);
 
             var plainTitle = CreateTmpChild(header.transform, "PlainTitle", 22, FontStyles.Bold, new Vector2(180, -50));
             plainTitle.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, 40);
@@ -1067,6 +1093,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("indexTitleEvent").objectReferenceValue = indexTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("settingsTitleEvent").objectReferenceValue = settingsTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("favoritesTitleEvent").objectReferenceValue = favoritesTitle.GetComponent<LocalizeStringEvent>();
+            so.FindProperty("quizTitleEvent").objectReferenceValue = quizTitle.GetComponent<LocalizeStringEvent>();
             AssignLocalized(so.FindProperty("detailTitle"), loc.DetailTitle);
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -1173,6 +1200,11 @@ namespace PeopleOfMath.Editor
             PinHomeSearchAndScroll(searchBar, scroll);
             var content = scroll.content;
 
+            var quizCard = CreateQuizHomeCard(content, loc);
+            var quizCardLe = quizCard.GetComponent<LayoutElement>();
+            if (quizCardLe != null)
+                quizCardLe.preferredHeight = 128f;
+
             AddSectionLabel(content, loc.UiCollection, "section_century");
             var centuryBox = CreateVerticalGroup(content, "CenturyGroup");
             AddSectionLabel(content, loc.UiCollection, "section_country");
@@ -1185,6 +1217,7 @@ namespace PeopleOfMath.Editor
             var so = new SerializedObject(home);
             so.FindProperty("navigation").objectReferenceValue = nav;
             so.FindProperty("searchBar").objectReferenceValue = searchBar.GetComponent<SearchBar>();
+            so.FindProperty("quizButton").objectReferenceValue = quizCard.GetComponent<Button>();
             so.FindProperty("centuryContainer").objectReferenceValue = centuryBox;
             so.FindProperty("countryContainer").objectReferenceValue = countryBox;
             so.FindProperty("branchContainer").objectReferenceValue = branchBox;
@@ -2088,6 +2121,8 @@ namespace PeopleOfMath.Editor
             AssignLocalized(soLse.FindProperty("m_StringReference"), MakeLocalized(loc.UiCollection, "empty_favorites"));
             soLse.ApplyModifiedPropertiesWithoutUndo();
 
+            ConfigureFavoritesPanelAnimation(panel);
+
             var favorites = panel.AddComponent<FavoritesPanel>();
             var prefabRef = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
                 $"{PrefabFolder}/MathematicianListItem.prefab") ?? prefab;
@@ -2099,9 +2134,292 @@ namespace PeopleOfMath.Editor
             so.FindProperty("emptyState").objectReferenceValue = empty;
             so.ApplyModifiedPropertiesWithoutUndo();
 
-            ConfigureFavoritesPanelAnimation(panel);
             slideBackdropGo.transform.SetAsFirstSibling();
             return panel;
+        }
+
+        static GameObject CreateQuizHomeCard(Transform parent, LocalizationRefs loc)
+        {
+            var card = new GameObject("QuizCard", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            card.transform.SetParent(parent, false);
+            card.transform.SetAsFirstSibling();
+            UiStyleBuilder.ApplyCardStyle(card, UiCardVariant.Filter);
+            var button = card.GetComponent<Button>();
+            if (button != null)
+                button.transition = Selectable.Transition.None;
+
+            var title = CreateTmpChild(card.transform, "Title", 20, FontStyles.Bold, new Vector2(24, -20));
+            title.GetComponent<RectTransform>().sizeDelta = new Vector2(-48, 32);
+            var titleLse = title.AddComponent<LocalizeStringEvent>();
+            var titleSo = new SerializedObject(titleLse);
+            AssignLocalized(titleSo.FindProperty("m_StringReference"), MakeLocalized(loc.UiCollection, "quiz_home_card_title"));
+            titleSo.ApplyModifiedPropertiesWithoutUndo();
+            WireLocalizeStringToTmp(title);
+
+            var subtitle = CreateTmpChild(card.transform, "Subtitle", 16, FontStyles.Normal, new Vector2(24, -58));
+            subtitle.GetComponent<RectTransform>().sizeDelta = new Vector2(-48, 28);
+            subtitle.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+            var subtitleLse = subtitle.AddComponent<LocalizeStringEvent>();
+            var subtitleSo = new SerializedObject(subtitleLse);
+            AssignLocalized(subtitleSo.FindProperty("m_StringReference"), MakeLocalized(loc.UiCollection, "quiz_home_card_subtitle"));
+            subtitleSo.ApplyModifiedPropertiesWithoutUndo();
+            WireLocalizeStringToTmp(subtitle);
+
+            return card;
+        }
+
+        static GameObject CreateQuizPanel(
+            Transform parent,
+            NavigationController nav,
+            MathematicianRepository repo,
+            LocalizationRefs loc)
+        {
+            var panel = CreatePanel(parent, "QuizPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            panel.SetActive(false);
+            panel.AddComponent<FontSizeScope>();
+
+            var menuView = CreateQuizMenuView(panel.transform, loc);
+            var playingView = CreateQuizPlayingView(panel.transform, loc);
+            var feedbackView = CreateQuizFeedbackView(panel.transform, loc);
+            var resultsView = CreateQuizResultsView(panel.transform, loc);
+            feedbackView.SetActive(false);
+
+            var answerPrefab = EnsureQuizAnswerButtonPrefab();
+            var quiz = panel.AddComponent<QuizPanel>();
+            var so = new SerializedObject(quiz);
+            so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("repository").objectReferenceValue = repo;
+            so.FindProperty("menuView").objectReferenceValue = menuView;
+            so.FindProperty("playingView").objectReferenceValue = playingView;
+            so.FindProperty("feedbackView").objectReferenceValue = feedbackView;
+            so.FindProperty("resultsView").objectReferenceValue = resultsView;
+            so.FindProperty("modePortraitButton").objectReferenceValue = menuView.transform.Find("ModePortrait")?.GetComponent<Button>();
+            so.FindProperty("modeFactButton").objectReferenceValue = menuView.transform.Find("ModeFact")?.GetComponent<Button>();
+            so.FindProperty("modeMixedButton").objectReferenceValue = menuView.transform.Find("ModeMixed")?.GetComponent<Button>();
+            so.FindProperty("startButton").objectReferenceValue = menuView.transform.Find("StartButton")?.GetComponent<Button>();
+            so.FindProperty("bestScoreLabel").objectReferenceValue = menuView.transform.Find("BestScore")?.GetComponent<TMP_Text>();
+            so.FindProperty("emptyStateLabel").objectReferenceValue = menuView.transform.Find("EmptyState")?.GetComponent<TMP_Text>();
+            so.FindProperty("progressLabel").objectReferenceValue = playingView.transform.Find("Progress")?.GetComponent<TMP_Text>();
+            so.FindProperty("promptPortrait").objectReferenceValue = playingView.transform.Find("PromptPortrait")?.GetComponent<Image>();
+            so.FindProperty("promptText").objectReferenceValue = playingView.transform.Find("PromptText")?.GetComponent<TMP_Text>();
+            so.FindProperty("answersContainer").objectReferenceValue = playingView.transform.Find("Answers")?.transform;
+            so.FindProperty("answerButtonPrefab").objectReferenceValue = answerPrefab;
+            so.FindProperty("feedbackTitleLabel").objectReferenceValue = feedbackView.transform.Find("FeedbackTitle")?.GetComponent<TMP_Text>();
+            so.FindProperty("feedbackAnswerLabel").objectReferenceValue = feedbackView.transform.Find("FeedbackAnswer")?.GetComponent<TMP_Text>();
+            so.FindProperty("nextButton").objectReferenceValue = feedbackView.transform.Find("NextButton")?.GetComponent<Button>();
+            so.FindProperty("viewProfileButton").objectReferenceValue = feedbackView.transform.Find("ViewProfileButton")?.GetComponent<Button>();
+            so.FindProperty("resultsTitleLabel").objectReferenceValue = resultsView.transform.Find("ResultsTitle")?.GetComponent<TMP_Text>();
+            so.FindProperty("resultsScoreLabel").objectReferenceValue = resultsView.transform.Find("ResultsScore")?.GetComponent<TMP_Text>();
+            so.FindProperty("resultsBestLabel").objectReferenceValue = resultsView.transform.Find("ResultsBest")?.GetComponent<TMP_Text>();
+            so.FindProperty("resultsNewRecordLabel").objectReferenceValue = resultsView.transform.Find("ResultsNewRecord")?.GetComponent<TMP_Text>();
+            so.FindProperty("playAgainButton").objectReferenceValue = resultsView.transform.Find("PlayAgainButton")?.GetComponent<Button>();
+            so.FindProperty("resultsHomeButton").objectReferenceValue = resultsView.transform.Find("HomeButton")?.GetComponent<Button>();
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return panel;
+        }
+
+        static GameObject CreateQuizMenuView(Transform parent, LocalizationRefs loc)
+        {
+            var view = CreateStretchChild(parent, "MenuView");
+            CreateQuizModeButton(view.transform, "ModePortrait", new Vector2(40, -40), new Vector2(1000, 72), loc, "quiz_mode_portrait");
+            CreateQuizModeButton(view.transform, "ModeFact", new Vector2(40, -130), new Vector2(1000, 72), loc, "quiz_mode_fact");
+            CreateQuizModeButton(view.transform, "ModeMixed", new Vector2(40, -220), new Vector2(1000, 72), loc, "quiz_mode_mixed");
+
+            var best = CreateTmpChild(view.transform, "BestScore", 18, FontStyles.Italic, new Vector2(40, -320));
+            best.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 40);
+
+            var empty = CreateTmpChild(view.transform, "EmptyState", 16, FontStyles.Italic, new Vector2(40, -380));
+            empty.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 60);
+            empty.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+            empty.SetActive(false);
+
+            CreateQuizActionButton(view.transform, "StartButton", new Vector2(40, -460), new Vector2(1000, 72), loc, "quiz_start");
+            return view;
+        }
+
+        static GameObject CreateQuizPlayingView(Transform parent, LocalizationRefs loc)
+        {
+            var view = CreateStretchChild(parent, "PlayingView");
+            view.SetActive(false);
+
+            var progress = CreateTmpChild(view.transform, "Progress", 18, FontStyles.Bold, new Vector2(40, -24));
+            progress.GetComponent<RectTransform>().sizeDelta = new Vector2(200, 32);
+
+            var portraitGo = new GameObject("PromptPortrait", typeof(RectTransform), typeof(Image));
+            portraitGo.transform.SetParent(view.transform, false);
+            var portraitRt = portraitGo.GetComponent<RectTransform>();
+            portraitRt.anchorMin = new Vector2(0.5f, 1f);
+            portraitRt.anchorMax = new Vector2(0.5f, 1f);
+            portraitRt.pivot = new Vector2(0.5f, 1f);
+            portraitRt.anchoredPosition = new Vector2(0, -72);
+            portraitRt.sizeDelta = new Vector2(320, 320);
+            portraitGo.GetComponent<Image>().color = UiTheme.PortraitPlaceholder;
+
+            var promptText = CreateTmpChild(view.transform, "PromptText", 18, FontStyles.Normal, new Vector2(40, -72));
+            var promptRt = promptText.GetComponent<RectTransform>();
+            promptRt.sizeDelta = new Vector2(1000, 320);
+            var promptTmp = promptText.GetComponent<TextMeshProUGUI>();
+            promptTmp.alignment = TextAlignmentOptions.TopLeft;
+            promptTmp.textWrappingMode = TextWrappingModes.Normal;
+            promptTmp.overflowMode = TextOverflowModes.Ellipsis;
+            promptText.SetActive(false);
+
+            var answers = new GameObject("Answers", typeof(RectTransform), typeof(VerticalLayoutGroup));
+            answers.transform.SetParent(view.transform, false);
+            var answersRt = answers.GetComponent<RectTransform>();
+            answersRt.anchorMin = new Vector2(0, 0);
+            answersRt.anchorMax = new Vector2(1, 1);
+            answersRt.offsetMin = new Vector2(40, 40);
+            answersRt.offsetMax = new Vector2(-40, -420);
+            var vlg = answers.GetComponent<VerticalLayoutGroup>();
+            vlg.spacing = 16f;
+            vlg.childControlHeight = true;
+            vlg.childControlWidth = true;
+            vlg.childForceExpandHeight = false;
+            vlg.childForceExpandWidth = true;
+
+            return view;
+        }
+
+        static GameObject CreateQuizFeedbackView(Transform parent, LocalizationRefs loc)
+        {
+            var view = CreateStretchChild(parent, "FeedbackView");
+            view.SetActive(false);
+
+            var title = CreateTmpChild(view.transform, "FeedbackTitle", 22, FontStyles.Bold, new Vector2(40, -520));
+            title.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 40);
+
+            var answer = CreateTmpChild(view.transform, "FeedbackAnswer", 16, FontStyles.Normal, new Vector2(40, -570));
+            answer.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 80);
+            answer.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+
+            CreateQuizActionButton(view.transform, "NextButton", new Vector2(40, -680), new Vector2(480, 72), loc, "quiz_next");
+            CreateQuizActionButton(view.transform, "ViewProfileButton", new Vector2(560, -680), new Vector2(480, 72), loc, "quiz_view_profile");
+            return view;
+        }
+
+        static GameObject CreateQuizResultsView(Transform parent, LocalizationRefs loc)
+        {
+            var view = CreateStretchChild(parent, "ResultsView");
+            view.SetActive(false);
+
+            var title = CreateTmpChild(view.transform, "ResultsTitle", 24, FontStyles.Bold, new Vector2(40, -120));
+            title.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 48);
+
+            var score = CreateTmpChild(view.transform, "ResultsScore", 32, FontStyles.Bold, new Vector2(40, -200));
+            score.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 56);
+
+            var best = CreateTmpChild(view.transform, "ResultsBest", 18, FontStyles.Normal, new Vector2(40, -280));
+            best.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 40);
+            best.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+
+            var record = CreateTmpChild(view.transform, "ResultsNewRecord", 18, FontStyles.Bold, new Vector2(40, -330));
+            record.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 36);
+            record.GetComponent<TextMeshProUGUI>().color = UiTheme.PrimaryAccent;
+            record.SetActive(false);
+
+            CreateQuizActionButton(view.transform, "PlayAgainButton", new Vector2(40, -420), new Vector2(1000, 72), loc, "quiz_play_again");
+            CreateQuizActionButton(view.transform, "HomeButton", new Vector2(40, -510), new Vector2(1000, 72), loc, "quiz_go_home");
+            return view;
+        }
+
+        static GameObject CreateStretchChild(Transform parent, string name)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+            return go;
+        }
+
+        static GameObject CreateQuizModeButton(
+            Transform parent,
+            string name,
+            Vector2 position,
+            Vector2 size,
+            LocalizationRefs loc,
+            string localizationKey)
+        {
+            var go = CreateQuizActionButton(parent, name, position, size, loc, localizationKey);
+            UiStyleBuilder.ApplySecondaryButton(go);
+            return go;
+        }
+
+        static GameObject CreateQuizActionButton(
+            Transform parent,
+            string name,
+            Vector2 position,
+            Vector2 size,
+            LocalizationRefs loc,
+            string localizationKey)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+            go.transform.SetParent(parent, false);
+            UiButtonLayout.ApplyTopLeftAnchoredRect(go.GetComponent<RectTransform>(), position, size);
+            UiStyleBuilder.ApplyPrimaryButton(go);
+
+            var label = CreateTmpChild(go.transform, "Text", UiButtonLayout.StandardLabelFontBase, FontStyles.Normal, UiButtonLayout.StandardLabelOffset);
+            UiButtonLayout.ConfigureStandardLabel(label);
+            var lse = label.AddComponent<LocalizeStringEvent>();
+            var so = new SerializedObject(lse);
+            AssignLocalized(so.FindProperty("m_StringReference"), MakeLocalized(loc.UiCollection, localizationKey));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            WireLocalizeStringToTmp(label);
+            return go;
+        }
+
+        static QuizAnswerButton EnsureQuizAnswerButtonPrefab()
+        {
+            var path = $"{PrefabFolder}/QuizAnswerButton.prefab";
+            var existing = AssetDatabase.LoadAssetAtPath<QuizAnswerButton>(path);
+            if (existing != null)
+            {
+                ConfigureQuizAnswerButton(existing.gameObject);
+                PrefabUtility.SavePrefabAsset(existing.gameObject);
+                return existing;
+            }
+
+            var go = BuildQuizAnswerButtonRoot();
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
+            Object.DestroyImmediate(go);
+            return prefab.GetComponent<QuizAnswerButton>();
+        }
+
+        static GameObject BuildQuizAnswerButtonRoot()
+        {
+            var go = new GameObject("QuizAnswerButton", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement), typeof(QuizAnswerButton));
+            UiStyleBuilder.ApplySecondaryButton(go);
+            ConfigureQuizAnswerButton(go);
+            return go;
+        }
+
+        static void ConfigureQuizAnswerButton(GameObject go)
+        {
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.preferredHeight = UiLayoutMetrics.FilterButtonHeight;
+            le.minHeight = UiLayoutMetrics.FilterButtonHeight;
+
+            var label = go.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (label == null)
+            {
+                var labelGo = CreateTmpChild(go.transform, "Label", UiLayoutMetrics.FilterButtonBaseFontSize, FontStyles.Normal, UiLayoutMetrics.FilterButtonLabelOffset);
+                labelGo.GetComponent<RectTransform>().anchorMax = Vector2.one;
+                label = labelGo.GetComponent<TextMeshProUGUI>();
+            }
+
+            label.alignment = TextAlignmentOptions.MidlineLeft;
+            label.margin = new Vector4(16, 0, 16, 0);
+
+            var quizButton = go.GetComponent<QuizAnswerButton>() ?? go.AddComponent<QuizAnswerButton>();
+            var fill = go.transform.Find("Fill")?.GetComponent<Image>();
+            var so = new SerializedObject(quizButton);
+            so.FindProperty("button").objectReferenceValue = go.GetComponent<Button>();
+            so.FindProperty("label").objectReferenceValue = label;
+            so.FindProperty("fillImage").objectReferenceValue = fill;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static GameObject CreateFavoritesSlideBackdrop(Transform parent)
@@ -2133,7 +2451,12 @@ namespace PeopleOfMath.Editor
             if (panel == null)
                 return;
 
-            var canvasGroup = panel.GetComponent<CanvasGroup>() ?? panel.AddComponent<CanvasGroup>();
+            var canvasGroup = panel.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = panel.AddComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                return;
+
             canvasGroup.alpha = 1f;
             canvasGroup.blocksRaycasts = true;
 
@@ -2620,6 +2943,7 @@ namespace PeopleOfMath.Editor
             public Button indexTab;
             public Button settingsTab;
             public Button favoritesButton;
+            public Button quizTab;
         }
 
         static BottomBarResult CreateBottomBar(Transform canvas, NavigationController nav, LocalizationRefs loc)
@@ -2634,16 +2958,19 @@ namespace PeopleOfMath.Editor
             var index = CreateSceneButton(bar.transform, UiButtonLayout.BottomIndex, loc.UiCollection);
             var settings = CreateSceneButton(bar.transform, UiButtonLayout.BottomSettings, loc.UiCollection);
             var favorites = CreateSceneButton(bar.transform, UiButtonLayout.BottomFavorites, loc.UiCollection);
+            var quiz = CreateSceneButton(bar.transform, UiButtonLayout.BottomQuiz, loc.UiCollection);
             WireButtonClick(browse.GetComponent<Button>(), nav.OnBrowseTabClicked);
             WireButtonClick(index.GetComponent<Button>(), nav.OnIndexTabClicked);
             WireButtonClick(settings.GetComponent<Button>(), nav.OnSettingsTabClicked);
             WireButtonClick(favorites.GetComponent<Button>(), nav.OnFavoritesButtonClicked);
+            WireButtonClick(quiz.GetComponent<Button>(), nav.OnQuizTabClicked);
             return new BottomBarResult
             {
                 browseTab = browse.GetComponent<Button>(),
                 indexTab = index.GetComponent<Button>(),
                 settingsTab = settings.GetComponent<Button>(),
-                favoritesButton = favorites.GetComponent<Button>()
+                favoritesButton = favorites.GetComponent<Button>(),
+                quizTab = quiz.GetComponent<Button>()
             };
         }
 
@@ -2699,6 +3026,7 @@ namespace PeopleOfMath.Editor
             GameObject index,
             GameObject list,
             GameObject favorites,
+            GameObject quiz,
             GameObject detail,
             GameObject settings,
             GameObject backButton,
@@ -2711,6 +3039,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("listPanel").objectReferenceValue = list.GetComponent<ListPanel>();
             so.FindProperty("favoritesPanel").objectReferenceValue = favorites.GetComponent<FavoritesPanel>();
             so.FindProperty("favoritesTransition").objectReferenceValue = favorites.GetComponent<UiPanelSlideTransition>();
+            so.FindProperty("quizPanel").objectReferenceValue = quiz.GetComponent<QuizPanel>();
             so.FindProperty("detailPanel").objectReferenceValue = detail.GetComponent<DetailPanel>();
             so.FindProperty("settingsPanel").objectReferenceValue = settings.GetComponent<SettingsPanel>();
             so.FindProperty("headerBackButton").objectReferenceValue = backButton;
@@ -2719,6 +3048,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("indexTab").objectReferenceValue = bottomBar.indexTab;
             so.FindProperty("settingsTab").objectReferenceValue = bottomBar.settingsTab;
             so.FindProperty("favoritesButton").objectReferenceValue = bottomBar.favoritesButton;
+            so.FindProperty("quizTab").objectReferenceValue = bottomBar.quizTab;
             so.ApplyModifiedPropertiesWithoutUndo();
             WireButtonClick(backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
         }
@@ -2998,6 +3328,30 @@ namespace PeopleOfMath.Editor
             EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
         }
 
+        [MenuItem("PeopleOfMath/Patch Quiz Support")]
+        public static void PatchQuizSupport()
+        {
+            if (DeferUntilEditMode(PatchQuizSupport))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            UiSpriteFactory.EnsureSprites();
+            var loc = SetupLocalization();
+            AssetDatabase.SaveAssets();
+            EnsureQuizAnswerButtonPrefab();
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            PatchQuizInOpenScene(loc);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Quiz support patched in Main scene.");
+        }
+
         [MenuItem("PeopleOfMath/Patch Favorites Support")]
         public static void PatchFavoritesSupport()
         {
@@ -3219,6 +3573,7 @@ namespace PeopleOfMath.Editor
             var home = contentArea.Find("HomePanel")?.gameObject;
             var list = contentArea.Find("ListPanel")?.gameObject;
             var favorites = contentArea.Find("FavoritesPanel")?.gameObject;
+            var quiz = contentArea.Find("QuizPanel")?.gameObject;
             var detail = contentArea.Find("DetailPanel")?.gameObject;
             var settings = contentArea.Find("SettingsPanel")?.gameObject;
             var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
@@ -3233,6 +3588,7 @@ namespace PeopleOfMath.Editor
                     indexPanelGo,
                     list,
                     favorites != null ? favorites : CreateFavoritesPanel(contentArea, navigation, repository, listItemPrefab, loc),
+                    quiz != null ? quiz : CreateQuizPanel(contentArea, navigation, repository, loc),
                     detail,
                     settings,
                     backButton,
@@ -3242,7 +3598,8 @@ namespace PeopleOfMath.Editor
                         browseTab = browseTab,
                         indexTab = indexTab,
                         settingsTab = settingsTab,
-                        favoritesButton = null
+                        favoritesButton = null,
+                        quizTab = null
                     });
             }
             else
@@ -3256,6 +3613,157 @@ namespace PeopleOfMath.Editor
 
             EnsureThemedCardOnPrefab($"{PrefabFolder}/LetterButton.prefab", UiCardVariant.Filter);
             CreateLetterButtonPrefab();
+        }
+
+        static void PatchQuizInOpenScene(LocalizationRefs loc)
+        {
+            var navigation = Object.FindFirstObjectByType<NavigationController>();
+            var repository = Object.FindFirstObjectByType<MathematicianRepository>();
+            if (navigation == null || repository == null)
+            {
+                Debug.LogError("NavigationController or MathematicianRepository not found in Main scene.");
+                return;
+            }
+
+            var contentArea = GameObject.Find("ContentArea")?.transform;
+            if (contentArea == null)
+            {
+                Debug.LogError("ContentArea not found in Main scene.");
+                return;
+            }
+
+            var quizPanelGo = contentArea.Find("QuizPanel")?.gameObject;
+            if (quizPanelGo == null)
+            {
+                quizPanelGo = CreateQuizPanel(contentArea, navigation, repository, loc);
+                var listPanel = contentArea.Find("ListPanel");
+                if (listPanel != null)
+                    quizPanelGo.transform.SetSiblingIndex(listPanel.GetSiblingIndex() + 1);
+            }
+
+            var header = GameObject.Find("Header");
+            HeaderTitleBinder headerBinder = null;
+            if (header != null)
+            {
+                headerBinder = header.GetComponent<HeaderTitleBinder>();
+                var quizTitle = header.transform.Find("QuizTitle")?.gameObject;
+                if (quizTitle == null)
+                {
+                    quizTitle = CreateLocalizedTitle(header.transform, "QuizTitle", loc.QuizTitle);
+                    quizTitle.SetActive(false);
+                }
+
+                if (headerBinder != null)
+                {
+                    var binderSo = new SerializedObject(headerBinder);
+                    binderSo.FindProperty("quizTitleEvent").objectReferenceValue =
+                        quizTitle.GetComponent<LocalizeStringEvent>();
+                    binderSo.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+
+            var homePanel = contentArea.Find("HomePanel");
+            if (homePanel != null)
+            {
+                var home = homePanel.GetComponent<HomePanel>();
+                var scroll = homePanel.Find("HomeScroll/Viewport/Content");
+                if (scroll != null && scroll.Find("QuizCard") == null)
+                {
+                    var quizCard = CreateQuizHomeCard(scroll, loc);
+                    var quizCardLe = quizCard.GetComponent<LayoutElement>();
+                    if (quizCardLe != null)
+                        quizCardLe.preferredHeight = 128f;
+
+                    if (home != null)
+                    {
+                        var homeSo = new SerializedObject(home);
+                        homeSo.FindProperty("quizButton").objectReferenceValue = quizCard.GetComponent<Button>();
+                        homeSo.ApplyModifiedPropertiesWithoutUndo();
+                    }
+                }
+            }
+
+            Button browseTab = null;
+            Button indexTab = null;
+            Button settingsTab = null;
+            Button favoritesButton = null;
+            Button quizTab = null;
+            var bottomBar = GameObject.Find("BottomBar")?.transform;
+            if (bottomBar != null)
+            {
+                browseTab = bottomBar.Find("BrowseTab")?.GetComponent<Button>();
+                indexTab = bottomBar.Find("IndexTab")?.GetComponent<Button>();
+                settingsTab = bottomBar.Find("SettingsTab")?.GetComponent<Button>();
+
+                var favoritesGo = bottomBar.Find("FavoritesTab")?.gameObject;
+                if (favoritesGo != null)
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        favoritesGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomFavorites.Position,
+                        UiButtonLayout.BottomFavorites.Size);
+                    favoritesButton = favoritesGo.GetComponent<Button>();
+                    WireButtonClick(favoritesButton, navigation.OnFavoritesButtonClicked);
+                }
+
+                var quizGo = bottomBar.Find("QuizTab")?.gameObject;
+                if (quizGo == null)
+                {
+                    quizGo = CreateSceneButton(bottomBar, UiButtonLayout.BottomQuiz, loc.UiCollection);
+                    WireButtonClick(quizGo.GetComponent<Button>(), navigation.OnQuizTabClicked);
+                }
+                else
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        quizGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomQuiz.Position,
+                        UiButtonLayout.BottomQuiz.Size);
+                    WireButtonClick(quizGo.GetComponent<Button>(), navigation.OnQuizTabClicked);
+                }
+
+                quizTab = quizGo.GetComponent<Button>();
+            }
+
+            var homeGo = contentArea.Find("HomePanel")?.gameObject;
+            var indexPanelGo = contentArea.Find("IndexPanel")?.gameObject;
+            var list = contentArea.Find("ListPanel")?.gameObject;
+            var favoritesPanelGo = contentArea.Find("FavoritesPanel")?.gameObject;
+            var detail = contentArea.Find("DetailPanel")?.gameObject;
+            var settings = contentArea.Find("SettingsPanel")?.gameObject;
+            var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
+
+            if (homeGo != null && indexPanelGo != null && list != null && favoritesPanelGo != null && detail != null
+                && settings != null && backButton != null && headerBinder != null
+                && browseTab != null && indexTab != null && settingsTab != null && favoritesButton != null && quizTab != null)
+            {
+                WireNavigation(
+                    navigation,
+                    homeGo,
+                    indexPanelGo,
+                    list,
+                    favoritesPanelGo,
+                    quizPanelGo,
+                    detail,
+                    settings,
+                    backButton,
+                    headerBinder,
+                    new BottomBarResult
+                    {
+                        browseTab = browseTab,
+                        indexTab = indexTab,
+                        settingsTab = settingsTab,
+                        favoritesButton = favoritesButton,
+                        quizTab = quizTab
+                    });
+            }
+            else
+            {
+                var navSo = new SerializedObject(navigation);
+                navSo.FindProperty("quizPanel").objectReferenceValue = quizPanelGo.GetComponent<QuizPanel>();
+                if (quizTab != null)
+                    navSo.FindProperty("quizTab").objectReferenceValue = quizTab;
+                navSo.ApplyModifiedPropertiesWithoutUndo();
+            }
         }
 
         static void PatchFavoritesInOpenScene(LocalizationRefs loc)
@@ -3320,6 +3828,7 @@ namespace PeopleOfMath.Editor
             Button indexTab = null;
             Button settingsTab = null;
             Button favoritesButton = null;
+            Button quizTab = null;
             var bottomBar = GameObject.Find("BottomBar")?.transform;
             if (bottomBar != null)
             {
@@ -3374,6 +3883,32 @@ namespace PeopleOfMath.Editor
                 }
 
                 favoritesButton = favoritesGo.GetComponent<Button>();
+
+                var quizGo = bottomBar.Find("QuizTab")?.gameObject;
+                if (quizGo == null)
+                {
+                    quizGo = CreateSceneButton(bottomBar, UiButtonLayout.BottomQuiz, loc.UiCollection);
+                    WireButtonClick(quizGo.GetComponent<Button>(), navigation.OnQuizTabClicked);
+                }
+                else
+                {
+                    UiButtonLayout.ApplyTopLeftAnchoredRect(
+                        quizGo.GetComponent<RectTransform>(),
+                        UiButtonLayout.BottomQuiz.Position,
+                        UiButtonLayout.BottomQuiz.Size);
+                    WireButtonClick(quizGo.GetComponent<Button>(), navigation.OnQuizTabClicked);
+                }
+
+                quizTab = quizGo.GetComponent<Button>();
+            }
+
+            var quizPanelGo = contentArea.Find("QuizPanel")?.gameObject;
+            if (quizPanelGo == null)
+            {
+                quizPanelGo = CreateQuizPanel(contentArea, navigation, repository, loc);
+                var listPanel = contentArea.Find("ListPanel");
+                if (listPanel != null)
+                    quizPanelGo.transform.SetSiblingIndex(listPanel.GetSiblingIndex() + 2);
             }
 
             var home = contentArea.Find("HomePanel")?.gameObject;
@@ -3393,6 +3928,7 @@ namespace PeopleOfMath.Editor
                     indexPanelGo,
                     list,
                     favoritesPanelGo,
+                    quizPanelGo,
                     detail,
                     settings,
                     backButton,
@@ -3402,7 +3938,8 @@ namespace PeopleOfMath.Editor
                         browseTab = browseTab,
                         indexTab = indexTab,
                         settingsTab = settingsTab,
-                        favoritesButton = favoritesButton
+                        favoritesButton = favoritesButton,
+                        quizTab = quizTab
                     });
             }
             else
