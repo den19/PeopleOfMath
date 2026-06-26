@@ -24,6 +24,7 @@ namespace PeopleOfMath.Core
         [SerializeField] DetailPanel detailPanel;
         [SerializeField] SettingsPanel settingsPanel;
         [SerializeField] FavoritesPanel favoritesPanel;
+        [SerializeField] UiPanelSlideTransition favoritesTransition;
         [SerializeField] GameObject headerBackButton;
         [SerializeField] HeaderTitleBinder headerTitle;
         [SerializeField] Button browseTab;
@@ -36,9 +37,20 @@ namespace PeopleOfMath.Core
         string _filterKey;
         string _searchQuery;
         bool _listFromSearch;
+        bool _listFromDetail;
         bool _detailFromIndex;
         bool _detailFromFavorites;
         string _selectedMathematicianId;
+        int _lastBackFrame = -1;
+
+        bool _detailReturnFromHome;
+        bool _detailReturnFromIndex;
+        bool _detailReturnFromFavorites;
+        bool _detailReturnFromSearch;
+        string _detailReturnSearchQuery;
+        bool _detailReturnFromFilterList;
+        FilterKind _detailReturnFilterKind;
+        string _detailReturnFilterKey;
 
         public AppScreen CurrentScreen => _screen;
 
@@ -57,7 +69,7 @@ namespace PeopleOfMath.Core
             if (button == null)
                 return;
 
-            button.onClick.RemoveListener(OnBackButtonClicked);
+            button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnBackButtonClicked);
         }
 
@@ -71,9 +83,37 @@ namespace PeopleOfMath.Core
             favoritesPanel?.gameObject.SetActive(false);
         }
 
+        void HideAllPanelsExceptFavorites()
+        {
+            homePanel?.gameObject.SetActive(false);
+            indexPanel?.gameObject.SetActive(false);
+            listPanel?.gameObject.SetActive(false);
+            detailPanel?.gameObject.SetActive(false);
+            settingsPanel?.gameObject.SetActive(false);
+        }
+
+        UiPanelSlideTransition GetFavoritesTransition()
+        {
+            if (favoritesTransition != null)
+                return favoritesTransition;
+
+            if (favoritesPanel == null)
+                return null;
+
+            favoritesTransition = favoritesPanel.GetComponent<UiPanelSlideTransition>();
+            return favoritesTransition;
+        }
+
+        bool IsFavoritesAnimating()
+        {
+            var transition = GetFavoritesTransition();
+            return transition != null && transition.IsAnimating;
+        }
+
         public void ShowHome()
         {
             _listFromSearch = false;
+            _listFromDetail = false;
             _screen = AppScreen.Home;
             HideAllPanels();
             homePanel.gameObject.SetActive(true);
@@ -85,6 +125,7 @@ namespace PeopleOfMath.Core
         public void ShowIndex()
         {
             _listFromSearch = false;
+            _listFromDetail = false;
             _screen = AppScreen.Index;
             HideAllPanels();
             indexPanel.gameObject.SetActive(true);
@@ -103,6 +144,7 @@ namespace PeopleOfMath.Core
             }
 
             _listFromSearch = true;
+            _listFromDetail = false;
             _screen = AppScreen.List;
             HideAllPanels();
             var count = listPanel.BindSearch(_searchQuery);
@@ -112,9 +154,10 @@ namespace PeopleOfMath.Core
             RefreshTabStyles();
         }
 
-        public void ShowList(FilterKind kind, string key)
+        public void ShowList(FilterKind kind, string key, bool fromDetail = false)
         {
             _listFromSearch = false;
+            _listFromDetail = fromDetail;
             _filterKind = kind;
             _filterKey = key;
             _screen = AppScreen.List;
@@ -126,10 +169,42 @@ namespace PeopleOfMath.Core
             RefreshTabStyles();
         }
 
-        public void ShowDetail(string mathematicianId)
+        public void ShowListFromDetail(FilterKind kind, string key, string mathematicianId)
         {
-            _detailFromIndex = _screen == AppScreen.Index;
-            _detailFromFavorites = _screen == AppScreen.Favorites;
+            _selectedMathematicianId = mathematicianId;
+            ShowList(kind, key, fromDetail: true);
+        }
+
+        public void ShowDetail(string mathematicianId, bool restoreReturnContext = false)
+        {
+            if (restoreReturnContext)
+            {
+                _detailFromIndex = _detailReturnFromIndex;
+                _detailFromFavorites = _detailReturnFromFavorites;
+                _listFromSearch = _detailReturnFromSearch;
+                _searchQuery = _detailReturnSearchQuery;
+                if (_detailReturnFromFilterList)
+                {
+                    _filterKind = _detailReturnFilterKind;
+                    _filterKey = _detailReturnFilterKey;
+                }
+            }
+            else
+            {
+                _detailReturnFromHome = _screen == AppScreen.Home;
+                _detailReturnFromIndex = _screen == AppScreen.Index;
+                _detailReturnFromFavorites = _screen == AppScreen.Favorites;
+                _detailReturnFromSearch = _screen == AppScreen.List && _listFromSearch;
+                _detailReturnSearchQuery = _searchQuery;
+                _detailReturnFromFilterList = _screen == AppScreen.List && !_listFromSearch;
+                _detailReturnFilterKind = _filterKind;
+                _detailReturnFilterKey = _filterKey;
+
+                _detailFromIndex = _detailReturnFromIndex;
+                _detailFromFavorites = _detailReturnFromFavorites;
+            }
+
+            _listFromDetail = false;
             _selectedMathematicianId = mathematicianId;
             _screen = AppScreen.Detail;
             HideAllPanels();
@@ -151,12 +226,27 @@ namespace PeopleOfMath.Core
 
         public void ShowFavorites()
         {
+            if (_screen == AppScreen.Favorites || IsFavoritesAnimating())
+                return;
+
             _screen = AppScreen.Favorites;
-            HideAllPanels();
-            favoritesPanel.gameObject.SetActive(true);
+            HideAllPanelsExceptFavorites();
             headerBackButton.SetActive(true);
             headerTitle?.SetFavoritesTitle();
             RefreshTabStyles();
+
+            favoritesPanel.PrepareAnimatedOpen();
+            favoritesPanel.gameObject.SetActive(true);
+
+            var transition = GetFavoritesTransition();
+            if (transition == null)
+            {
+                favoritesPanel.RevealListItemsStaggered();
+                return;
+            }
+
+            transition.SnapClosed();
+            transition.PlayOpen(() => favoritesPanel.RevealListItemsStaggered());
         }
 
         public void RefreshTabStyles()
@@ -179,10 +269,16 @@ namespace PeopleOfMath.Core
 
         public void HandleBack()
         {
+            if (IsFavoritesAnimating())
+                return;
+
             switch (_screen)
             {
                 case AppScreen.List:
-                    ShowHome();
+                    if (_listFromDetail)
+                        ShowDetail(_selectedMathematicianId, restoreReturnContext: true);
+                    else
+                        ShowHome();
                     break;
                 case AppScreen.Detail:
                     if (detailPanel != null && detailPanel.TryGoBack())
@@ -193,6 +289,10 @@ namespace PeopleOfMath.Core
                         ShowFavorites();
                     else if (_listFromSearch)
                         ShowSearch(_searchQuery);
+                    else if (_detailReturnFromFilterList)
+                        ShowList(_detailReturnFilterKind, _detailReturnFilterKey);
+                    else if (_detailReturnFromHome)
+                        ShowHome();
                     else
                         ShowList(_filterKind, _filterKey);
                     break;
@@ -204,7 +304,14 @@ namespace PeopleOfMath.Core
             }
         }
 
-        public void OnBackButtonClicked() => HandleBack();
+        public void OnBackButtonClicked()
+        {
+            if (_lastBackFrame == Time.frameCount)
+                return;
+
+            _lastBackFrame = Time.frameCount;
+            HandleBack();
+        }
 
         public void OnBrowseTabClicked() => ShowHome();
 
@@ -212,6 +319,12 @@ namespace PeopleOfMath.Core
 
         public void OnSettingsTabClicked() => ShowSettings();
 
-        public void OnFavoritesButtonClicked() => ShowFavorites();
+        public void OnFavoritesButtonClicked()
+        {
+            if (IsFavoritesAnimating())
+                return;
+
+            ShowFavorites();
+        }
     }
 }

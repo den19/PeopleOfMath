@@ -8279,6 +8279,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1972823490}
     m_Modifications:
+    - target: {fileID: 2545176479345909149, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
+      propertyPath: navigation
+      value: 
+      objectReference: {fileID: 1445266487}
     - target: {fileID: 3584526127150068450, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
       propertyPath: m_Name
       value: DetailSection_Centuries
@@ -8374,9 +8378,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 755372763056028885, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1106362491}
-    - targetCorrespondingSourceObject: {fileID: 7931612311725410020, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1106362490}
   m_SourcePrefab: {fileID: 100100000, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
 --- !u!114 &1106362486 stripped
 MonoBehaviour:
@@ -8389,11 +8390,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88a7af3841eeff447bf4f8293524d9e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.LabeledTextDetailSection
---- !u!1 &1106362487 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7931612311725410020, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
-  m_PrefabInstance: {fileID: 1106362485}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1106362488 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 755372763056028885, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
@@ -8404,19 +8400,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6632352897366926266, guid: 6764b8d200d278d40a760699ce24555a, type: 3}
   m_PrefabInstance: {fileID: 1106362485}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1106362490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1106362487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
 --- !u!114 &1106362491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9443,30 +9426,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1445266487}
-        m_TargetAssemblyTypeName: PeopleOfMath.Core.NavigationController, PeopleOfMath
-        m_MethodName: OnBackButtonClicked
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1445266487}
-        m_TargetAssemblyTypeName: PeopleOfMath.Core.NavigationController, PeopleOfMath
-        m_MethodName: OnBackButtonClicked
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1445266487}
         m_TargetAssemblyTypeName: PeopleOfMath.Core.NavigationController, PeopleOfMath
         m_MethodName: OnBackButtonClicked
@@ -11057,6 +11016,7 @@ MonoBehaviour:
   detailPanel: {fileID: 1181415125}
   settingsPanel: {fileID: 1616596207}
   favoritesPanel: {fileID: 1476861619}
+  favoritesTransition: {fileID: 2100000004}
   headerBackButton: {fileID: 1248154761}
   headerTitle: {fileID: 42445209}
   browseTab: {fileID: 70051839}
@@ -11192,6 +11152,8 @@ GameObject:
   - component: {fileID: 1476861621}
   - component: {fileID: 1476861620}
   - component: {fileID: 1476861619}
+  - component: {fileID: 2100000003}
+  - component: {fileID: 2100000004}
   m_Layer: 0
   m_Name: FavoritesPanel
   m_TagString: Untagged
@@ -11211,6 +11173,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2100000002}
   - {fileID: 884619949}
   - {fileID: 487468010}
   m_Father: {fileID: 1683135270}
@@ -11503,6 +11466,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5610269666014567084, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
+      propertyPath: navigation
+      value: 
+      objectReference: {fileID: 1445266487}
     - target: {fileID: 8499877946542026807, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
       propertyPath: m_Name
       value: DetailSection_Fields
@@ -11518,9 +11485,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7125663679742297328, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1597918984}
-    - targetCorrespondingSourceObject: {fileID: 8076934204611508725, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1597918983}
   m_SourcePrefab: {fileID: 100100000, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
 --- !u!114 &1597918979 stripped
 MonoBehaviour:
@@ -11533,11 +11497,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88a7af3841eeff447bf4f8293524d9e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.LabeledTextDetailSection
---- !u!1 &1597918980 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8076934204611508725, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
-  m_PrefabInstance: {fileID: 1597918978}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1597918981 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7125663679742297328, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
@@ -11548,19 +11507,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2820333423724664252, guid: c267d33a9f7e59549ba0aba69b3cbf7f, type: 3}
   m_PrefabInstance: {fileID: 1597918978}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1597918983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1597918980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
 --- !u!114 &1597918984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13376,6 +13322,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8243520111399772255, guid: 9bd79cd7659adea40b3b28b8dd43c4dc, type: 3}
+      propertyPath: navigation
+      value: 
+      objectReference: {fileID: 1445266487}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16023,6 +15973,107 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!1 &2100000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2100000002}
+  - component: {fileID: 2100000005}
+  - component: {fileID: 2100000006}
+  m_Layer: 0
+  m_Name: SlideBackdrop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2100000002
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100000001}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1476861618}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!222 &2100000005
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100000001}
+  m_CullTransparentMesh: 1
+--- !u!114 &2100000006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!225 &2100000003
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476861617}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &2100000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476861617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e8f1a23b5d6e7490a1c2d3e4f5a6b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiPanelSlideTransition
+  slideRoot: {fileID: 2100000002}
+  openDuration: 0.28
 --- !u!1 &2118313811
 GameObject:
   m_ObjectHideFlags: 0

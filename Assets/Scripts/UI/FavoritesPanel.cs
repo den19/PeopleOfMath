@@ -1,9 +1,12 @@
+using System.Collections;
+using System.Collections.Generic;
 using PeopleOfMath.Core;
 using PeopleOfMath.Data;
 using PeopleOfMath.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
+using UnityEngine.UI;
 
 namespace PeopleOfMath.UI
 {
@@ -17,10 +20,17 @@ namespace PeopleOfMath.UI
         [SerializeField] MathematicianListItem itemPrefab;
         [SerializeField] GameObject emptyState;
 
+        bool _animateOnNextRefresh;
+        Coroutine _revealRoutine;
+        ScrollRect _listScroll;
+
         void Awake()
         {
             if (itemPrefab == null)
                 itemPrefab = Resources.Load<MathematicianListItem>(ListItemResourceName);
+
+            if (listContent != null)
+                _listScroll = listContent.GetComponentInParent<ScrollRect>();
         }
 
         void OnEnable()
@@ -38,6 +48,50 @@ namespace PeopleOfMath.UI
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
             FontSizeHelper.FontSizeChanged -= OnFontSizeChanged;
             ThemeHelper.ThemeChanged -= OnThemeChanged;
+
+            if (_revealRoutine != null)
+            {
+                StopCoroutine(_revealRoutine);
+                _revealRoutine = null;
+            }
+        }
+
+        public void PrepareAnimatedOpen() => _animateOnNextRefresh = true;
+
+        public void RevealListItemsStaggered()
+        {
+            if (_revealRoutine != null)
+            {
+                StopCoroutine(_revealRoutine);
+                _revealRoutine = null;
+            }
+
+            _revealRoutine = StartCoroutine(RevealListItemsStaggeredRoutine());
+        }
+
+        IEnumerator RevealListItemsStaggeredRoutine()
+        {
+            ResetListScrollToTop();
+            Canvas.ForceUpdateCanvases();
+            yield return null;
+
+            ResetListScrollToTop();
+            var reveal = UiListItemReveal.RevealStaggered(this, CollectRevealTargets());
+            if (reveal != null)
+                yield return reveal;
+            _revealRoutine = null;
+        }
+
+        void ResetListScrollToTop()
+        {
+            if (_listScroll == null && listContent != null)
+                _listScroll = listContent.GetComponentInParent<ScrollRect>();
+
+            if (_listScroll == null)
+                return;
+
+            _listScroll.StopMovement();
+            _listScroll.verticalNormalizedPosition = 1f;
         }
 
         void OnFavoritesChanged() => Refresh();
@@ -59,13 +113,16 @@ namespace PeopleOfMath.UI
 
         void Refresh()
         {
+            var animateItems = _animateOnNextRefresh;
+            _animateOnNextRefresh = false;
+
             foreach (Transform child in listContent)
                 Destroy(child.gameObject);
 
             if (repository == null)
                 return;
 
-            var favorites = new System.Collections.Generic.List<MathematicianData>();
+            var favorites = new List<MathematicianData>();
             foreach (var id in FavoritesHelper.GetOrderedIds())
             {
                 var data = repository.GetById(id);
@@ -88,9 +145,30 @@ namespace PeopleOfMath.UI
             {
                 var item = Instantiate(itemPrefab, listContent);
                 item.Bind(data, id => navigation.ShowDetail(id));
+
+                if (animateItems)
+                    UiListItemReveal.HideImmediate(item.transform);
             }
 
+            if (animateItems && emptyState != null && emptyState.activeSelf)
+                UiListItemReveal.HideImmediate(emptyState.transform);
+
+            if (animateItems)
+                ResetListScrollToTop();
+
             GetComponent<FontSizeScope>()?.Apply();
+        }
+
+        IEnumerable<Transform> CollectRevealTargets()
+        {
+            if (listContent != null)
+            {
+                foreach (Transform child in listContent)
+                    yield return child;
+            }
+
+            if (emptyState != null && emptyState.activeSelf)
+                yield return emptyState.transform;
         }
 
         void UpdateEmptyStateMessage()

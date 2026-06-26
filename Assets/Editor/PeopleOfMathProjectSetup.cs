@@ -1432,6 +1432,70 @@ namespace PeopleOfMath.Editor
             EditorUtility.SetDirty(go);
         }
 
+        public static void ConfigureDetailTagButton(GameObject go)
+        {
+            var height = UiLayoutMetrics.ScaleDetailSize(72f);
+            ConfigureLayoutRect(go.GetComponent<RectTransform>(), height);
+
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.preferredWidth = -1f;
+            le.flexibleWidth = 1f;
+            le.preferredHeight = height;
+            le.minHeight = height;
+
+            var btnFitter = go.GetComponent<ContentSizeFitter>();
+            if (btnFitter != null)
+                Object.DestroyImmediate(btnFitter);
+
+            var label = go.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (label != null)
+            {
+                var fontSizeMax = UiLayoutMetrics.ScaleDetailFont(15f);
+                var fontSizeMin = fontSizeMax * 0.5f;
+                label.fontSize = fontSizeMax;
+                label.enableAutoSizing = true;
+                label.fontSizeMin = fontSizeMin;
+                label.fontSizeMax = fontSizeMax;
+                label.textWrappingMode = TextWrappingModes.NoWrap;
+                label.overflowMode = TextOverflowModes.Ellipsis;
+                label.alignment = TextAlignmentOptions.Center;
+                var so = new SerializedObject(label);
+                var baseProp = so.FindProperty("m_fontSizeBase");
+                if (baseProp != null)
+                    baseProp.floatValue = fontSizeMax;
+                so.ApplyModifiedPropertiesWithoutUndo();
+
+                var labelRt = label.rectTransform;
+                if (labelRt != null)
+                {
+                    labelRt.anchorMin = Vector2.zero;
+                    labelRt.anchorMax = Vector2.one;
+                    labelRt.pivot = new Vector2(0.5f, 0.5f);
+                    labelRt.anchoredPosition = Vector2.zero;
+                    labelRt.sizeDelta = Vector2.zero;
+                }
+
+                var labelLe = label.GetComponent<LayoutElement>();
+                if (labelLe != null)
+                    Object.DestroyImmediate(labelLe);
+
+                var labelFitter = label.GetComponent<ContentSizeFitter>();
+                if (labelFitter != null)
+                    Object.DestroyImmediate(labelFitter);
+
+                var layoutHeight = label.GetComponent<TmpLayoutHeight>();
+                if (layoutHeight != null)
+                    Object.DestroyImmediate(layoutHeight);
+
+                label.color = UiTheme.TextPrimary;
+            }
+
+            UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.Filter);
+            ConfigureLayoutRect(go.GetComponent<RectTransform>(), height);
+            EnsureThemedCard(go, UiCardVariant.Filter);
+            EditorUtility.SetDirty(go);
+        }
+
         static Button CreateFilterButtonPrefab()
         {
             var path = $"{PrefabFolder}/FilterButton.prefab";
@@ -1439,6 +1503,39 @@ namespace PeopleOfMath.Editor
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
             Object.DestroyImmediate(go);
             return prefab.GetComponent<Button>();
+        }
+
+        static Button EnsureDetailTagButtonPrefab()
+        {
+            var path = $"{PrefabFolder}/DetailTagButton.prefab";
+            var existing = AssetDatabase.LoadAssetAtPath<Button>(path);
+            if (existing != null)
+            {
+                ConfigureDetailTagButton(existing.gameObject);
+                PrefabUtility.SavePrefabAsset(existing.gameObject);
+                return existing;
+            }
+
+            return CreateDetailTagButtonPrefab();
+        }
+
+        static Button CreateDetailTagButtonPrefab()
+        {
+            var path = $"{PrefabFolder}/DetailTagButton.prefab";
+            var go = BuildDetailTagButtonRoot();
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
+            Object.DestroyImmediate(go);
+            return prefab.GetComponent<Button>();
+        }
+
+        static GameObject BuildDetailTagButtonRoot()
+        {
+            var go = new GameObject("DetailTagButton", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            go.GetComponent<Image>().color = UiTheme.CardFill;
+            var label = CreateTmpChild(go.transform, "Label", 15, FontStyles.Normal, Vector2.zero);
+            label.GetComponent<RectTransform>().anchorMax = Vector2.one;
+            ConfigureDetailTagButton(go);
+            return go;
         }
 
         static GameObject BuildFilterButtonRoot()
@@ -1544,6 +1641,13 @@ namespace PeopleOfMath.Editor
                 StretchToParent(instance.GetComponent<RectTransform>());
                 instance.gameObject.SetActive(false);
                 sections.Add(instance);
+
+                if (instance is LabeledTextDetailSection labeledSection)
+                {
+                    var labeledSo = new SerializedObject(labeledSection);
+                    labeledSo.FindProperty("navigation").objectReferenceValue = nav;
+                    labeledSo.ApplyModifiedPropertiesWithoutUndo();
+                }
             }
 
             var navBar = CreateSectionNavBar(panel.transform, loc.UiCollection);
@@ -1830,12 +1934,28 @@ namespace PeopleOfMath.Editor
             var root = CreateStretchSectionRoot($"DetailSection_{kind}");
             AddSectionVerticalLayout(root);
             var label = AddDetailField(root.transform, "Label", 15, FontStyles.Bold, height: 36, textColor: UiTheme.TextPrimary);
-            var body = AddDetailField(root.transform, "Body", 15, FontStyles.Normal, height: 120, textColor: UiTheme.TextSecondary);
+
+            var tagContainerGo = new GameObject("TagContainer", typeof(RectTransform));
+            tagContainerGo.transform.SetParent(root.transform, false);
+            var tagContainerLe = tagContainerGo.AddComponent<LayoutElement>();
+            tagContainerLe.flexibleWidth = 1;
+            tagContainerLe.flexibleHeight = 1;
+            var tagVlg = tagContainerGo.AddComponent<VerticalLayoutGroup>();
+            tagVlg.spacing = UiLayoutMetrics.ScaleDetailPadding(UiLayoutMetrics.DetailSectionSpacing);
+            tagVlg.childAlignment = TextAnchor.UpperLeft;
+            tagVlg.childForceExpandWidth = true;
+            tagVlg.childForceExpandHeight = false;
+            tagVlg.childControlWidth = true;
+            tagVlg.childControlHeight = true;
+
+            var tagButtonPrefab = EnsureDetailTagButtonPrefab();
+
             var section = root.AddComponent<LabeledTextDetailSection>();
             var so = new SerializedObject(section);
             so.FindProperty("sectionKind").enumValueIndex = (int)kind;
             so.FindProperty("labelText").objectReferenceValue = label;
-            so.FindProperty("bodyText").objectReferenceValue = body;
+            so.FindProperty("tagContainer").objectReferenceValue = tagContainerGo.transform;
+            so.FindProperty("tagButtonPrefab").objectReferenceValue = tagButtonPrefab;
             so.ApplyModifiedPropertiesWithoutUndo();
             return root;
         }
@@ -1933,6 +2053,8 @@ namespace PeopleOfMath.Editor
             var panel = CreatePanel(parent, "FavoritesPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             panel.SetActive(false);
             panel.AddComponent<FontSizeScope>();
+
+            var slideBackdropGo = CreateFavoritesSlideBackdrop(panel.transform);
             var scroll = CreateScrollView(panel.transform, "ListScroll");
             var empty = CreateTmpChild(panel.transform, "Empty", UiLayoutMetrics.EmptyStateBaseFontSize, FontStyles.Italic, UiLayoutMetrics.EmptyStatePosition);
             HomeListPanelLayout.ConfigureEmptyState(empty);
@@ -1952,7 +2074,116 @@ namespace PeopleOfMath.Editor
             so.FindProperty("itemPrefab").objectReferenceValue = prefabRef;
             so.FindProperty("emptyState").objectReferenceValue = empty;
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            ConfigureFavoritesPanelAnimation(panel);
+            slideBackdropGo.transform.SetAsFirstSibling();
             return panel;
+        }
+
+        static GameObject CreateFavoritesSlideBackdrop(Transform parent)
+        {
+            var backdropGo = new GameObject("SlideBackdrop", typeof(RectTransform), typeof(Image));
+            backdropGo.transform.SetParent(parent, false);
+            ConfigureFavoritesSlideRoot(backdropGo.GetComponent<RectTransform>());
+            var image = backdropGo.GetComponent<Image>();
+            image.color = UiTheme.Background;
+            image.raycastTarget = false;
+            return backdropGo;
+        }
+
+        static void ConfigureFavoritesSlideRoot(RectTransform slideRoot)
+        {
+            if (slideRoot == null)
+                return;
+
+            slideRoot.anchorMin = Vector2.zero;
+            slideRoot.anchorMax = Vector2.one;
+            slideRoot.pivot = new Vector2(0.5f, 1f);
+            slideRoot.offsetMin = Vector2.zero;
+            slideRoot.offsetMax = Vector2.zero;
+            slideRoot.anchoredPosition = Vector2.zero;
+        }
+
+        static void ConfigureFavoritesPanelAnimation(GameObject panel)
+        {
+            if (panel == null)
+                return;
+
+            var canvasGroup = panel.GetComponent<CanvasGroup>() ?? panel.AddComponent<CanvasGroup>();
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = true;
+
+            var slideRoot = panel.transform.Find("SlideBackdrop") as RectTransform
+                ?? panel.transform.Find("SlideRoot") as RectTransform;
+            var transition = panel.GetComponent<UiPanelSlideTransition>() ?? panel.AddComponent<UiPanelSlideTransition>();
+            var transitionSo = new SerializedObject(transition);
+            transitionSo.FindProperty("slideRoot").objectReferenceValue = slideRoot;
+            transitionSo.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void DetachFavoritesContentFromSlideRoot(Transform panel, Transform slideRoot)
+        {
+            var listScroll = slideRoot.Find("ListScroll");
+            if (listScroll != null)
+                listScroll.SetParent(panel, false);
+
+            var empty = slideRoot.Find("Empty");
+            if (empty != null)
+                empty.SetParent(panel, false);
+        }
+
+        static void EnsureFavoritesPanelAnimation(GameObject panel)
+        {
+            if (panel == null)
+                return;
+
+            var panelTransform = panel.transform;
+            var legacySlideRoot = panelTransform.Find("SlideRoot") as RectTransform;
+            var slideBackdrop = panelTransform.Find("SlideBackdrop") as RectTransform;
+
+            if (legacySlideRoot != null)
+            {
+                DetachFavoritesContentFromSlideRoot(panelTransform, legacySlideRoot);
+
+                if (slideBackdrop == null)
+                {
+                    legacySlideRoot.name = "SlideBackdrop";
+                    slideBackdrop = legacySlideRoot;
+                    if (slideBackdrop.GetComponent<Image>() == null)
+                    {
+                        var image = slideBackdrop.gameObject.AddComponent<Image>();
+                        image.color = UiTheme.Background;
+                        image.raycastTarget = false;
+                    }
+                }
+                else
+                {
+                    Object.DestroyImmediate(legacySlideRoot.gameObject);
+                }
+            }
+
+            if (slideBackdrop == null)
+                CreateFavoritesSlideBackdrop(panelTransform);
+            else
+                DetachFavoritesContentFromSlideRoot(panelTransform, slideBackdrop);
+
+            slideBackdrop = panelTransform.Find("SlideBackdrop") as RectTransform;
+            if (slideBackdrop != null)
+            {
+                ConfigureFavoritesSlideRoot(slideBackdrop);
+                slideBackdrop.SetAsFirstSibling();
+
+                var image = slideBackdrop.GetComponent<Image>();
+                if (image == null)
+                {
+                    image = slideBackdrop.gameObject.AddComponent<Image>();
+                    image.color = UiTheme.Background;
+                }
+
+                image.raycastTarget = false;
+            }
+
+            ConfigureFavoritesPanelAnimation(panel);
         }
 
         static GameObject CreateIndexPanel(
@@ -2452,6 +2683,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("indexPanel").objectReferenceValue = index.GetComponent<IndexPanel>();
             so.FindProperty("listPanel").objectReferenceValue = list.GetComponent<ListPanel>();
             so.FindProperty("favoritesPanel").objectReferenceValue = favorites.GetComponent<FavoritesPanel>();
+            so.FindProperty("favoritesTransition").objectReferenceValue = favorites.GetComponent<UiPanelSlideTransition>();
             so.FindProperty("detailPanel").objectReferenceValue = detail.GetComponent<DetailPanel>();
             so.FindProperty("settingsPanel").objectReferenceValue = settings.GetComponent<SettingsPanel>();
             so.FindProperty("headerBackButton").objectReferenceValue = backButton;
@@ -2464,11 +2696,12 @@ namespace PeopleOfMath.Editor
             WireButtonClick(backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
         }
 
-        static void WireButtonClick(Button button, UnityAction action)
+        static void WireButtonClick(Button button, UnityEngine.Events.UnityAction action)
         {
             if (button == null || action == null)
                 return;
 
+            button.onClick.RemoveAllListeners();
             UnityEventTools.AddPersistentListener(button.onClick, action);
         }
 
@@ -2649,6 +2882,7 @@ namespace PeopleOfMath.Editor
             }
 
             EnsureThemedCardOnPrefab($"{PrefabFolder}/FilterButton.prefab", UiCardVariant.Filter);
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/DetailTagButton.prefab", UiCardVariant.Filter);
             EnsureThemedCardOnPrefab($"{PrefabFolder}/SearchBar.prefab", UiCardVariant.Filter);
             EnsureThemedCardOnPrefab($"{PrefabFolder}/MathematicianListItem.prefab", UiCardVariant.ListItem);
             EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
@@ -2679,6 +2913,91 @@ namespace PeopleOfMath.Editor
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
             Debug.Log("Favorites support patched in Main scene.");
+        }
+
+        [MenuItem("PeopleOfMath/Patch Favorites Panel Animation")]
+        public static void PatchFavoritesPanelAnimation()
+        {
+            if (DeferUntilEditMode(PatchFavoritesPanelAnimation))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            PatchFavoritesPanelAnimationInOpenScene();
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Favorites panel animation patched in Main scene.");
+        }
+
+        static void PatchFavoritesPanelAnimationInOpenScene()
+        {
+            var navigation = Object.FindFirstObjectByType<NavigationController>();
+            var favoritesPanelGo = GameObject.Find("ContentArea")?.transform.Find("FavoritesPanel")?.gameObject;
+            if (favoritesPanelGo == null)
+            {
+                Debug.LogError("FavoritesPanel not found in Main scene.");
+                return;
+            }
+
+            EnsureFavoritesPanelAnimation(favoritesPanelGo);
+
+            if (navigation == null)
+                return;
+
+            var navSo = new SerializedObject(navigation);
+            navSo.FindProperty("favoritesTransition").objectReferenceValue =
+                favoritesPanelGo.GetComponent<UiPanelSlideTransition>();
+            navSo.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        [MenuItem("PeopleOfMath/Patch Clickable Detail Tags")]
+        public static void PatchClickableDetailTags()
+        {
+            if (DeferUntilEditMode(PatchClickableDetailTags))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            UiSpriteFactory.EnsureSprites();
+            EnsureDetailTagButtonPrefab();
+            EnsureDetailSectionPrefabs();
+            AssetDatabase.SaveAssets();
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            PatchClickableDetailTagsInOpenScene();
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Clickable detail tags patched (prefabs + Main scene).");
+        }
+
+        static void PatchClickableDetailTagsInOpenScene()
+        {
+            var navigation = Object.FindFirstObjectByType<NavigationController>();
+            if (navigation == null)
+            {
+                Debug.LogError("NavigationController not found in Main scene.");
+                return;
+            }
+
+            var tagButtonPrefab = EnsureDetailTagButtonPrefab();
+            var labeledSections = Object.FindObjectsByType<LabeledTextDetailSection>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var section in labeledSections)
+            {
+                var so = new SerializedObject(section);
+                so.FindProperty("navigation").objectReferenceValue = navigation;
+                if (so.FindProperty("tagButtonPrefab").objectReferenceValue == null)
+                    so.FindProperty("tagButtonPrefab").objectReferenceValue = tagButtonPrefab;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
         }
 
         static void PatchIndexInOpenScene(LocalizationRefs loc)
@@ -2861,6 +3180,10 @@ namespace PeopleOfMath.Editor
                 if (listPanel != null)
                     favoritesPanelGo.transform.SetSiblingIndex(listPanel.GetSiblingIndex() + 1);
             }
+            else
+            {
+                EnsureFavoritesPanelAnimation(favoritesPanelGo);
+            }
 
             var header = GameObject.Find("Header");
             HeaderTitleBinder headerBinder = null;
@@ -2977,6 +3300,8 @@ namespace PeopleOfMath.Editor
                 var navSo = new SerializedObject(navigation);
                 navSo.FindProperty("favoritesPanel").objectReferenceValue =
                     favoritesPanelGo.GetComponent<FavoritesPanel>();
+                navSo.FindProperty("favoritesTransition").objectReferenceValue =
+                    favoritesPanelGo.GetComponent<UiPanelSlideTransition>();
                 if (favoritesButton != null)
                     navSo.FindProperty("favoritesButton").objectReferenceValue = favoritesButton;
                 navSo.ApplyModifiedPropertiesWithoutUndo();
