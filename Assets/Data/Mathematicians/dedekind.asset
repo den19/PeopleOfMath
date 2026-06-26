@@ -18,12 +18,13 @@ MonoBehaviour:
   fullNameRu: "\u042E\u0301\u043B\u0438\u0443\u0441 \u0412\u0438\u043B\u044C\u0433\u0435\u0301\u043B\u044C\u043C
     \u0420\u0438\u0301\u0445\u0430\u0440\u0434 \u0414\u0435\u0301\u0434\u0435\u043A\u0438\u043D\u0434"
   fullNameEn: Julius Wilhelm Richard Dedekind
-  birthDate: 06.10.1931
+  birthDate: 06.10.1831
   deathDate: 12.02.1916
   countryKeys:
   - germany
   centuryKeys:
   - 19
+  - 20
   branchKeys:
   - number_theory
   - algebra

@@ -26,6 +26,7 @@ MonoBehaviour:
   countryKeys:
   - iran
   centuryKeys:
+  - 8
   - 9
   branchKeys:
   - algebra

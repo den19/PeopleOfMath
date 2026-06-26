@@ -23,6 +23,7 @@ MonoBehaviour:
   - switzerland
   centuryKeys:
   - 17
+  - 18
   branchKeys:
   - analysis
   - probability

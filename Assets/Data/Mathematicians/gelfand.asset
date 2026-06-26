@@ -24,6 +24,7 @@ MonoBehaviour:
   - usa
   centuryKeys:
   - 20
+  - 21
   branchKeys:
   - algebra
   - analysis

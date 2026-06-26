@@ -23,6 +23,7 @@ MonoBehaviour:
   - germany
   - usa
   centuryKeys:
+  - 19
   - 20
   branchKeys:
   - algebra

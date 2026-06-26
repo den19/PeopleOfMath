@@ -23,6 +23,7 @@ MonoBehaviour:
   countryKeys:
   - france
   centuryKeys:
+  - 18
   - 19
   branchKeys:
   - analysis

@@ -24,6 +24,7 @@ MonoBehaviour:
   countryKeys:
   - russia
   centuryKeys:
+  - 18
   - 19
   branchKeys:
   - geometry
