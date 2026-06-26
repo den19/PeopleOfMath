@@ -382,6 +382,10 @@ MonoBehaviour:
     m_Localized: "No favorites yet. Tap \u2665 on a card to add one."
     m_Metadata:
       m_Items: []
+  - m_Id: 8372675893256192
+    m_Localized: Glass
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

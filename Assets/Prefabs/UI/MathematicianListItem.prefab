@@ -926,6 +926,7 @@ GameObject:
   - component: {fileID: 9156533829303293770}
   - component: {fileID: 3149860415039092541}
   - component: {fileID: 3556126201590593174}
+  - component: {fileID: 1717825933549741550}
   m_Layer: 0
   m_Name: Fill
   m_TagString: Untagged
@@ -1005,6 +1006,21 @@ MonoBehaviour:
   m_EffectColor: {r: 0.749, g: 0.353, b: 0.949, a: 0.45}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &1717825933549741550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6130641503818046434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 998db1b2d92812b428ed635ce79d1e88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiGlassSurface
+  targetImage: {fileID: 3149860415039092541}
+  useFrostedMaterial: 1
+  tintToken: 3
 --- !u!1 &6441954387902694553
 GameObject:
   m_ObjectHideFlags: 0

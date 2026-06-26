@@ -217,6 +217,28 @@ namespace PeopleOfMath.Editor
                 ConfigureIdentitySection(identitySection.gameObject);
         }
 
+        [MenuItem("PeopleOfMath/Patch Glass Theme Support")]
+        public static void PatchGlassThemeSupport()
+        {
+            if (DeferUntilEditMode(PatchGlassThemeSupport))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var loc = SetupLocalization();
+            AddUiEntry(loc.UiCollection, "btn_theme_glass", "Стекло", "Glass");
+            AssetDatabase.SaveAssets();
+            EditorSceneManager.OpenScene(ScenePath);
+            PatchGlassThemeInOpenScene(loc.UiCollection);
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+            AssetDatabase.SaveAssets();
+            Debug.Log("Glass theme support patched in Main scene.");
+        }
+
         [MenuItem("PeopleOfMath/Patch Theme Support")]
         public static void PatchThemeSupport()
         {
@@ -485,6 +507,7 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "settings_theme", "Тема оформления", "Appearance theme");
             AddUiEntry(collection, "btn_theme_dark", "Тёмная", "Dark");
             AddUiEntry(collection, "btn_theme_light", "Светлая", "Light");
+            AddUiEntry(collection, "btn_theme_glass", "Стекло", "Glass");
             AddUiEntry(collection, "empty_list", "Нет математиков по выбранному фильтру", "No mathematicians for this filter");
             AddUiEntry(collection, "empty_index", "Нет математиков на эту букву", "No mathematicians for this letter");
             AddUiEntry(collection, "search_placeholder", "Имя, биография, раздел…", "Name, bio, branch…");
@@ -974,6 +997,7 @@ namespace PeopleOfMath.Editor
             esGo.AddComponent<InputSystemUIInputModule>();
 
             var canvasGo = CreateCanvas();
+            CreateGlassBackdrop(canvasGo.transform);
             var header = CreateHeader(canvasGo.transform, loc);
             var content = CreateContentArea(canvasGo.transform);
             var home = CreateHomePanel(content.transform, navigation, loc);
@@ -2558,7 +2582,8 @@ namespace PeopleOfMath.Editor
 
             var darkBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeDark, collection);
             var lightBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeLight, collection);
-            var themeStatus = CreateTmpChild(panel.transform, "ThemeStatus", 16, FontStyles.Italic, new Vector2(40, -1040));
+            var glassBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeGlass, collection);
+            var themeStatus = CreateTmpChild(panel.transform, "ThemeStatus", 16, FontStyles.Italic, new Vector2(40, -1120));
             themeStatus.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
             themeStatus.GetComponent<TextMeshProUGUI>().raycastTarget = false;
             AddThemeBinding(themeStatus, UiThemeToken.TextSecondary);
@@ -2574,6 +2599,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("fontStatusText").objectReferenceValue = fontStatus.GetComponent<TMP_Text>();
             so.FindProperty("darkThemeButton").objectReferenceValue = darkBtn.GetComponent<Button>();
             so.FindProperty("lightThemeButton").objectReferenceValue = lightBtn.GetComponent<Button>();
+            so.FindProperty("glassThemeButton").objectReferenceValue = glassBtn.GetComponent<Button>();
             so.FindProperty("themeStatusText").objectReferenceValue = themeStatus.GetComponent<TMP_Text>();
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -2584,6 +2610,7 @@ namespace PeopleOfMath.Editor
             WireButtonClick(fontExtraLargeBtn.GetComponent<Button>(), settings.SelectFontExtraLarge);
             WireButtonClick(darkBtn.GetComponent<Button>(), settings.SelectDark);
             WireButtonClick(lightBtn.GetComponent<Button>(), settings.SelectLight);
+            WireButtonClick(glassBtn.GetComponent<Button>(), settings.SelectGlass);
             return panel;
         }
 
@@ -2727,14 +2754,41 @@ namespace PeopleOfMath.Editor
             GameObject detail)
         {
             var scope = canvasGo.GetComponent<UiThemeScope>() ?? canvasGo.AddComponent<UiThemeScope>();
+            var glassController = canvasGo.GetComponent<GlassThemeController>() ?? canvasGo.AddComponent<GlassThemeController>();
             var gallery = detail.GetComponentInChildren<PortraitGalleryView>(true);
             var so = new SerializedObject(scope);
             so.FindProperty("targetCamera").objectReferenceValue = cam;
             so.FindProperty("navigation").objectReferenceValue = nav;
             so.FindProperty("settingsPanel").objectReferenceValue = settings.GetComponent<SettingsPanel>();
             so.FindProperty("portraitGallery").objectReferenceValue = gallery;
+            so.FindProperty("glassController").objectReferenceValue = glassController;
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            var glassSo = new SerializedObject(glassController);
+            var backdrop = canvasGo.transform.Find("GlassBackdrop")?.GetComponent<GlassBackdropView>();
+            glassSo.FindProperty("backdropView").objectReferenceValue = backdrop;
+            glassSo.FindProperty("rootCanvas").objectReferenceValue = canvasGo.GetComponent<Canvas>();
+            glassSo.ApplyModifiedPropertiesWithoutUndo();
+
             TagThemeBindings(canvasGo.transform);
+        }
+
+        static GameObject CreateGlassBackdrop(Transform canvas)
+        {
+            var existing = canvas.Find("GlassBackdrop");
+            if (existing != null)
+                return existing.gameObject;
+
+            var go = new GameObject("GlassBackdrop", typeof(RectTransform), typeof(GlassBackdropView));
+            go.transform.SetParent(canvas, false);
+            go.transform.SetAsFirstSibling();
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+            go.SetActive(false);
+            return go;
         }
 
         static void EnsureThemedCard(GameObject go, UiCardVariant variant)
@@ -2827,18 +2881,46 @@ namespace PeopleOfMath.Editor
                 return;
 
             AddThemeBinding(bar.gameObject, UiThemeToken.NavBar);
+            EnsureGlassSurface(bar.gameObject, UiThemeToken.NavBar);
             var topGlow = bar.Find("TopGlow");
             if (topGlow != null)
                 AddThemeBinding(topGlow.gameObject, UiThemeToken.NavBarAccent);
         }
 
+        static void EnsureGlassSurface(GameObject go, UiThemeToken tintToken)
+        {
+            if (go.GetComponent<Image>() == null)
+                return;
+
+            var surface = go.GetComponent<UiGlassSurface>() ?? go.AddComponent<UiGlassSurface>();
+            var so = new SerializedObject(surface);
+            so.FindProperty("targetImage").objectReferenceValue = go.GetComponent<Image>();
+            so.FindProperty("useFrostedMaterial").boolValue = true;
+            so.FindProperty("tintToken").enumValueIndex = (int)tintToken;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void EnsureGlassSurfaceOnCardFill(GameObject root)
+        {
+            var fill = root.transform.Find("Fill");
+            if (fill == null)
+                return;
+
+            EnsureGlassSurface(fill.gameObject, UiThemeToken.CardFill);
+        }
+
         static void PatchThemeInOpenScene(StringTableCollection collection)
+        {
+            PatchGlassThemeInOpenScene(collection, includeLegacyThemeButtons: true);
+        }
+
+        static void PatchGlassThemeInOpenScene(StringTableCollection collection, bool includeLegacyThemeButtons = false)
         {
             var settings = Object.FindFirstObjectByType<SettingsPanel>(FindObjectsInactive.Include);
             if (settings != null)
             {
                 var panel = settings.gameObject;
-                if (panel.transform.Find("DarkThemeButton") == null)
+                if (includeLegacyThemeButtons && panel.transform.Find("DarkThemeButton") == null)
                 {
                     var themeLabel = CreateTmpChild(panel.transform, "ThemeLabel", 18, FontStyles.Bold, new Vector2(40, -800));
                     themeLabel.GetComponent<TextMeshProUGUI>().color = UiTheme.TextPrimary;
@@ -2850,7 +2932,7 @@ namespace PeopleOfMath.Editor
 
                     var darkBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeDark, collection);
                     var lightBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeLight, collection);
-                    var themeStatus = CreateTmpChild(panel.transform, "ThemeStatus", 16, FontStyles.Italic, new Vector2(40, -1040));
+                    var themeStatus = CreateTmpChild(panel.transform, "ThemeStatus", 16, FontStyles.Italic, new Vector2(40, -1120));
                     themeStatus.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
                     themeStatus.GetComponent<TextMeshProUGUI>().raycastTarget = false;
                     AddThemeBinding(themeStatus, UiThemeToken.TextSecondary);
@@ -2864,6 +2946,25 @@ namespace PeopleOfMath.Editor
                     WireButtonClick(darkBtn.GetComponent<Button>(), settings.SelectDark);
                     WireButtonClick(lightBtn.GetComponent<Button>(), settings.SelectLight);
                 }
+
+                if (panel.transform.Find("GlassThemeButton") == null)
+                {
+                    var glassBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsThemeGlass, collection);
+                    var themeStatus = panel.transform.Find("ThemeStatus")?.GetComponent<TMP_Text>();
+                    if (themeStatus != null)
+                    {
+                        var statusRt = themeStatus.GetComponent<RectTransform>();
+                        statusRt.anchoredPosition = new Vector2(40f, -1120f);
+                    }
+
+                    var settingsSo = new SerializedObject(settings);
+                    settingsSo.FindProperty("glassThemeButton").objectReferenceValue = glassBtn.GetComponent<Button>();
+                    if (themeStatus != null)
+                        settingsSo.FindProperty("themeStatusText").objectReferenceValue = themeStatus;
+                    settingsSo.ApplyModifiedPropertiesWithoutUndo();
+
+                    WireButtonClick(glassBtn.GetComponent<Button>(), settings.SelectGlass);
+                }
             }
 
             var canvas = Object.FindAnyObjectByType<Canvas>();
@@ -2871,12 +2972,21 @@ namespace PeopleOfMath.Editor
             var gallery = Object.FindFirstObjectByType<PortraitGalleryView>(FindObjectsInactive.Include);
             if (canvas != null)
             {
+                CreateGlassBackdrop(canvas.transform);
+
+                var glassController = canvas.GetComponent<GlassThemeController>() ?? canvas.gameObject.AddComponent<GlassThemeController>();
+                var glassSo = new SerializedObject(glassController);
+                glassSo.FindProperty("backdropView").objectReferenceValue = canvas.transform.Find("GlassBackdrop")?.GetComponent<GlassBackdropView>();
+                glassSo.FindProperty("rootCanvas").objectReferenceValue = canvas;
+                glassSo.ApplyModifiedPropertiesWithoutUndo();
+
                 var scope = canvas.GetComponent<UiThemeScope>() ?? canvas.gameObject.AddComponent<UiThemeScope>();
                 var scopeSo = new SerializedObject(scope);
                 scopeSo.FindProperty("targetCamera").objectReferenceValue = Camera.main;
                 scopeSo.FindProperty("navigation").objectReferenceValue = navigation;
                 scopeSo.FindProperty("settingsPanel").objectReferenceValue = settings;
                 scopeSo.FindProperty("portraitGallery").objectReferenceValue = gallery;
+                scopeSo.FindProperty("glassController").objectReferenceValue = glassController;
                 scopeSo.ApplyModifiedPropertiesWithoutUndo();
                 TagThemeBindings(canvas.transform);
             }
@@ -3319,6 +3429,7 @@ namespace PeopleOfMath.Editor
 
             var root = PrefabUtility.LoadPrefabContents(path);
             EnsureThemedCard(root, variant);
+            EnsureGlassSurfaceOnCardFill(root);
             PrefabUtility.SaveAsPrefabAsset(root, path);
             PrefabUtility.UnloadPrefabContents(root);
         }

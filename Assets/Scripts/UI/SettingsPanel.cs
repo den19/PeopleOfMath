@@ -17,6 +17,7 @@ namespace PeopleOfMath.UI
         [SerializeField] TMP_Text fontStatusText;
         [SerializeField] Button darkThemeButton;
         [SerializeField] Button lightThemeButton;
+        [SerializeField] Button glassThemeButton;
         [SerializeField] TMP_Text themeStatusText;
 
         void Awake()
@@ -28,6 +29,7 @@ namespace PeopleOfMath.UI
             BindButton(fontExtraLargeButton, SelectFontExtraLarge);
             BindButton(darkThemeButton, SelectDark);
             BindButton(lightThemeButton, SelectLight);
+            BindButton(glassThemeButton, SelectGlass);
         }
 
         void OnEnable()
@@ -86,6 +88,12 @@ namespace PeopleOfMath.UI
             RefreshStatus();
         }
 
+        public void SelectGlass()
+        {
+            ThemeHelper.SetTheme(AppTheme.Glassmorphism);
+            RefreshStatus();
+        }
+
         public void RefreshStatus()
         {
             var english = LocaleHelper.IsEnglish;
@@ -121,9 +129,10 @@ namespace PeopleOfMath.UI
             UiButtonStyler.Apply(fontLargeButton, level == FontSizeLevel.Large ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
             UiButtonStyler.Apply(fontExtraLargeButton, level == FontSizeLevel.ExtraLarge ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
 
-            var darkTheme = ThemeHelper.Current == AppTheme.Dark;
-            UiButtonStyler.Apply(darkThemeButton, darkTheme ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
-            UiButtonStyler.Apply(lightThemeButton, darkTheme ? UiButtonStyle.Secondary : UiButtonStyle.Primary);
+            var currentTheme = ThemeHelper.Current;
+            UiButtonStyler.Apply(darkThemeButton, currentTheme == AppTheme.Dark ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            UiButtonStyler.Apply(lightThemeButton, currentTheme == AppTheme.Light ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            UiButtonStyler.Apply(glassThemeButton, currentTheme == AppTheme.Glassmorphism ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
         }
     }
 }

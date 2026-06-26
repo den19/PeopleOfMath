@@ -34,8 +34,30 @@ namespace PeopleOfMath.UI
             var glow = GetGlowImage(button);
             var fill = GetFillImage(button);
             var roundedSprite = UiSprites.RoundedRect;
+            if (glow == null || fill == null || roundedSprite == null)
+                return;
+
+            RestoreDefaultMaterial(fill);
+            RestoreDefaultMaterial(glow);
+
+            if (ThemeHelper.IsGlassmorphism)
+            {
+                glow.sprite = roundedSprite;
+                glow.type = Image.Type.Sliced;
+                glow.color = new Color(1f, 1f, 1f, 0.08f);
+
+                fill.sprite = roundedSprite;
+                fill.type = Image.Type.Sliced;
+                fill.color = Color.white;
+
+                var border = fill.GetComponent<Outline>();
+                if (border != null)
+                    border.effectColor = new Color(1f, 1f, 1f, 0.35f);
+                return;
+            }
+
             var gradientSprite = UiSprites.ButtonGradient;
-            if (glow == null || fill == null || gradientSprite == null || roundedSprite == null)
+            if (gradientSprite == null)
                 return;
 
             glow.sprite = roundedSprite;
@@ -46,9 +68,9 @@ namespace PeopleOfMath.UI
             fill.type = Image.Type.Sliced;
             fill.color = Color.white;
 
-            var border = fill.GetComponent<Outline>();
-            if (border != null)
-                border.effectColor = UiTheme.CardBorder;
+            var defaultBorder = fill.GetComponent<Outline>();
+            if (defaultBorder != null)
+                defaultBorder.effectColor = UiTheme.CardBorder;
         }
 
         static void ApplySecondary(Button button)
@@ -59,9 +81,14 @@ namespace PeopleOfMath.UI
             if (glow == null || fill == null || roundedSprite == null)
                 return;
 
+            RestoreDefaultMaterial(fill);
+            RestoreDefaultMaterial(glow);
+
             glow.sprite = roundedSprite;
             glow.type = Image.Type.Sliced;
-            glow.color = new Color(UiTheme.Glow.r, UiTheme.Glow.g, UiTheme.Glow.b, 0.12f);
+            glow.color = ThemeHelper.IsGlassmorphism
+                ? new Color(1f, 1f, 1f, 0.06f)
+                : new Color(UiTheme.Glow.r, UiTheme.Glow.g, UiTheme.Glow.b, 0.12f);
 
             fill.sprite = roundedSprite;
             fill.type = Image.Type.Sliced;
@@ -70,6 +97,19 @@ namespace PeopleOfMath.UI
             var border = fill.GetComponent<Outline>();
             if (border != null)
                 border.effectColor = UiTheme.ButtonSecondaryBorder;
+        }
+
+        static void RestoreDefaultMaterial(Image image)
+        {
+            if (image == null || image.material == null)
+                return;
+
+            if (image.material.shader != null
+                && image.material.shader.name == GlassThemeAssets.FrostedGlassShaderName)
+            {
+                Object.Destroy(image.material);
+                image.material = null;
+            }
         }
 
         static Image GetGlowImage(Button button)
@@ -87,7 +127,7 @@ namespace PeopleOfMath.UI
         static void ApplyLabelColor(Button button, UiButtonStyle style)
         {
             var color = style == UiButtonStyle.Primary
-                ? Color.white
+                ? (ThemeHelper.IsGlassmorphism ? UiTheme.PrimaryButtonText : Color.white)
                 : UiTheme.TextPrimary;
 
             foreach (Transform child in button.transform)

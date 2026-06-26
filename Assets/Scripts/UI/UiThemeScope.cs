@@ -11,6 +11,7 @@ namespace PeopleOfMath.UI
         [SerializeField] NavigationController navigation;
         [SerializeField] SettingsPanel settingsPanel;
         [SerializeField] PortraitGalleryView portraitGallery;
+        [SerializeField] GlassThemeController glassController;
 
         void OnEnable()
         {
@@ -29,7 +30,12 @@ namespace PeopleOfMath.UI
                 targetCamera = Camera.main;
 
             if (targetCamera != null)
-                targetCamera.backgroundColor = UiTheme.Background;
+                targetCamera.backgroundColor = UiTheme.CameraBackground;
+
+            if (glassController == null)
+                glassController = GetComponent<GlassThemeController>();
+
+            glassController?.Apply();
 
             ApplyStructuralTheme();
 
@@ -38,6 +44,8 @@ namespace PeopleOfMath.UI
 
             foreach (var card in GetComponentsInChildren<UiThemedCard>(true))
                 card.Apply();
+
+            glassController?.ApplyGlassSurfaces();
 
             navigation?.RefreshTabStyles();
             settingsPanel?.RefreshStatus();
@@ -54,7 +62,7 @@ namespace PeopleOfMath.UI
 
                 var image = panel.GetComponent<Image>();
                 if (image != null)
-                    image.color = UiTheme.Background;
+                    image.color = UiTheme.SurfaceBackground;
             }
 
             foreach (var node in GetComponentsInChildren<Transform>(true))
@@ -85,7 +93,7 @@ namespace PeopleOfMath.UI
                 if (image == null || scroll.content.GetComponent<UiThemeBinding>() != null)
                     continue;
 
-                image.color = UiTheme.Background;
+                image.color = UiTheme.SurfaceBackground;
             }
         }
 

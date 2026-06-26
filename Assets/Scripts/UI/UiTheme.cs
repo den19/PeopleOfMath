@@ -24,6 +24,7 @@ namespace PeopleOfMath.UI
     {
         struct Palette
         {
+            public Color CameraBackground;
             public Color Background;
             public Color CardFill;
             public Color CardBorder;
@@ -41,11 +42,13 @@ namespace PeopleOfMath.UI
             public Color GalleryDotInactive;
             public Color GalleryDotActive;
             public Color PortraitPlaceholder;
+            public Color PrimaryButtonText;
         }
 
         // DarkPalette: original Syncra look (black + purple accent).
         static readonly Palette DarkPalette = new()
         {
+            CameraBackground = Color.black,
             Background = Color.black,
             CardFill = new Color(1f, 1f, 1f, 0.06f),
             CardBorder = new Color(0.749f, 0.353f, 0.949f, 0.45f),
@@ -62,11 +65,13 @@ namespace PeopleOfMath.UI
             ViewportMask = new Color(0f, 0f, 0f, 0.01f),
             GalleryDotInactive = new Color(0.557f, 0.557f, 0.576f, 0.8f),
             GalleryDotActive = new Color(0.749f, 0.353f, 0.949f, 1f),
-            PortraitPlaceholder = new Color(1f, 1f, 1f, 0.06f)
+            PortraitPlaceholder = new Color(1f, 1f, 1f, 0.06f),
+            PrimaryButtonText = Color.white
         };
 
         static readonly Palette LightPalette = new()
         {
+            CameraBackground = new Color(0.961f, 0.953f, 0.980f, 1f),
             Background = new Color(0.961f, 0.953f, 0.980f, 1f),
             CardFill = new Color(1f, 1f, 1f, 0.92f),
             CardBorder = new Color(0.749f, 0.353f, 0.949f, 0.35f),
@@ -83,12 +88,43 @@ namespace PeopleOfMath.UI
             ViewportMask = new Color(1f, 1f, 1f, 0.01f),
             GalleryDotInactive = new Color(0.659f, 0.655f, 0.710f, 0.8f),
             GalleryDotActive = new Color(0.749f, 0.353f, 0.949f, 1f),
-            PortraitPlaceholder = new Color(0f, 0f, 0f, 0.05f)
+            PortraitPlaceholder = new Color(0f, 0f, 0f, 0.05f),
+            PrimaryButtonText = Color.white
         };
 
-        static Palette Active => ThemeHelper.Current == AppTheme.Light ? LightPalette : DarkPalette;
+        static readonly Palette GlassPalette = new()
+        {
+            CameraBackground = new Color(0.239f, 0.082f, 0.471f, 1f), // #3D1578
+            Background = new Color(0f, 0f, 0f, 0f),
+            CardFill = new Color(1f, 1f, 1f, 0.14f),
+            CardBorder = new Color(1f, 1f, 1f, 0.30f),
+            Glow = new Color(1f, 1f, 1f, 0.12f),
+            GlowHighlighted = new Color(1f, 1f, 1f, 0.22f),
+            PrimaryAccent = Color.white,
+            PrimaryPressed = new Color(0.92f, 0.92f, 0.94f, 1f),
+            TextPrimary = Color.white,
+            TextSecondary = new Color(1f, 1f, 1f, 0.72f),
+            ButtonSecondaryBorder = new Color(1f, 1f, 1f, 0.35f),
+            ButtonSecondaryFill = new Color(1f, 1f, 1f, 0.10f),
+            NavBar = new Color(1f, 1f, 1f, 0.15f),
+            ScrollBackground = new Color(0f, 0f, 0f, 0f),
+            ViewportMask = new Color(0f, 0f, 0f, 0.01f),
+            GalleryDotInactive = new Color(1f, 1f, 1f, 0.45f),
+            GalleryDotActive = Color.white,
+            PortraitPlaceholder = new Color(1f, 1f, 1f, 0.12f),
+            PrimaryButtonText = new Color(0.110f, 0.106f, 0.133f, 1f)
+        };
 
+        static Palette Active => ThemeHelper.Current switch
+        {
+            AppTheme.Light => LightPalette,
+            AppTheme.Glassmorphism => GlassPalette,
+            _ => DarkPalette
+        };
+
+        public static Color CameraBackground => Active.CameraBackground;
         public static Color Background => Active.Background;
+        public static Color SurfaceBackground => ThemeHelper.IsGlassmorphism ? Color.clear : Active.Background;
         public static Color CardFill => Active.CardFill;
         public static Color CardBorder => Active.CardBorder;
         public static Color Glow => Active.Glow;
@@ -105,6 +141,7 @@ namespace PeopleOfMath.UI
         public static Color GalleryDotInactive => Active.GalleryDotInactive;
         public static Color GalleryDotActive => Active.GalleryDotActive;
         public static Color PortraitPlaceholder => Active.PortraitPlaceholder;
+        public static Color PrimaryButtonText => Active.PrimaryButtonText;
 
         public static Color GetToken(UiThemeToken token) => token switch
         {
@@ -121,7 +158,7 @@ namespace PeopleOfMath.UI
             UiThemeToken.PortraitPlaceholder => PortraitPlaceholder,
             UiThemeToken.GalleryDotActive => GalleryDotActive,
             UiThemeToken.GalleryDotInactive => GalleryDotInactive,
-            _ => Background
+            _ => SurfaceBackground
         };
     }
 

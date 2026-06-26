@@ -9,6 +9,8 @@ namespace PeopleOfMath.UI
     {
         [SerializeField] UiThemeToken token;
 
+        public UiThemeToken Token => token;
+
         Image _image;
         TMP_Text _text;
 

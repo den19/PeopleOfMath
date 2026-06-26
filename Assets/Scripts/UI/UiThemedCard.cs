@@ -20,7 +20,16 @@ namespace PeopleOfMath.UI
 
             if (fill != null)
             {
-                fill.color = UiTheme.CardFill;
+                var glassSurface = fill.GetComponent<UiGlassSurface>();
+                if (ThemeHelper.IsGlassmorphism && glassSurface != null)
+                {
+                    glassSurface.RefreshTint();
+                }
+                else
+                {
+                    fill.color = UiTheme.CardFill;
+                }
+
                 var border = fill.GetComponent<Outline>();
                 if (border != null)
                     border.effectColor = UiTheme.CardBorder;

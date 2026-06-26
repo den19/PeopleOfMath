@@ -6,7 +6,8 @@ namespace PeopleOfMath.UI
     public enum AppTheme
     {
         Dark, // Canonical Syncra brand theme (default)
-        Light
+        Light,
+        Glassmorphism
     }
 
     public static class ThemeHelper
@@ -16,6 +17,8 @@ namespace PeopleOfMath.UI
         public static event Action ThemeChanged;
 
         public static AppTheme Current { get; private set; } = AppTheme.Dark;
+
+        public static bool IsGlassmorphism => Current == AppTheme.Glassmorphism;
 
         public static void Initialize()
         {
@@ -40,6 +43,7 @@ namespace PeopleOfMath.UI
         public static string GetThemeLabel(bool english, AppTheme theme) => theme switch
         {
             AppTheme.Light => english ? "Light" : "Светлая",
+            AppTheme.Glassmorphism => english ? "Glass" : "Стекло",
             _ => english ? "Dark" : "Тёмная"
         };
     }

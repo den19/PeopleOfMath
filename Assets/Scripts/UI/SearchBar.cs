@@ -10,7 +10,7 @@ namespace PeopleOfMath.UI
 {
     public class SearchBar : MonoBehaviour
     {
-        const float DebounceSeconds = 0.3f;
+        const float DebounceSeconds = 0.8f;
 
         [SerializeField] NavigationController navigation;
         [SerializeField] TMP_InputField inputField;

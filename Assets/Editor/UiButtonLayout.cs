@@ -64,6 +64,9 @@ namespace PeopleOfMath.Editor
         public static readonly SceneButton SettingsThemeLight = new(
             "LightThemeButton", new Vector2(40f, -960f), new Vector2(400f, 64f), "btn_theme_light", UiButtonStyle.Secondary);
 
+        public static readonly SceneButton SettingsThemeGlass = new(
+            "GlassThemeButton", new Vector2(40f, -1040f), new Vector2(400f, 64f), "btn_theme_glass", UiButtonStyle.Secondary);
+
         public static readonly SceneButton BottomBrowse = new(
             "BrowseTab", new Vector2(19f, -110f), new Vector2(347f, 72f), "tab_browse", UiButtonStyle.Secondary);
 
