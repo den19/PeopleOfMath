@@ -45,6 +45,7 @@ namespace PeopleOfMath.UI
             FontSizeHelper.FontSizeChanged += OnFontSizeChanged;
             ThemeHelper.ThemeChanged += OnThemeChanged;
             RefreshPlaceholder();
+            RefreshInputTextColor();
             themedCard?.Apply();
             ApplyGlow(false);
         }
@@ -64,6 +65,13 @@ namespace PeopleOfMath.UI
         {
             themedCard?.Apply();
             ApplyGlow(inputField != null && inputField.isFocused);
+            RefreshInputTextColor();
+        }
+
+        void RefreshInputTextColor()
+        {
+            if (inputField?.textComponent is TMP_Text text)
+                text.color = UiTheme.TextPrimary;
         }
 
         public void SetQuerySilently(string query)

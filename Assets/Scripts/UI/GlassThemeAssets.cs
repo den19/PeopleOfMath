@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace PeopleOfMath.UI
 {
@@ -10,10 +9,14 @@ namespace PeopleOfMath.UI
         public const string FrostedGlassShaderName = "PeopleOfMath/UiFrostedGlass";
         public const string BackdropBlurShaderName = "PeopleOfMath/UiBackdropBlur";
 
+        const string FrostedGlassResourcePath = "UI/UiFrostedGlass";
+        const string BackdropBlurResourcePath = "UI/UiBackdropBlur";
+
         static Material _frostedGlassMaterial;
         static Material _backdropBlurMaterial;
         static Shader _frostedGlassShader;
         static Shader _backdropBlurShader;
+        static bool _warnedMissingShaders;
 
         public static Material FrostedGlassMaterial
         {
@@ -40,9 +43,31 @@ namespace PeopleOfMath.UI
         static void EnsureLoaded()
         {
             if (_frostedGlassShader == null)
-                _frostedGlassShader = Shader.Find(FrostedGlassShaderName);
+            {
+                var frostedMat = Resources.Load<Material>(FrostedGlassResourcePath);
+                _frostedGlassShader = frostedMat != null
+                    ? frostedMat.shader
+                    : Shader.Find(FrostedGlassShaderName);
+            }
+
             if (_backdropBlurShader == null)
-                _backdropBlurShader = Shader.Find(BackdropBlurShaderName);
+            {
+                var blurMat = Resources.Load<Material>(BackdropBlurResourcePath);
+                _backdropBlurShader = blurMat != null
+                    ? blurMat.shader
+                    : Shader.Find(BackdropBlurShaderName);
+            }
+
+            if (!_warnedMissingShaders
+                && (_frostedGlassShader == null || _backdropBlurShader == null))
+            {
+                _warnedMissingShaders = true;
+                Debug.LogWarning(
+                    "Glass theme shaders were not found. Frosted glass UI will use a semi-transparent fallback. " +
+                    $"Missing: {(_frostedGlassShader == null ? FrostedGlassShaderName : "")}" +
+                    $"{(_frostedGlassShader == null && _backdropBlurShader == null ? ", " : "")}" +
+                    $"{(_backdropBlurShader == null ? BackdropBlurShaderName : "")}");
+            }
         }
     }
 }

@@ -33,20 +33,26 @@ namespace PeopleOfMath.UI
                 if (!_glassActive)
                     _defaultMaterial = targetImage.material;
 
-                targetImage.color = Color.white;
-
                 if (useFrostedMaterial)
                 {
                     var material = GlassThemeAssets.FrostedGlassMaterial;
                     if (material != null)
                     {
+                        targetImage.color = Color.white;
                         targetImage.material = new Material(material);
                         targetImage.material.SetColor("_GlassTint", ResolveTintColor());
+                        DisableOutlineForGlass();
+                        _glassActive = true;
+                        return;
                     }
                 }
 
-                DisableOutlineForGlass();
+                if (_glassActive && targetImage.material != null && targetImage.material != _defaultMaterial)
+                    Destroy(targetImage.material);
 
+                targetImage.material = _defaultMaterial;
+                targetImage.color = ResolveTintColor();
+                DisableOutlineForGlass();
                 _glassActive = true;
                 return;
             }
