@@ -39,9 +39,15 @@ namespace PeopleOfMath.UI
                 }
             }
 
-            blob1 = EnsureBlob(blob1, "Blob1", new Vector2(0.15f, 0.72f), new Vector2(520f, 520f), new Color(1f, 0.624f, 0.263f, 0.55f));
+            blob1 = EnsureBlob(blob1, "Blob1", new Vector2(0.15f, 0.72f), new Vector2(520f, 520f), WarmBlobColor());
             blob2 = EnsureBlob(blob2, "Blob2", new Vector2(0.82f, 0.58f), new Vector2(480f, 480f), new Color(0.749f, 0.353f, 0.949f, 0.50f));
             blob3 = EnsureBlob(blob3, "Blob3", new Vector2(0.55f, 0.28f), new Vector2(640f, 640f), new Color(0.420f, 0.188f, 0.659f, 0.45f));
+        }
+
+        static Color WarmBlobColor()
+        {
+            var warm = UiTheme.AccentWarm;
+            return new Color(warm.r, warm.g, warm.b, 0.55f);
         }
 
         static GameObject CreateStretchChild(Transform parent, string name)
@@ -97,7 +103,7 @@ namespace PeopleOfMath.UI
                 gradientImage.color = Color.white;
             }
 
-            ApplyBlob(blob1, new Color(1f, 0.624f, 0.263f, 0.55f));
+            ApplyBlob(blob1, WarmBlobColor());
             ApplyBlob(blob2, new Color(0.749f, 0.353f, 0.949f, 0.50f));
             ApplyBlob(blob3, new Color(0.420f, 0.188f, 0.659f, 0.45f));
         }
@@ -183,8 +189,8 @@ namespace PeopleOfMath.UI
                 name = "GlassGradient"
             };
 
-            var top = new Color(0.176f, 0.063f, 0.333f, 1f);    // #2D1055
-            var bottom = new Color(0.420f, 0.184f, 0.659f, 1f); // #6B2FA8
+            var top = new Color(0.176f, 0.063f, 0.333f, 1f);
+            var bottom = new Color(0.420f, 0.184f, 0.659f, 1f);
             for (var y = 0; y < height; y++)
             {
                 var t = y / (height - 1f);

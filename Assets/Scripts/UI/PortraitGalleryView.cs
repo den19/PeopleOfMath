@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using PeopleOfMath.Data;
 using PeopleOfMath.Localization;
+using PeopleOfMath.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
@@ -76,9 +77,7 @@ namespace PeopleOfMath.UI
                 OnPageChanged(0);
             }
             else
-                SetCaption(LocaleHelper.IsEnglish
-                    ? "No images available"
-                    : "Изображения недоступны");
+                SetCaption(UiStrings.Get("gallery_no_images"));
 
             ScheduleRelayout();
         }
@@ -269,8 +268,8 @@ namespace PeopleOfMath.UI
             var attr = english
                 ? (string.IsNullOrWhiteSpace(entry.attributionEn) ? entry.attributionRu : entry.attributionEn)
                 : entry.attributionRu;
-            var sourceLabel = english ? "Source" : "Источник";
-            var licenseLabel = english ? "License" : "Лицензия";
+            var sourceLabel = UiStrings.Get("gallery_source");
+            var licenseLabel = UiStrings.Get("gallery_license");
 
             var lines = new List<string>();
             if (!string.IsNullOrWhiteSpace(license))

@@ -1,5 +1,7 @@
 using System;
 using PeopleOfMath.Core;
+using PeopleOfMath.Localization;
+using PeopleOfMath.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -11,7 +13,10 @@ namespace PeopleOfMath.Input
     {
         [SerializeField] NavigationController navigation;
 
+        const float ExitConfirmWindowSeconds = 2f;
+
         int _lastBackFrame = -1;
+        float _lastExitPromptTime = -10f;
         IDisposable _buttonPressSubscription;
 
         void Awake()
@@ -57,7 +62,14 @@ namespace PeopleOfMath.Input
             switch (navigation.CurrentScreen)
             {
                 case AppScreen.Home:
-                    Application.Quit();
+                    if (Time.unscaledTime - _lastExitPromptTime <= ExitConfirmWindowSeconds)
+                    {
+                        Application.Quit();
+                        return;
+                    }
+
+                    _lastExitPromptTime = Time.unscaledTime;
+                    UiToastView.Show(UiStrings.Get("exit_press_again"));
                     break;
                 case AppScreen.Settings:
                 case AppScreen.Index:

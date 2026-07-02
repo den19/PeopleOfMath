@@ -470,6 +470,110 @@ MonoBehaviour:
     m_Localized: Back to home
     m_Metadata:
       m_Items: []
+  - m_Id: 9100000000000001
+    m_Localized: 'Current language: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000002
+    m_Localized: 'Current font size: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000003
+    m_Localized: 'Current theme: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000004
+    m_Localized: Name and dates
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000005
+    m_Localized: Portraits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000006
+    m_Localized: Countries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000007
+    m_Localized: Centuries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000008
+    m_Localized: Fields
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000009
+    m_Localized: Achievements and contributions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000010
+    m_Localized: Personal life
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000011
+    m_Localized: Short bio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000012
+    m_Localized: Interesting facts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000013
+    m_Localized: Links
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000014
+    m_Localized: Wikipedia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000015
+    m_Localized: Wikidata
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000016
+    m_Localized: Press back again to exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000017
+    m_Localized: Filters on the home screen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000018
+    m_Localized: Choose a century, country, or branch of mathematics to quickly find mathematicians.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000019
+    m_Localized: Swipe through profile sections
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000020
+    m_Localized: On a mathematician profile, swipe left and right to move between biography sections.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000021
+    m_Localized: Quiz mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000022
+    m_Localized: Test your knowledge in the quiz using portraits, facts, or a mixed mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000023
+    m_Localized: '{0} of {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000024
+    m_Localized: Next
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000025
+    m_Localized: Skip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000026
+    m_Localized: Get started
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

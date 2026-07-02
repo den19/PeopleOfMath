@@ -1,4 +1,5 @@
 using PeopleOfMath.Data;
+using PeopleOfMath.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,17 +22,17 @@ namespace PeopleOfMath.UI
                 wikipediaButton,
                 wikipediaLabel,
                 data.GetWikipediaUrl(english),
-                english ? "Wikipedia" : "Википедия");
+                UiStrings.Get("link_wikipedia"));
 
             BindLinkButton(
                 wikidataButton,
                 wikidataLabel,
                 data.GetWikidataUrl(),
-                "Wikidata");
+                UiStrings.Get("link_wikidata"));
         }
 
         public override string GetSectionTitle(bool english) =>
-            english ? "Links" : "Ссылки";
+            UiStrings.Get("section_links");
 
         public override bool HasContent(MathematicianData data, bool english) =>
             data != null &&

@@ -83,70 +83,6 @@ MonoBehaviour:
     m_Key: btn_next
     m_Metadata:
       m_Items: []
-  - m_Id: 1650885419008
-    m_Key: New Entry
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333568
-    m_Key: New Entry 1
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333569
-    m_Key: New Entry 2
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333570
-    m_Key: New Entry 3
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333571
-    m_Key: New Entry 4
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333572
-    m_Key: New Entry 5
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333573
-    m_Key: New Entry 6
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333574
-    m_Key: New Entry 7
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333575
-    m_Key: New Entry 8
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333576
-    m_Key: New Entry 9
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333577
-    m_Key: New Entry 10
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333578
-    m_Key: New Entry 11
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333579
-    m_Key: New Entry 12
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333580
-    m_Key: New Entry 13
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333581
-    m_Key: New Entry 14
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1650948333582
-    m_Key: New Entry 15
-    m_Metadata:
-      m_Items: []
   - m_Id: 12797315407872
     m_Key: search_placeholder
     m_Metadata:
@@ -161,50 +97,6 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 745777570766848
     m_Key: empty_search
-    m_Metadata:
-      m_Items: []
-  - m_Id: 745777570766849
-    m_Key: New Entry 20
-    m_Metadata:
-      m_Items: []
-  - m_Id: 745777574961152
-    m_Key: New Entry 21
-    m_Metadata:
-      m_Items: []
-  - m_Id: 747999507505152
-    m_Key: New Entry 22
-    m_Metadata:
-      m_Items: []
-  - m_Id: 747999549448192
-    m_Key: New Entry 23
-    m_Metadata:
-      m_Items: []
-  - m_Id: 747999549448193
-    m_Key: New Entry 24
-    m_Metadata:
-      m_Items: []
-  - m_Id: 749242606936064
-    m_Key: New Entry 25
-    m_Metadata:
-      m_Items: []
-  - m_Id: 749242661462016
-    m_Key: New Entry 26
-    m_Metadata:
-      m_Items: []
-  - m_Id: 749242661462017
-    m_Key: New Entry 27
-    m_Metadata:
-      m_Items: []
-  - m_Id: 749371132993536
-    m_Key: New Entry 28
-    m_Metadata:
-      m_Items: []
-  - m_Id: 749371183325184
-    m_Key: New Entry 29
-    m_Metadata:
-      m_Items: []
-  - m_Id: 749371183325185
-    m_Key: New Entry 30
     m_Metadata:
       m_Items: []
   - m_Id: 7372777647497216
@@ -361,6 +253,110 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 8379492757135379
     m_Key: quiz_go_home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000001
+    m_Key: settings_current_language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000002
+    m_Key: settings_current_font_size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000003
+    m_Key: settings_current_theme
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000004
+    m_Key: section_identity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000005
+    m_Key: section_portraits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000006
+    m_Key: section_countries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000007
+    m_Key: section_centuries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000008
+    m_Key: section_fields
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000009
+    m_Key: section_achievements
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000010
+    m_Key: section_personal_life
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000011
+    m_Key: section_short_bio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000012
+    m_Key: section_interesting_facts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000013
+    m_Key: section_links
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000014
+    m_Key: link_wikipedia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000015
+    m_Key: link_wikidata
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000016
+    m_Key: exit_press_again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000017
+    m_Key: onboarding_title_filters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000018
+    m_Key: onboarding_body_filters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000019
+    m_Key: onboarding_title_detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000020
+    m_Key: onboarding_body_detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000021
+    m_Key: onboarding_title_quiz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000022
+    m_Key: onboarding_body_quiz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000023
+    m_Key: onboarding_step
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000024
+    m_Key: onboarding_next
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000025
+    m_Key: onboarding_skip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000000000026
+    m_Key: onboarding_done
     m_Metadata:
       m_Items: []
   m_Metadata:

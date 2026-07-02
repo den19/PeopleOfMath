@@ -58,7 +58,16 @@ namespace PeopleOfMath.UI
                 return;
 
             foreach (Transform child in listContent)
-                child.GetComponent<UiThemedCard>()?.Apply();
+            {
+                var card = child.GetComponent<UiThemedCard>();
+                if (card == null)
+                    continue;
+
+                card.Configure(UiCardVariant.ListItem);
+                card.Apply();
+            }
+
+            GlassThemeController.RefreshAllSurfaces();
         }
 
         void Rebuild()
@@ -206,10 +215,13 @@ namespace PeopleOfMath.UI
             foreach (var data in results)
             {
                 var item = Instantiate(itemPrefab, listContent);
+                var card = item.GetComponent<UiThemedCard>();
+                card?.Configure(UiCardVariant.ListItem);
                 item.Bind(data, id => navigation.ShowDetail(id));
             }
 
             listContent.GetComponentInParent<FontSizeScope>()?.Apply();
+            RefreshTheme();
         }
 
         void UpdateEmptyStateMessage()

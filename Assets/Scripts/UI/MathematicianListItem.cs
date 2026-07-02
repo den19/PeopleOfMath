@@ -29,6 +29,7 @@ namespace PeopleOfMath.UI
         void OnEnable()
         {
             FavoritesHelper.FavoritesChanged += OnFavoritesChanged;
+            ApplyCardTheme();
         }
 
         void OnDisable()
@@ -69,9 +70,23 @@ namespace PeopleOfMath.UI
             BindPortrait(data);
             BindShareButton(data, english);
             BindFavoriteButton();
+
+            ApplyCardTheme();
+
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => _onSelected?.Invoke(_id));
             ScheduleLayoutRefresh();
+        }
+
+        void ApplyCardTheme()
+        {
+            var themedCard = GetComponent<UiThemedCard>();
+            if (themedCard == null)
+                return;
+
+            themedCard.Configure(UiCardVariant.ListItem);
+            if (!string.IsNullOrEmpty(_id))
+                themedCard.SetHighlightActive(FavoritesHelper.IsFavorite(_id));
         }
 
         void BindShareButton(MathematicianData data, bool english)

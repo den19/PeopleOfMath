@@ -1,4 +1,5 @@
 using PeopleOfMath.Data;
+using PeopleOfMath.Localization;
 using UnityEngine;
 
 namespace PeopleOfMath.UI
@@ -11,6 +12,6 @@ namespace PeopleOfMath.UI
             gallery?.Bind(data);
 
         public override string GetSectionTitle(bool english) =>
-            english ? "Portraits" : "Портреты";
+            UiStrings.Get("section_portraits");
     }
 }

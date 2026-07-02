@@ -119,19 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &12168885
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1610467527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
 --- !u!1 &15328728
 GameObject:
   m_ObjectHideFlags: 0
@@ -2147,7 +2134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &129770048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4588,7 +4575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!222 &395129507
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4891,7 +4878,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &453980667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5417,7 +5404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!114 &509118541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6034,7 +6021,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!1 &568288856
 GameObject:
   m_ObjectHideFlags: 0
@@ -6087,7 +6074,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &568288859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6587,7 +6574,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 5
+  token: 6
 --- !u!114 &589263244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6677,7 +6664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!114 &593680141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7061,7 +7048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 10
+  token: 11
 --- !u!114 &602115304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7285,7 +7272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!114 &605930548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7311,7 +7298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 13
+  token: 14
 --- !u!1 &628904829
 GameObject:
   m_ObjectHideFlags: 0
@@ -7623,7 +7610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &646069029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8069,7 +8056,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &668397990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9216,7 +9203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!114 &748726384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9623,7 +9610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!1 &795825237
 GameObject:
   m_ObjectHideFlags: 0
@@ -10052,7 +10039,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 80, y: -400}
+  m_AnchoredPosition: {x: 32, y: -400}
   m_SizeDelta: {x: -20, y: 48}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &839291853
@@ -10067,7 +10054,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!114 &839291854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10570,7 +10557,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!1 &891500368
 GameObject:
   m_ObjectHideFlags: 0
@@ -12879,7 +12866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!114 &1116752702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13121,7 +13108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!1 &1138546275
 GameObject:
   m_ObjectHideFlags: 0
@@ -13718,7 +13705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!1 &1194192669
 GameObject:
   m_ObjectHideFlags: 0
@@ -13835,7 +13822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!1 &1207855095
 GameObject:
   m_ObjectHideFlags: 0
@@ -14242,7 +14229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!1 &1251966424
 GameObject:
   m_ObjectHideFlags: 0
@@ -14471,7 +14458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!114 &1267366706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15242,7 +15229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &1336936338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16112,7 +16099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &1462265742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16631,7 +16618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!114 &1505000476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16644,7 +16631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!1 &1508529364
 GameObject:
   m_ObjectHideFlags: 0
@@ -18036,19 +18023,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6012683408815590221, guid: b8a9b33c3d5baa44bb5ce85ea4392636, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 12168885}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8a9b33c3d5baa44bb5ce85ea4392636, type: 3}
 --- !u!224 &1610467526 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5746210341401958567, guid: b8a9b33c3d5baa44bb5ce85ea4392636, type: 3}
-  m_PrefabInstance: {fileID: 1610467525}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1610467527 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6012683408815590221, guid: b8a9b33c3d5baa44bb5ce85ea4392636, type: 3}
   m_PrefabInstance: {fileID: 1610467525}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1610467528 stripped
@@ -18314,7 +18293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!1 &1631928398
 GameObject:
   m_ObjectHideFlags: 0
@@ -18493,7 +18472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!1 &1655796600
 GameObject:
   m_ObjectHideFlags: 0
@@ -18906,7 +18885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 9
+  token: 10
 --- !u!114 &1707465790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19666,7 +19645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &1771651597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22838,7 +22817,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &2035943515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23262,7 +23241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!1 &2071177294
 GameObject:
   m_ObjectHideFlags: 0
@@ -23350,7 +23329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 8
+  token: 9
 --- !u!1 &2081689758
 GameObject:
   m_ObjectHideFlags: 0
@@ -23533,7 +23512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d164a7931385b24c81dc41c151abae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemeBinding
-  token: 7
+  token: 8
 --- !u!114 &2099078380
 MonoBehaviour:
   m_ObjectHideFlags: 0

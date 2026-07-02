@@ -1,4 +1,5 @@
 using System.Collections;
+using PeopleOfMath.Localization;
 using PeopleOfMath.Data;
 using PeopleOfMath.Sharing;
 using TMPro;
@@ -61,7 +62,7 @@ namespace PeopleOfMath.UI
         }
 
         public override string GetSectionTitle(bool english) =>
-            english ? "Name and dates" : "Имя и даты";
+            UiStrings.Get("section_identity");
 
         void ScheduleNameHeightRefresh()
         {

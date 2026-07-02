@@ -231,6 +231,7 @@ namespace PeopleOfMath.Editor
 
             var loc = SetupLocalization();
             AddUiEntry(loc.UiCollection, "btn_theme_glass", "Стекло", "Glass");
+            GlassShaderBuildSetup.EnsureGlassShadersIncluded(logChanges: false);
             AssetDatabase.SaveAssets();
             EditorSceneManager.OpenScene(ScenePath);
             PatchGlassThemeInOpenScene(loc.UiCollection);
@@ -327,6 +328,7 @@ namespace PeopleOfMath.Editor
             if (!Application.isBatchMode)
                 TryImportTmpResources();
             SetupRenderPipeline();
+            GlassShaderBuildSetup.EnsureGlassShadersIncluded(logChanges: false);
             SetupPlayerSettings();
             SetupAndroidTarget();
             var mathematicians = MathematicianRepositoryRefresh.LoadAllFromFolder(DataFolder);
@@ -3166,15 +3168,13 @@ namespace PeopleOfMath.Editor
                 if (text.GetComponent<UiThemeBinding>() != null)
                     continue;
 
-                var name = text.gameObject.name;
-                if (name is "Status" or "FontStatus" or "ThemeStatus" or "Caption" or "Empty")
-                    AddThemeBinding(text.gameObject, UiThemeToken.TextSecondary);
-                else if (name is "LangLabel" or "FontSizeLabel" or "ThemeLabel"
-                         || name.StartsWith("section_")
-                         || name is "Name" or "Label" or "HomeTitle" or "IndexTitle" or "SettingsTitle" or "FavoritesTitle" or "PlainTitle")
-                    AddThemeBinding(text.gameObject, UiThemeToken.TextPrimary);
-                else if (name is "Dates" or "Bio" or "Body")
-                    AddThemeBinding(text.gameObject, UiThemeToken.TextSecondary);
+                if (text.GetComponentInParent<UiThemedCard>() != null)
+                    continue;
+
+                if (!ThemeBindingResolver.TryResolveToken(text.gameObject, out var token))
+                    continue;
+
+                AddThemeBinding(text.gameObject, token);
             }
 
             foreach (var node in canvas.GetComponentsInChildren<Transform>(true))

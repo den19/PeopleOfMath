@@ -313,6 +313,7 @@ namespace PeopleOfMath.UI
             if (resultsNewRecordLabel != null)
             {
                 resultsNewRecordLabel.gameObject.SetActive(_isNewRecord);
+                resultsNewRecordLabel.color = UiTheme.AccentWarm;
                 if (_isNewRecord)
                     resultsNewRecordLabel.text = L("quiz_new_record");
             }
@@ -327,9 +328,9 @@ namespace PeopleOfMath.UI
 
         void RefreshModeButtons()
         {
-            ApplyModeStyle(modePortraitButton, _selectedMode == QuizMode.Portrait);
-            ApplyModeStyle(modeFactButton, _selectedMode == QuizMode.Fact);
-            ApplyModeStyle(modeMixedButton, _selectedMode == QuizMode.Mixed);
+            ApplyModeStyle(modePortraitButton, _selectedMode == QuizMode.Portrait, QuizMode.Portrait);
+            ApplyModeStyle(modeFactButton, _selectedMode == QuizMode.Fact, QuizMode.Fact);
+            ApplyModeStyle(modeMixedButton, _selectedMode == QuizMode.Mixed, QuizMode.Mixed);
 
             if (modePortraitButton != null)
                 SetButtonLabel(modePortraitButton, L("quiz_mode_portrait"));
@@ -347,12 +348,18 @@ namespace PeopleOfMath.UI
                 SetButtonLabel(viewProfileButton, L("quiz_view_profile"));
         }
 
-        static void ApplyModeStyle(Button button, bool selected)
+        static void ApplyModeStyle(Button button, bool selected, QuizMode mode)
         {
             if (button == null)
                 return;
 
-            UiButtonStyler.Apply(button, selected ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            UiButtonStyler.Apply(button, selected ? UiButtonStyle.Primary : UiButtonStyle.Secondary, showTabIndicator: selected);
+            if (!selected)
+                return;
+
+            var indicator = button.transform.Find("TabIndicator")?.GetComponent<Image>();
+            if (indicator != null)
+                indicator.color = UiTheme.GetQuizModeAccent(mode);
         }
 
         static void SetButtonLabel(Button button, string text)

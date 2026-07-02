@@ -50,6 +50,12 @@ namespace PeopleOfMath.UI
             }
         }
 
+        public static void RefreshAllSurfaces()
+        {
+            var controller = Object.FindFirstObjectByType<GlassThemeController>();
+            controller?.ApplyGlassSurfaces();
+        }
+
         UiGlassSurface[] FindSurfaces()
         {
             if (rootCanvas != null)

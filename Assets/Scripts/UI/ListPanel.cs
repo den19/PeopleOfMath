@@ -30,6 +30,8 @@ namespace PeopleOfMath.UI
         string _searchQuery;
         int _lastResultCount;
 
+        public int LastResultCount => _lastResultCount;
+
         void Awake()
         {
             if (itemPrefab == null)
@@ -79,7 +81,16 @@ namespace PeopleOfMath.UI
                 return;
 
             foreach (Transform child in listContent)
-                child.GetComponent<UiThemedCard>()?.Apply();
+            {
+                var card = child.GetComponent<UiThemedCard>();
+                if (card == null)
+                    continue;
+
+                card.Configure(UiCardVariant.ListItem);
+                card.Apply();
+            }
+
+            GlassThemeController.RefreshAllSurfaces();
         }
 
         void Refresh()
@@ -118,10 +129,13 @@ namespace PeopleOfMath.UI
             foreach (var data in results)
             {
                 var item = Instantiate(itemPrefab, listContent);
+                var card = item.GetComponent<UiThemedCard>();
+                card?.Configure(UiCardVariant.ListItem);
                 item.Bind(data, id => navigation.ShowDetail(id));
             }
 
             GetComponent<FontSizeScope>()?.Apply();
+            RefreshTheme();
         }
 
         void UpdateEmptyStateMessage()

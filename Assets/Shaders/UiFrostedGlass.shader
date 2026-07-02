@@ -116,10 +116,11 @@ Shader "PeopleOfMath/UiFrostedGlass"
                     backdrop = fixed4(0.239, 0.082, 0.471, 1);
 
                 fixed4 frosted = backdrop;
-                frosted.rgb = lerp(frosted.rgb, fixed3(1, 1, 1), _GlassTint.a * 0.4);
+                frosted.rgb = lerp(frosted.rgb, _GlassTint.rgb, _GlassTint.a * 0.65);
+                frosted.rgb = lerp(frosted.rgb, fixed3(1, 1, 1), _GlassTint.a * 0.18);
 
                 fixed4 glass = frosted;
-                glass.a = sprite.a * _GlassTint.a;
+                glass.a = sprite.a * saturate(_GlassTint.a + 0.08);
                 glass = UnityApplyAlphaClip(glass, _ClipRect, i.worldPosition.xy);
                 return glass;
             }

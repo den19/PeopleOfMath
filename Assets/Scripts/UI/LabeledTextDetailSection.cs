@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using PeopleOfMath.Core;
 using PeopleOfMath.Data;
+using PeopleOfMath.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,13 +25,35 @@ namespace PeopleOfMath.UI
 
         readonly List<Button> _spawnedTags = new();
 
+        public FilterKind FilterKind => GetFilterKind();
+
+        void OnEnable()
+        {
+            ThemeHelper.ThemeChanged += ApplySectionLabelColor;
+            ApplySectionLabelColor();
+        }
+
+        void OnDisable()
+        {
+            ThemeHelper.ThemeChanged -= ApplySectionLabelColor;
+        }
+
+        void ApplySectionLabelColor()
+        {
+            if (labelText != null)
+                labelText.color = UiTheme.GetFilterAccent(GetFilterKind());
+        }
+
         public override void Bind(MathematicianData data, bool english)
         {
             if (data == null)
                 return;
 
             if (labelText != null)
+            {
                 labelText.text = GetSectionTitle(english);
+                labelText.color = UiTheme.GetFilterAccent(GetFilterKind());
+            }
 
             ClearSpawnedTags();
             if (tagContainer == null || tagButtonPrefab == null)
@@ -56,6 +79,10 @@ namespace PeopleOfMath.UI
                     text.ForceMeshUpdate();
                 }
 
+                var themedCard = btn.GetComponent<UiThemedCard>();
+                if (themedCard != null)
+                    themedCard.Configure(UiCardVariant.Filter, filterKind);
+
                 var capturedKey = key;
                 btn.onClick.AddListener(() => nav.ShowListFromDetail(filterKind, capturedKey, data.id));
                 _spawnedTags.Add(btn);
@@ -64,9 +91,9 @@ namespace PeopleOfMath.UI
 
         public override string GetSectionTitle(bool english) => sectionKind switch
         {
-            LabeledDetailSectionKind.Countries => english ? "Countries" : "Страны",
-            LabeledDetailSectionKind.Centuries => english ? "Centuries" : "Века",
-            LabeledDetailSectionKind.Fields => english ? "Fields" : "Разделы",
+            LabeledDetailSectionKind.Countries => UiStrings.Get("section_countries"),
+            LabeledDetailSectionKind.Centuries => UiStrings.Get("section_centuries"),
+            LabeledDetailSectionKind.Fields => UiStrings.Get("section_fields"),
             _ => ""
         };
 

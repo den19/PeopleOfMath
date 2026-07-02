@@ -27,6 +27,10 @@ namespace PeopleOfMath.Core
             ThemeHelper.Initialize();
             FavoritesHelper.Initialize();
             navigation?.ShowHome();
+
+            var canvas = FindFirstObjectByType<Canvas>();
+            if (canvas != null)
+                OnboardingOverlay.TryShow(canvas.transform);
         }
     }
 }

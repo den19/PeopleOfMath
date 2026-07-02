@@ -41,7 +41,11 @@ namespace PeopleOfMath.UI
             }
 
             if (_button != null)
+            {
                 _button.transition = Selectable.Transition.None;
+                if (_button.GetComponent<UiButtonPressFeedback>() == null)
+                    _button.gameObject.AddComponent<UiButtonPressFeedback>();
+            }
 
             ApplyTheme();
             _initialized = true;
@@ -51,6 +55,7 @@ namespace PeopleOfMath.UI
         {
             _isFavorite = isFavorite;
             ApplyTheme();
+            RefreshListItemHighlight();
         }
 
         void ApplyTheme()
@@ -61,7 +66,14 @@ namespace PeopleOfMath.UI
             iconImage.sprite = _isFavorite ? UiSprites.HeartFilled : UiSprites.HeartOutline;
             iconImage.preserveAspect = true;
             iconImage.raycastTarget = false;
-            iconImage.color = _isFavorite ? UiTheme.PrimaryAccent : UiTheme.TextSecondary;
+            iconImage.color = _isFavorite ? UiTheme.AccentWarm : UiTheme.CardTextSecondary;
+        }
+
+        void RefreshListItemHighlight()
+        {
+            var themedCard = GetComponentInParent<UiThemedCard>();
+            if (themedCard != null && themedCard.Variant == UiCardVariant.ListItem)
+                themedCard.SetHighlightActive(_isFavorite);
         }
 
         public void SetClickHandler(UnityAction handler)

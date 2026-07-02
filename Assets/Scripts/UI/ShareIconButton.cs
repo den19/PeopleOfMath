@@ -60,7 +60,7 @@ namespace PeopleOfMath.UI
         void ApplyTheme()
         {
             if (iconImage != null)
-                iconImage.color = UiTheme.TextSecondary;
+                iconImage.color = UiTheme.CardTextSecondary;
         }
 
         public void SetClickHandler(UnityAction handler)

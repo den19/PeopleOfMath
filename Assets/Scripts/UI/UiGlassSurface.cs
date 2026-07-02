@@ -14,6 +14,8 @@ namespace PeopleOfMath.UI
         Outline _outline;
         bool _outlineWasEnabled;
         bool _glassActive;
+        bool _hasTintOverride;
+        Color _tintOverride;
 
         void Awake()
         {
@@ -80,6 +82,18 @@ namespace PeopleOfMath.UI
             _outline.enabled = _outlineWasEnabled;
         }
 
+        public void SetTintOverride(Color tint)
+        {
+            _hasTintOverride = true;
+            _tintOverride = tint;
+            RefreshTint();
+        }
+
+        public void ClearTintOverride()
+        {
+            _hasTintOverride = false;
+        }
+
         public void RefreshTint()
         {
             if (!_glassActive || targetImage == null || targetImage.material == null)
@@ -91,6 +105,9 @@ namespace PeopleOfMath.UI
 
         Color ResolveTintColor()
         {
+            if (_hasTintOverride)
+                return _tintOverride;
+
             var binding = GetComponent<UiThemeBinding>();
             if (binding != null)
                 return UiTheme.GetToken(binding.Token);

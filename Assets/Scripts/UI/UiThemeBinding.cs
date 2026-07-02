@@ -28,10 +28,15 @@ namespace PeopleOfMath.UI
             if (_text == null)
                 _text = GetComponent<TMP_Text>();
 
-            if (_image != null)
+            if (UiTheme.IsTextToken(token))
+            {
+                if (_text != null)
+                    _text.color = color;
+            }
+            else if (_image != null)
+            {
                 _image.color = color;
-            if (_text != null)
-                _text.color = color;
+            }
         }
     }
 }

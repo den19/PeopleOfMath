@@ -1,5 +1,6 @@
 using System.Collections;
 using PeopleOfMath.Data;
+using PeopleOfMath.Localization;
 using PeopleOfMath.Text;
 using TMPro;
 using UnityEngine;
@@ -60,12 +61,10 @@ namespace PeopleOfMath.UI
 
         public override string GetSectionTitle(bool english) => sectionKind switch
         {
-            ScrollDetailSectionKind.Achievements => english
-                ? "Achievements and contributions"
-                : "Достижения и вклад",
-            ScrollDetailSectionKind.PersonalLife => english ? "Personal life" : "Личная жизнь",
-            ScrollDetailSectionKind.ShortBio => english ? "Short bio" : "Краткая биография",
-            ScrollDetailSectionKind.InterestingFacts => english ? "Interesting facts" : "Интересные факты",
+            ScrollDetailSectionKind.Achievements => UiStrings.Get("section_achievements"),
+            ScrollDetailSectionKind.PersonalLife => UiStrings.Get("section_personal_life"),
+            ScrollDetailSectionKind.ShortBio => UiStrings.Get("section_short_bio"),
+            ScrollDetailSectionKind.InterestingFacts => UiStrings.Get("section_interesting_facts"),
             _ => ""
         };
 

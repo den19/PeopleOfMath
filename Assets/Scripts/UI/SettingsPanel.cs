@@ -100,25 +100,20 @@ namespace PeopleOfMath.UI
 
             if (statusText != null)
             {
-                statusText.text = english
-                    ? "Current language: English"
-                    : "Текущий язык: русский";
+                var languageLabel = english ? "English" : "русский";
+                statusText.text = UiStrings.Format("settings_current_language", languageLabel);
             }
 
             if (fontStatusText != null)
             {
                 var levelLabel = FontSizeHelper.GetLevelLabel(english, FontSizeHelper.CurrentLevel);
-                fontStatusText.text = english
-                    ? $"Current font size: {levelLabel}"
-                    : $"Текущий размер шрифта: {levelLabel}";
+                fontStatusText.text = UiStrings.Format("settings_current_font_size", levelLabel);
             }
 
             if (themeStatusText != null)
             {
                 var themeLabel = ThemeHelper.GetThemeLabel(english, ThemeHelper.Current);
-                themeStatusText.text = english
-                    ? $"Current theme: {themeLabel}"
-                    : $"Текущая тема: {themeLabel}";
+                themeStatusText.text = UiStrings.Format("settings_current_theme", themeLabel);
             }
 
             UiButtonStyler.Apply(russianButton, english ? UiButtonStyle.Secondary : UiButtonStyle.Primary);

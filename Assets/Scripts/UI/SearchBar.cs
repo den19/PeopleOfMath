@@ -71,7 +71,7 @@ namespace PeopleOfMath.UI
         void RefreshInputTextColor()
         {
             if (inputField?.textComponent is TMP_Text text)
-                text.color = UiTheme.TextPrimary;
+                text.color = UiTheme.CardTextPrimary;
         }
 
         public void SetQuerySilently(string query)
@@ -160,7 +160,7 @@ namespace PeopleOfMath.UI
         void ApplyGlow(bool highlighted)
         {
             if (glowImage != null)
-                glowImage.color = highlighted ? UiTheme.GlowHighlighted : UiTheme.Glow;
+                glowImage.color = highlighted ? UiTheme.GlowHighlighted : UiTheme.AccentMuted;
         }
 
         void RefreshPlaceholder()
@@ -170,7 +170,7 @@ namespace PeopleOfMath.UI
 
             placeholder.text =
                 LocalizationSettings.StringDatabase.GetLocalizedString("UI", "search_placeholder");
-            placeholder.color = UiTheme.TextSecondary;
+            placeholder.color = UiTheme.CardTextSecondary;
         }
     }
 }

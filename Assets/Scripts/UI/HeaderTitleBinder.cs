@@ -21,14 +21,44 @@ namespace PeopleOfMath.UI
         void OnEnable()
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+            ThemeHelper.ThemeChanged += OnThemeChanged;
+            RefreshTitleColors();
         }
 
         void OnDisable()
         {
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            ThemeHelper.ThemeChanged -= OnThemeChanged;
         }
 
         void OnLocaleChanged(Locale _) => RefreshCurrent();
+
+        void OnThemeChanged() => RefreshTitleColors();
+
+        public void RefreshTitleColors()
+        {
+            var color = _mode == TitleMode.Filter && _pendingKind.HasValue
+                ? UiTheme.GetFilterAccent(_pendingKind.Value)
+                : UiTheme.NavBarText;
+            if (titleText != null)
+                titleText.color = color;
+
+            ApplyTitleColor(homeTitleEvent, color);
+            ApplyTitleColor(indexTitleEvent, color);
+            ApplyTitleColor(settingsTitleEvent, color);
+            ApplyTitleColor(favoritesTitleEvent, color);
+            ApplyTitleColor(quizTitleEvent, color);
+        }
+
+        static void ApplyTitleColor(LocalizeStringEvent titleEvent, Color color)
+        {
+            if (titleEvent == null)
+                return;
+
+            var tmp = titleEvent.GetComponent<TMP_Text>();
+            if (tmp != null)
+                tmp.color = color;
+        }
 
         FilterKind? _pendingKind;
         string _pendingKey;
@@ -63,6 +93,8 @@ namespace PeopleOfMath.UI
                 homeTitleEvent.enabled = true;
                 homeTitleEvent.RefreshString();
             }
+
+            RefreshTitleColors();
         }
 
         public void SetIndexTitle()
@@ -76,6 +108,7 @@ namespace PeopleOfMath.UI
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             indexTitleEvent?.RefreshString();
+            RefreshTitleColors();
         }
 
         public void SetSettingsTitle()
@@ -89,6 +122,7 @@ namespace PeopleOfMath.UI
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             settingsTitleEvent?.RefreshString();
+            RefreshTitleColors();
         }
 
         public void SetFavoritesTitle()
@@ -102,6 +136,7 @@ namespace PeopleOfMath.UI
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             favoritesTitleEvent?.RefreshString();
+            RefreshTitleColors();
         }
 
         public void SetQuizTitle()
@@ -115,6 +150,7 @@ namespace PeopleOfMath.UI
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             quizTitleEvent?.RefreshString();
+            RefreshTitleColors();
         }
 
         public void SetFilterTitle(FilterKind kind, string key)
@@ -130,6 +166,7 @@ namespace PeopleOfMath.UI
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
             RefreshFilterTitle();
+            RefreshTitleColors();
         }
 
         public void SetSearchTitle(string query, int count)
@@ -145,6 +182,7 @@ namespace PeopleOfMath.UI
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
             RefreshSearchTitle();
+            RefreshTitleColors();
         }
 
         public void SetDetailTitle()
@@ -159,6 +197,7 @@ namespace PeopleOfMath.UI
                 titleText.gameObject.SetActive(true);
             if (detailTitle != null && titleText != null)
                 titleText.text = detailTitle.GetLocalizedString();
+            RefreshTitleColors();
         }
 
         public void SetDetailSectionTitle(string title)
@@ -174,6 +213,8 @@ namespace PeopleOfMath.UI
                 titleText.gameObject.SetActive(true);
                 titleText.text = title;
             }
+
+            RefreshTitleColors();
         }
 
         void RefreshCurrent()

@@ -108,7 +108,16 @@ namespace PeopleOfMath.UI
                 return;
 
             foreach (Transform child in listContent)
-                child.GetComponent<UiThemedCard>()?.Apply();
+            {
+                var card = child.GetComponent<UiThemedCard>();
+                if (card == null)
+                    continue;
+
+                card.Configure(UiCardVariant.ListItem);
+                card.Apply();
+            }
+
+            GlassThemeController.RefreshAllSurfaces();
         }
 
         void Refresh()
@@ -144,6 +153,8 @@ namespace PeopleOfMath.UI
             foreach (var data in favorites)
             {
                 var item = Instantiate(itemPrefab, listContent);
+                var card = item.GetComponent<UiThemedCard>();
+                card?.Configure(UiCardVariant.ListItem);
                 item.Bind(data, id => navigation.ShowDetail(id));
 
                 if (animateItems)
@@ -157,6 +168,7 @@ namespace PeopleOfMath.UI
                 ResetListScrollToTop();
 
             GetComponent<FontSizeScope>()?.Apply();
+            RefreshTheme();
         }
 
         IEnumerable<Transform> CollectRevealTargets()

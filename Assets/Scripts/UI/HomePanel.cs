@@ -33,15 +33,19 @@ namespace PeopleOfMath.UI
         void OnEnable()
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+            ThemeHelper.ThemeChanged += OnThemeChanged;
             Rebuild();
         }
 
         void OnDisable()
         {
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            ThemeHelper.ThemeChanged -= OnThemeChanged;
         }
 
         void OnLocaleChanged(UnityEngine.Localization.Locale _) => Rebuild();
+
+        void OnThemeChanged() => ApplyFilterStyles();
 
         void Rebuild()
         {
@@ -53,6 +57,8 @@ namespace PeopleOfMath.UI
                 FilterKind.Branch,
                 Taxonomy.AllBranchKeys,
                 Taxonomy.Branches);
+            ApplyFilterStyles();
+            StyleQuizButton();
         }
 
         void ClearSpawned()
@@ -88,10 +94,38 @@ namespace PeopleOfMath.UI
                     text.ForceMeshUpdate();
                 }
 
+                var themedCard = btn.GetComponent<UiThemedCard>();
+                if (themedCard != null)
+                    themedCard.Configure(UiCardVariant.Filter, kind);
+
                 var capturedKey = key;
                 btn.onClick.AddListener(() => navigation.ShowList(kind, capturedKey));
                 _spawned.Add(btn);
             }
+        }
+
+        void ApplyFilterStyles()
+        {
+            foreach (var button in _spawned)
+            {
+                if (button == null)
+                    continue;
+
+                button.GetComponent<UiThemedCard>()?.Apply();
+            }
+
+            StyleQuizButton();
+        }
+
+        void StyleQuizButton()
+        {
+            if (quizButton == null)
+                return;
+
+            UiButtonStyler.Apply(quizButton, UiButtonStyle.Primary);
+            var indicator = quizButton.transform.Find("TabIndicator")?.GetComponent<Image>();
+            if (indicator != null && ThemeHelper.IsGlassmorphism)
+                indicator.color = UiTheme.AccentWarm;
         }
     }
 }

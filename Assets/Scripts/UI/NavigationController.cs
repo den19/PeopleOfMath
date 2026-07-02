@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PeopleOfMath.Data;
 using PeopleOfMath.UI;
 using UnityEngine;
@@ -6,17 +7,6 @@ using UnityEngine.UI;
 
 namespace PeopleOfMath.Core
 {
-    public enum AppScreen
-    {
-        Home,
-        Index,
-        List,
-        Detail,
-        Settings,
-        Favorites,
-        Quiz
-    }
-
     public class NavigationController : MonoBehaviour
     {
         [SerializeField] HomePanel homePanel;
@@ -35,32 +25,17 @@ namespace PeopleOfMath.Core
         [SerializeField] Button favoritesButton;
         [SerializeField] Button quizTab;
 
-        AppScreen _screen = AppScreen.Home;
-        FilterKind _filterKind;
-        string _filterKey;
-        string _searchQuery;
-        bool _listFromSearch;
-        bool _listFromDetail;
-        bool _detailFromIndex;
-        bool _detailFromFavorites;
-        bool _detailFromQuiz;
-        string _selectedMathematicianId;
+        readonly List<ScreenContext> _stack = new();
         int _lastBackFrame = -1;
 
-        bool _detailReturnFromHome;
-        bool _detailReturnFromIndex;
-        bool _detailReturnFromFavorites;
-        bool _detailReturnFromQuiz;
-        bool _detailReturnFromSearch;
-        string _detailReturnSearchQuery;
-        bool _detailReturnFromFilterList;
-        FilterKind _detailReturnFilterKind;
-        string _detailReturnFilterKey;
+        public AppScreen CurrentScreen => _stack.Count > 0 ? _stack[^1].Screen : AppScreen.Home;
 
-        public AppScreen CurrentScreen => _screen;
+        public ScreenContext CurrentContext => _stack.Count > 0 ? _stack[^1] : ScreenContext.Home();
 
         void Awake()
         {
+            _stack.Clear();
+            _stack.Add(ScreenContext.Home());
             HideAllPanels();
             WireHeaderBackButton();
         }
@@ -117,181 +92,227 @@ namespace PeopleOfMath.Core
             return transition != null && transition.IsAnimating;
         }
 
-        public void ShowHome()
+        void SetRoot(ScreenContext context)
         {
-            _listFromSearch = false;
-            _listFromDetail = false;
-            _screen = AppScreen.Home;
+            _stack.Clear();
+            _stack.Add(context);
+            Present(context);
+        }
+
+        void Push(ScreenContext context)
+        {
+            _stack.Add(context);
+            Present(context);
+        }
+
+        void Pop()
+        {
+            if (_stack.Count <= 1)
+                return;
+
+            _stack.RemoveAt(_stack.Count - 1);
+            Present(_stack[^1], restoring: true);
+        }
+
+        void Present(ScreenContext context, bool restoring = false)
+        {
             HideAllPanels();
-            homePanel.gameObject.SetActive(true);
-            headerBackButton.SetActive(false);
-            headerTitle?.SetHomeTitle();
+
+            switch (context.Screen)
+            {
+                case AppScreen.Home:
+                    homePanel.gameObject.SetActive(true);
+                    headerBackButton.SetActive(false);
+                    headerTitle?.SetHomeTitle();
+                    break;
+                case AppScreen.Index:
+                    indexPanel.gameObject.SetActive(true);
+                    headerBackButton.SetActive(false);
+                    headerTitle?.SetIndexTitle();
+                    break;
+                case AppScreen.List:
+                    if (context.ListFromSearch)
+                        listPanel.BindSearch(context.SearchQuery);
+                    else
+                        listPanel.BindFilter(context.FilterKind, context.FilterKey);
+
+                    listPanel.gameObject.SetActive(true);
+                    headerBackButton.SetActive(true);
+                    if (context.ListFromSearch)
+                        headerTitle?.SetSearchTitle(context.SearchQuery, listPanel.LastResultCount);
+                    else
+                        headerTitle?.SetFilterTitle(context.FilterKind, context.FilterKey);
+                    break;
+                case AppScreen.Detail:
+                    detailPanel.gameObject.SetActive(true);
+                    detailPanel.Bind(context.MathematicianId);
+                    headerBackButton.SetActive(true);
+                    break;
+                case AppScreen.Settings:
+                    settingsPanel.gameObject.SetActive(true);
+                    headerBackButton.SetActive(false);
+                    headerTitle?.SetSettingsTitle();
+                    break;
+                case AppScreen.Favorites:
+                    PresentFavorites(restoring);
+                    break;
+                case AppScreen.Quiz:
+                    quizPanel.gameObject.SetActive(true);
+                    if (!restoring || !quizPanel.IsInActiveRound)
+                        quizPanel.ShowMenu();
+                    headerBackButton.SetActive(true);
+                    headerTitle?.SetQuizTitle();
+                    break;
+            }
+
             RefreshTabStyles();
         }
 
-        public void ShowIndex()
+        void PresentFavorites(bool restoring)
         {
-            _listFromSearch = false;
-            _listFromDetail = false;
-            _screen = AppScreen.Index;
-            HideAllPanels();
-            indexPanel.gameObject.SetActive(true);
-            headerBackButton.SetActive(false);
-            headerTitle?.SetIndexTitle();
-            RefreshTabStyles();
+            HideAllPanelsExceptFavorites();
+            headerBackButton.SetActive(true);
+            headerTitle?.SetFavoritesTitle();
+
+            if (!restoring)
+            {
+                favoritesPanel.PrepareAnimatedOpen();
+                favoritesPanel.gameObject.SetActive(true);
+
+                var transition = GetFavoritesTransition();
+                if (transition == null)
+                {
+                    favoritesPanel.RevealListItemsStaggered();
+                    return;
+                }
+
+                transition.SnapClosed();
+                transition.PlayOpen(() => favoritesPanel.RevealListItemsStaggered());
+                return;
+            }
+
+            favoritesPanel.gameObject.SetActive(true);
+            favoritesPanel.RevealListItemsStaggered();
         }
+
+        public void ShowHome() => SetRoot(ScreenContext.Home());
+
+        public void ShowIndex() => SetRoot(ScreenContext.Index());
 
         public void ShowSearch(string query)
         {
-            _searchQuery = query?.Trim() ?? "";
-            if (string.IsNullOrEmpty(_searchQuery))
+            query = query?.Trim() ?? "";
+            if (string.IsNullOrEmpty(query))
             {
                 ShowHome();
                 return;
             }
 
-            _listFromSearch = true;
-            _listFromDetail = false;
-            _screen = AppScreen.List;
-            HideAllPanels();
-            var count = listPanel.BindSearch(_searchQuery);
-            listPanel.gameObject.SetActive(true);
-            headerBackButton.SetActive(true);
-            headerTitle?.SetSearchTitle(_searchQuery, count);
-            RefreshTabStyles();
+            if (_stack.Count > 0 && _stack[^1].Screen == AppScreen.List && _stack[^1].ListFromSearch)
+            {
+                _stack[^1] = ScreenContext.ListSearch(query);
+                Present(_stack[^1]);
+                return;
+            }
+
+            Push(ScreenContext.ListSearch(query));
         }
 
         public void ShowList(FilterKind kind, string key, bool fromDetail = false)
         {
-            _listFromSearch = false;
-            _listFromDetail = fromDetail;
-            _filterKind = kind;
-            _filterKey = key;
-            _screen = AppScreen.List;
-            HideAllPanels();
-            listPanel.BindFilter(kind, key);
-            listPanel.gameObject.SetActive(true);
-            headerBackButton.SetActive(true);
-            headerTitle?.SetFilterTitle(kind, key);
-            RefreshTabStyles();
+            if (fromDetail)
+            {
+                var parent = _stack.Count > 0 ? _stack[^1] : ScreenContext.Home();
+                Push(ScreenContext.ListFilter(kind, key, fromDetail: true, mathematicianId: parent.MathematicianId));
+                return;
+            }
+
+            Push(ScreenContext.ListFilter(kind, key));
         }
 
-        public void ShowListFromDetail(FilterKind kind, string key, string mathematicianId)
-        {
-            _selectedMathematicianId = mathematicianId;
-            ShowList(kind, key, fromDetail: true);
-        }
+        public void ShowListFromDetail(FilterKind kind, string key, string mathematicianId) =>
+            Push(ScreenContext.ListFilter(kind, key, fromDetail: true, mathematicianId: mathematicianId));
 
         public void ShowDetail(string mathematicianId, bool restoreReturnContext = false)
         {
             if (restoreReturnContext)
             {
-                _detailFromIndex = _detailReturnFromIndex;
-                _detailFromFavorites = _detailReturnFromFavorites;
-                _detailFromQuiz = _detailReturnFromQuiz;
-                _listFromSearch = _detailReturnFromSearch;
-                _searchQuery = _detailReturnSearchQuery;
-                if (_detailReturnFromFilterList)
-                {
-                    _filterKind = _detailReturnFilterKind;
-                    _filterKey = _detailReturnFilterKey;
-                }
-            }
-            else
-            {
-                _detailReturnFromHome = _screen == AppScreen.Home;
-                _detailReturnFromIndex = _screen == AppScreen.Index;
-                _detailReturnFromFavorites = _screen == AppScreen.Favorites;
-                _detailReturnFromQuiz = _screen == AppScreen.Quiz;
-                _detailReturnFromSearch = _screen == AppScreen.List && _listFromSearch;
-                _detailReturnSearchQuery = _searchQuery;
-                _detailReturnFromFilterList = _screen == AppScreen.List && !_listFromSearch;
-                _detailReturnFilterKind = _filterKind;
-                _detailReturnFilterKey = _filterKey;
-
-                _detailFromIndex = _detailReturnFromIndex;
-                _detailFromFavorites = _detailReturnFromFavorites;
-                _detailFromQuiz = _detailReturnFromQuiz;
+                Pop();
+                return;
             }
 
-            _listFromDetail = false;
-            _selectedMathematicianId = mathematicianId;
-            _screen = AppScreen.Detail;
-            HideAllPanels();
-            detailPanel.gameObject.SetActive(true);
-            detailPanel.Bind(mathematicianId);
-            headerBackButton.SetActive(true);
-            RefreshTabStyles();
+            Push(ScreenContext.Detail(mathematicianId));
         }
 
-        public void ShowSettings()
-        {
-            _screen = AppScreen.Settings;
-            HideAllPanels();
-            settingsPanel.gameObject.SetActive(true);
-            headerBackButton.SetActive(false);
-            headerTitle?.SetSettingsTitle();
-            RefreshTabStyles();
-        }
+        public void ShowSettings() => SetRoot(ScreenContext.Settings());
 
         public void ShowFavorites()
         {
-            if (_screen == AppScreen.Favorites || IsFavoritesAnimating())
+            if (CurrentScreen == AppScreen.Favorites || IsFavoritesAnimating())
                 return;
 
-            _screen = AppScreen.Favorites;
-            HideAllPanelsExceptFavorites();
-            headerBackButton.SetActive(true);
-            headerTitle?.SetFavoritesTitle();
-            RefreshTabStyles();
-
-            favoritesPanel.PrepareAnimatedOpen();
-            favoritesPanel.gameObject.SetActive(true);
-
-            var transition = GetFavoritesTransition();
-            if (transition == null)
-            {
-                favoritesPanel.RevealListItemsStaggered();
-                return;
-            }
-
-            transition.SnapClosed();
-            transition.PlayOpen(() => favoritesPanel.RevealListItemsStaggered());
+            Push(ScreenContext.Favorites());
         }
 
-        public void ShowQuiz()
+        public void ShowQuiz() => SetRoot(ScreenContext.Quiz());
+
+        DetailOrigin GetDetailOrigin()
         {
-            _listFromSearch = false;
-            _listFromDetail = false;
-            _screen = AppScreen.Quiz;
-            HideAllPanels();
-            quizPanel.gameObject.SetActive(true);
-            quizPanel.ShowMenu();
-            headerBackButton.SetActive(true);
-            headerTitle?.SetQuizTitle();
-            RefreshTabStyles();
+            if (_stack.Count < 2 || _stack[^1].Screen != AppScreen.Detail)
+                return DetailOrigin.None;
+
+            var previous = _stack[^2];
+            return previous.Screen switch
+            {
+                AppScreen.Index => DetailOrigin.Index,
+                AppScreen.Favorites => DetailOrigin.Favorites,
+                AppScreen.Quiz => DetailOrigin.Quiz,
+                AppScreen.Home => DetailOrigin.Home,
+                AppScreen.List when previous.ListFromSearch => DetailOrigin.Search,
+                AppScreen.List => DetailOrigin.FilterList,
+                _ => DetailOrigin.Home
+            };
         }
 
         public void RefreshTabStyles()
         {
-            var browseActive = _screen == AppScreen.Home
-                || _screen == AppScreen.List
-                || (_screen == AppScreen.Detail && !_detailFromIndex);
-            var indexActive = _screen == AppScreen.Index
-                || (_screen == AppScreen.Detail && _detailFromIndex);
-            var settingsActive = _screen == AppScreen.Settings;
-            var favoritesActive = _screen == AppScreen.Favorites
-                || (_screen == AppScreen.Detail && _detailFromFavorites);
-            var quizActive = _screen == AppScreen.Quiz
-                || (_screen == AppScreen.Detail && _detailFromQuiz);
-            UiButtonStyler.Apply(browseTab, browseActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
-            UiButtonStyler.Apply(indexTab, indexActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
-            UiButtonStyler.Apply(settingsTab, settingsActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+            var ctx = CurrentContext;
+            var detailOrigin = GetDetailOrigin();
+
+            var browseActive = ctx.Screen == AppScreen.Home
+                || ctx.Screen == AppScreen.List
+                || (ctx.Screen == AppScreen.Detail && detailOrigin is DetailOrigin.Home or DetailOrigin.Search or DetailOrigin.FilterList);
+            var indexActive = ctx.Screen == AppScreen.Index
+                || (ctx.Screen == AppScreen.Detail && detailOrigin == DetailOrigin.Index);
+            var settingsActive = ctx.Screen == AppScreen.Settings;
+            var favoritesActive = ctx.Screen == AppScreen.Favorites
+                || (ctx.Screen == AppScreen.Detail && detailOrigin == DetailOrigin.Favorites);
+            var quizActive = ctx.Screen == AppScreen.Quiz
+                || (ctx.Screen == AppScreen.Detail && detailOrigin == DetailOrigin.Quiz);
+
+            ApplyTabStyle(browseTab, browseActive, UiTheme.PrimaryAccent);
+            ApplyTabStyle(indexTab, indexActive, UiTheme.AccentSecondary);
+            ApplyTabStyle(settingsTab, settingsActive, UiTheme.PrimaryAccent);
             if (favoritesButton != null)
-                UiButtonStyler.Apply(favoritesButton, favoritesActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+                ApplyTabStyle(favoritesButton, favoritesActive, UiTheme.AccentWarm);
             if (quizTab != null)
-                UiButtonStyler.Apply(quizTab, quizActive ? UiButtonStyle.Primary : UiButtonStyle.Secondary);
+                ApplyTabStyle(quizTab, quizActive, UiTheme.AccentTertiary);
+
             EventSystem.current?.SetSelectedGameObject(null);
+        }
+
+        static void ApplyTabStyle(Button button, bool active, Color indicatorColor)
+        {
+            if (button == null)
+                return;
+
+            UiButtonStyler.Apply(button, active ? UiButtonStyle.Primary : UiButtonStyle.Secondary, showTabIndicator: active);
+            if (!active)
+                return;
+
+            var indicator = button.transform.Find("TabIndicator")?.GetComponent<Image>();
+            if (indicator != null)
+                indicator.color = indicatorColor;
         }
 
         public void HandleBack()
@@ -299,31 +320,16 @@ namespace PeopleOfMath.Core
             if (IsFavoritesAnimating())
                 return;
 
-            switch (_screen)
+            var ctx = CurrentContext;
+            switch (ctx.Screen)
             {
                 case AppScreen.List:
-                    if (_listFromDetail)
-                        ShowDetail(_selectedMathematicianId, restoreReturnContext: true);
-                    else
-                        ShowHome();
+                    Pop();
                     break;
                 case AppScreen.Detail:
                     if (detailPanel != null && detailPanel.TryGoBack())
                         break;
-                    if (_detailFromIndex)
-                        ShowIndex();
-                    else if (_detailFromFavorites)
-                        ShowFavorites();
-                    else if (_detailFromQuiz)
-                        ShowQuiz();
-                    else if (_listFromSearch)
-                        ShowSearch(_searchQuery);
-                    else if (_detailReturnFromFilterList)
-                        ShowList(_detailReturnFilterKind, _detailReturnFilterKey);
-                    else if (_detailReturnFromHome)
-                        ShowHome();
-                    else
-                        ShowList(_filterKind, _filterKey);
+                    Pop();
                     break;
                 case AppScreen.Index:
                 case AppScreen.Settings:

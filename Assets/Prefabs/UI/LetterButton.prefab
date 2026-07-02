@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6954166218272527772}
   - component: {fileID: 8027401518401279593}
   - component: {fileID: 1442307482631055146}
+  - component: {fileID: 7961491238416894154}
   m_Layer: 0
   m_Name: Fill
   m_TagString: Untagged
@@ -91,6 +92,21 @@ MonoBehaviour:
   m_EffectColor: {r: 0.227, g: 0.227, b: 0.235, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &7961491238416894154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836291571808114752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 998db1b2d92812b428ed635ce79d1e88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiGlassSurface
+  targetImage: {fileID: 8027401518401279593}
+  useFrostedMaterial: 1
+  tintToken: 3
 --- !u!1 &1976407340094449875
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,6 +264,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbb53257354134a4c84e0f410e912a6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PeopleOfMath::PeopleOfMath.UI.UiThemedCard
+  variant: 0
+  filterKind: 0
 --- !u!1 &2613863485399838764
 GameObject:
   m_ObjectHideFlags: 0
