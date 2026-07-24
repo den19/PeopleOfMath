@@ -48,6 +48,8 @@ Shader "PeopleOfMath/UiFrostedGlass"
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 2.0
+            #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
+            #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
             #include "UnityCG.cginc"
             #include "UnityUI.cginc"
 
@@ -121,7 +123,15 @@ Shader "PeopleOfMath/UiFrostedGlass"
 
                 fixed4 glass = frosted;
                 glass.a = sprite.a * saturate(_GlassTint.a + 0.08);
-                glass = UnityApplyAlphaClip(glass, _ClipRect, i.worldPosition.xy);
+
+                #ifdef UNITY_UI_CLIP_RECT
+                glass.a *= UnityGet2DClipping(i.worldPosition.xy, _ClipRect);
+                #endif
+
+                #ifdef UNITY_UI_ALPHACLIP
+                clip(glass.a - 0.001);
+                #endif
+
                 return glass;
             }
             ENDCG

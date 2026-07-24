@@ -523,11 +523,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000014
-    m_Localized: Wikipedia
+    m_Localized: Open Wikipedia
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000015
-    m_Localized: Wikidata
+    m_Localized: Open Wikidata
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000016

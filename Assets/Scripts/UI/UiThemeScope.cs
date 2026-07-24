@@ -177,7 +177,7 @@ namespace PeopleOfMath.UI
                     continue;
 
                 var name = button.gameObject.name;
-                if (name is "BackButton" or "NextButton")
+                if (name is "BackButton" or "NextButton" or "WikipediaButton" or "WikidataButton")
                     UiButtonStyler.Apply(button, UiButtonStyle.Secondary);
             }
         }
