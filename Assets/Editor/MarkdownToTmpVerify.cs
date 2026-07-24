@@ -15,7 +15,8 @@ namespace PeopleOfMath.Editor
         {
             AssertContains("bold", Convert("Plain text without markdown"), "Plain");
             AssertContains("<b>жирный</b>", Convert("Текст **жирный** текст"), "Bold RU");
-            AssertContains("<size=115%>", Convert("Intro ### Заголовок"), "Header");
+            AssertContains("<b>Заголовок</b>", Convert("Intro ### Заголовок"), "Header");
+            AssertNoContains("<size=", Convert("Intro ### Заголовок"), "No header size tag");
             AssertContains("<indent=1em>•", Convert("Para. *   **Пункт:** описание"), "Bullet");
             AssertContains("<indent=1em>1.", Convert("Start 1.  **First:** item"), "Numbered");
             AssertContains("&lt;", Convert("3 < π < 4"), "Escape lt");
@@ -25,7 +26,12 @@ namespace PeopleOfMath.Editor
             var scrollEmoji = char.ConvertFromUtf32(0x1F4DC);
             var emojiHeader = Convert($"### {scrollEmoji} Ранние годы");
             AssertContains(scrollEmoji, emojiHeader, "Emoji in header");
-            AssertContains("<size=115%>", emojiHeader, "Emoji header size");
+            AssertContains($"<b>{scrollEmoji} Ранние годы</b>", emojiHeader, "Emoji header bold");
+            AssertNoContains("<size=", emojiHeader, "Emoji header no size");
+
+            var titleAndBody = Convert("Intro ### Title  Body text");
+            AssertContains("<b>Title</b><br><br>Body text", titleAndBody, "Title then body");
+            AssertNoContains("<size=", titleAndBody, "Split body no size");
 
             VerifyArtinEmojiData();
 

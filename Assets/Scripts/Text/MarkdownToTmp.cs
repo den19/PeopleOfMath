@@ -8,6 +8,9 @@ namespace PeopleOfMath.Text
         static readonly Regex HeaderBreak = new(@"\s+(#{3}\s+)", RegexOptions.Compiled);
         static readonly Regex BulletBreak = new(@"\s+(\*\s+\*\*)", RegexOptions.Compiled);
         static readonly Regex NumberedBreak = new(@"\s+(\d+\.\s+\*\*)", RegexOptions.Compiled);
+        static readonly Regex HeaderTitleBodySplit = new(
+            @"  +|(?<=[a-zа-яё)»]) (?=[A-ZА-ЯЁ])",
+            RegexOptions.Compiled);
 
         public static string Convert(string markdown)
         {
@@ -51,9 +54,7 @@ namespace PeopleOfMath.Text
             var trimmed = line.TrimStart();
             if (trimmed.StartsWith("### "))
             {
-                result.Append("<size=115%><b>")
-                    .Append(FormatInline(trimmed.Substring(4)))
-                    .Append("</b></size>");
+                AppendHeader(result, trimmed.Substring(4));
                 return;
             }
 
@@ -76,6 +77,35 @@ namespace PeopleOfMath.Text
             }
 
             result.Append(FormatInline(trimmed));
+        }
+
+        static void AppendHeader(StringBuilder result, string rest)
+        {
+            SplitHeaderTitleAndBody(rest, out var title, out var body);
+            result.Append("<b>").Append(FormatInline(title)).Append("</b>");
+            if (string.IsNullOrEmpty(body))
+                return;
+
+            result.Append("<br><br>").Append(FormatInline(body));
+        }
+
+        static void SplitHeaderTitleAndBody(string rest, out string title, out string body)
+        {
+            var match = HeaderTitleBodySplit.Match(rest);
+            if (!match.Success)
+            {
+                title = rest.Trim();
+                body = "";
+                return;
+            }
+
+            title = rest.Substring(0, match.Index).Trim();
+            body = rest.Substring(match.Index + match.Length).Trim();
+            if (string.IsNullOrEmpty(title))
+            {
+                title = rest.Trim();
+                body = "";
+            }
         }
 
         static bool TryParseBullet(string line, out string body)

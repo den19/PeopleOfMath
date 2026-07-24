@@ -2101,7 +2101,13 @@ namespace PeopleOfMath.Editor
             scroll.horizontal = false;
             scroll.movementType = ScrollRect.MovementType.Clamped;
 
-            var body = AddDetailField(content.transform, "Body", 15, FontStyles.Normal, autoHeight: true, textColor: UiTheme.TextSecondary);
+            var body = AddDetailField(
+                content.transform,
+                "Body",
+                UiLayoutMetrics.DetailScrollBodyBaseFontSize,
+                FontStyles.Normal,
+                autoHeight: true,
+                textColor: UiTheme.TextSecondary);
 
             var section = root.AddComponent<ScrollTextDetailSection>();
             var so = new SerializedObject(section);

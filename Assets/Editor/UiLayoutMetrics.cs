@@ -102,6 +102,8 @@ namespace PeopleOfMath.Editor
         public const float DetailScrollMinHeight = 240f;
         public const float DetailFieldPadding = 10f;
         public const float DetailCaptionBaseFontSize = 11f;
+        // ~15 * 1.15 — matches prior visual size of ###-section body text
+        public const float DetailScrollBodyBaseFontSize = 17.25f;
         public const float DetailGalleryDotsHeight = 24f;
         public const float DetailGalleryDotSize = 10f;
         public const float DetailGalleryBottomInset = 48f;
