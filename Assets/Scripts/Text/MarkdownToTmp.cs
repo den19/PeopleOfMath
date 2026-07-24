@@ -43,7 +43,7 @@ namespace PeopleOfMath.Text
         static string Preprocess(string text)
         {
             text = text.Replace("/n/n", "\n\n").Replace("/n", "\n");
-            text = HeaderBreak.Replace(text, "\n$1");
+            text = HeaderBreak.Replace(text, "\n\n$1");
             text = BulletBreak.Replace(text, "\n$1");
             text = NumberedBreak.Replace(text, "\n$1");
             return text;
