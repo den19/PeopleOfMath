@@ -94,6 +94,18 @@ namespace PeopleOfMath.Editor
             rt.sizeDelta = size;
         }
 
+        public static void ApplyBottomLeftAnchoredRect(RectTransform rt, Vector2 position, Vector2 size)
+        {
+            if (rt == null)
+                return;
+
+            rt.anchorMin = new Vector2(0f, 0f);
+            rt.anchorMax = new Vector2(0f, 0f);
+            rt.pivot = new Vector2(0f, 0f);
+            rt.anchoredPosition = position;
+            rt.sizeDelta = size;
+        }
+
         public static void ApplyBottomStretchBarRect(RectTransform rt, Vector2 position, Vector2 size)
         {
             if (rt == null)

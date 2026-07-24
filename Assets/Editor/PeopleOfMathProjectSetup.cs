@@ -2305,13 +2305,14 @@ namespace PeopleOfMath.Editor
             portraitRt.sizeDelta = new Vector2(320, 320);
             portraitGo.GetComponent<Image>().color = UiTheme.PortraitPlaceholder;
 
-            var promptText = CreateTmpChild(view.transform, "PromptText", 18, FontStyles.Normal, new Vector2(40, -72));
+            var promptText = CreateTmpChild(view.transform, "PromptText", 18, FontStyles.Normal, new Vector2(0, -72));
             var promptRt = promptText.GetComponent<RectTransform>();
-            promptRt.sizeDelta = new Vector2(1000, 320);
+            // Stretch X: sizeDelta.x is inset vs parent width (not absolute width).
+            promptRt.sizeDelta = new Vector2(-80, 320);
             var promptTmp = promptText.GetComponent<TextMeshProUGUI>();
             promptTmp.alignment = TextAlignmentOptions.TopLeft;
             promptTmp.textWrappingMode = TextWrappingModes.Normal;
-            promptTmp.overflowMode = TextOverflowModes.Ellipsis;
+            promptTmp.overflowMode = TextOverflowModes.Overflow;
             promptText.SetActive(false);
 
             var answers = new GameObject("Answers", typeof(RectTransform), typeof(VerticalLayoutGroup));
@@ -2319,7 +2320,8 @@ namespace PeopleOfMath.Editor
             var answersRt = answers.GetComponent<RectTransform>();
             answersRt.anchorMin = new Vector2(0, 0);
             answersRt.anchorMax = new Vector2(1, 1);
-            answersRt.offsetMin = new Vector2(40, 40);
+            // Bottom inset reserves space for FeedbackView actions.
+            answersRt.offsetMin = new Vector2(40, 300);
             answersRt.offsetMax = new Vector2(-40, -420);
             var vlg = answers.GetComponent<VerticalLayoutGroup>();
             vlg.spacing = 16f;
@@ -2336,15 +2338,27 @@ namespace PeopleOfMath.Editor
             var view = CreateStretchChild(parent, "FeedbackView");
             view.SetActive(false);
 
-            var title = CreateTmpChild(view.transform, "FeedbackTitle", 22, FontStyles.Bold, new Vector2(40, -520));
-            title.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 40);
+            var title = CreateTmpChild(view.transform, "FeedbackTitle", 22, FontStyles.Bold, Vector2.zero);
+            var titleRt = title.GetComponent<RectTransform>();
+            titleRt.anchorMin = new Vector2(0f, 0f);
+            titleRt.anchorMax = new Vector2(1f, 0f);
+            titleRt.pivot = new Vector2(0f, 0f);
+            titleRt.anchoredPosition = new Vector2(0f, 220f);
+            titleRt.sizeDelta = new Vector2(-80f, 40f);
 
-            var answer = CreateTmpChild(view.transform, "FeedbackAnswer", 16, FontStyles.Normal, new Vector2(40, -570));
-            answer.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 80);
+            var answer = CreateTmpChild(view.transform, "FeedbackAnswer", 16, FontStyles.Normal, Vector2.zero);
+            var answerRt = answer.GetComponent<RectTransform>();
+            answerRt.anchorMin = new Vector2(0f, 0f);
+            answerRt.anchorMax = new Vector2(1f, 0f);
+            answerRt.pivot = new Vector2(0f, 0f);
+            answerRt.anchoredPosition = new Vector2(0f, 140f);
+            answerRt.sizeDelta = new Vector2(-80f, 80f);
             answer.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
 
-            CreateQuizActionButton(view.transform, "NextButton", new Vector2(40, -680), new Vector2(480, 72), loc, "quiz_next");
-            CreateQuizActionButton(view.transform, "ViewProfileButton", new Vector2(560, -680), new Vector2(480, 72), loc, "quiz_view_profile");
+            var next = CreateQuizActionButton(view.transform, "NextButton", new Vector2(40, 40), new Vector2(480, 72), loc, "quiz_next");
+            UiButtonLayout.ApplyBottomLeftAnchoredRect(next.GetComponent<RectTransform>(), new Vector2(40f, 40f), new Vector2(480f, 72f));
+            var viewProfile = CreateQuizActionButton(view.transform, "ViewProfileButton", new Vector2(560, 40), new Vector2(480, 72), loc, "quiz_view_profile");
+            UiButtonLayout.ApplyBottomLeftAnchoredRect(viewProfile.GetComponent<RectTransform>(), new Vector2(560f, 40f), new Vector2(480f, 72f));
             return view;
         }
 
