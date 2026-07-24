@@ -1527,6 +1527,22 @@
         "geometry",
         "applied_math"
       ]
+    },
+    {
+      "id": "amdahl",
+      "wikiTitleRu": "Амдал, Джин",
+      "wikidataId": "Q62890",
+      "countryKeys": [
+        "usa"
+      ],
+      "centuryKeys": [
+        "20",
+        "21"
+      ],
+      "branchKeys": [
+        "informatics",
+        "applied_math"
+      ]
     }
   ]
 }
