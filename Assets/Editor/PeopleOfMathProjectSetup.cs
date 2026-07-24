@@ -2305,9 +2305,9 @@ namespace PeopleOfMath.Editor
             portraitRt.sizeDelta = new Vector2(320, 320);
             portraitGo.GetComponent<Image>().color = UiTheme.PortraitPlaceholder;
 
-            var promptText = CreateTmpChild(view.transform, "PromptText", 18, FontStyles.Normal, new Vector2(0, -72));
+            var promptText = CreateTmpChild(view.transform, "PromptText", 18, FontStyles.Normal, new Vector2(40, -72));
             var promptRt = promptText.GetComponent<RectTransform>();
-            // Stretch X: sizeDelta.x is inset vs parent width (not absolute width).
+            // Stretch X: with pivot.x=0, pos.x=40 and sizeDelta.x=-80 → 40px left+right.
             promptRt.sizeDelta = new Vector2(-80, 320);
             var promptTmp = promptText.GetComponent<TextMeshProUGUI>();
             promptTmp.alignment = TextAlignmentOptions.TopLeft;
@@ -2343,7 +2343,7 @@ namespace PeopleOfMath.Editor
             titleRt.anchorMin = new Vector2(0f, 0f);
             titleRt.anchorMax = new Vector2(1f, 0f);
             titleRt.pivot = new Vector2(0f, 0f);
-            titleRt.anchoredPosition = new Vector2(0f, 220f);
+            titleRt.anchoredPosition = new Vector2(40f, 220f);
             titleRt.sizeDelta = new Vector2(-80f, 40f);
 
             var answer = CreateTmpChild(view.transform, "FeedbackAnswer", 16, FontStyles.Normal, Vector2.zero);
@@ -2351,7 +2351,7 @@ namespace PeopleOfMath.Editor
             answerRt.anchorMin = new Vector2(0f, 0f);
             answerRt.anchorMax = new Vector2(1f, 0f);
             answerRt.pivot = new Vector2(0f, 0f);
-            answerRt.anchoredPosition = new Vector2(0f, 140f);
+            answerRt.anchoredPosition = new Vector2(40f, 140f);
             answerRt.sizeDelta = new Vector2(-80f, 80f);
             answer.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
 
