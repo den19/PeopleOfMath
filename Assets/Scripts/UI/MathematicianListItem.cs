@@ -3,6 +3,7 @@ using System.Collections;
 using PeopleOfMath.Data;
 using PeopleOfMath.Localization;
 using PeopleOfMath.Sharing;
+using PeopleOfMath.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -133,6 +134,8 @@ namespace PeopleOfMath.UI
             datesText.textWrappingMode = TextWrappingModes.Normal;
             datesText.overflowMode = TextOverflowModes.Overflow;
             ConfigureBioText(bioText);
+
+            TmpOrphanWrap.AvoidShortLastLine(nameText, textWidth);
 
             var nameHeight = MeasureTextHeight(nameText, textWidth, nameText.fontSize * 1.1f);
             var datesHeight = MeasureTextHeight(datesText, textWidth, datesText.fontSize * 1.1f);
