@@ -14,13 +14,13 @@ namespace PeopleOfMath.Editor
         public static readonly Vector2 SectionNavBarSize = new(0f, 90f);
 
         /// <summary>Single-row Figma-style tab bar height (reference 1080 canvas).</summary>
-        public const float BottomBarHeight = 132f;
+        public const float BottomBarHeight = 148f;
         public static readonly Vector2 BottomBarPosition = new(0f, BottomBarHeight * 0.5f);
         public static readonly Vector2 BottomBarSize = new(0f, BottomBarHeight);
 
-        public const float TabIconSize = 40f;
-        public const float TabSelectionSize = 64f;
-        public const float TabCaptionFontBase = 11f;
+        public const float TabIconSize = 48f;
+        public const float TabSelectionSize = 76f;
+        public const float TabCaptionFontBase = 12f;
 
         public readonly struct SceneButton
         {

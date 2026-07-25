@@ -128,6 +128,10 @@ namespace PeopleOfMath.Editor
             rt.anchoredPosition = Vector2.zero;
             rt.sizeDelta = new Vector2(0, 2);
 
+            // Must not participate in HorizontalLayoutGroup (would steal a tab slot).
+            var layoutElement = glowLine.GetComponent<LayoutElement>() ?? glowLine.AddComponent<LayoutElement>();
+            layoutElement.ignoreLayout = true;
+
             var glowImage = glowLine.GetComponent<Image>() ?? glowLine.AddComponent<Image>();
             glowImage.sprite = null;
             glowImage.color = UiTheme.PrimaryAccent;

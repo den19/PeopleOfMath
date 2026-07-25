@@ -263,6 +263,77 @@ namespace PeopleOfMath.Editor
             Debug.Log("Bottom tab bar patched (6 tabs, Figma-style single row).");
         }
 
+        [MenuItem("PeopleOfMath/Fix Bottom Bar Layout")]
+        public static void FixBottomBarLayout()
+        {
+            if (DeferUntilEditMode(FixBottomBarLayout))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var bottomBar = GameObject.Find("BottomBar");
+            var contentArea = GameObject.Find("ContentArea");
+            if (bottomBar == null)
+            {
+                Debug.LogError("BottomBar not found. Run PeopleOfMath → Patch Bottom Tab Bar first.");
+                return;
+            }
+
+            UiStyleBuilder.ApplyNavBarStyle(bottomBar);
+            UiButtonLayout.ApplyBottomStretchBarRect(
+                bottomBar.GetComponent<RectTransform>(),
+                UiButtonLayout.BottomBarPosition,
+                UiButtonLayout.BottomBarSize);
+
+            if (contentArea != null)
+            {
+                var contentRt = contentArea.GetComponent<RectTransform>();
+                contentRt.offsetMin = new Vector2(contentRt.offsetMin.x, UiButtonLayout.BottomBarHeight);
+                EditorUtility.SetDirty(contentRt);
+            }
+
+            foreach (Transform child in bottomBar.transform)
+            {
+                if (child.name == "TopGlow")
+                    continue;
+                if (!child.name.EndsWith("Tab", System.StringComparison.Ordinal))
+                    continue;
+
+                var selection = child.Find("SelectionBg")?.GetComponent<RectTransform>();
+                if (selection != null)
+                {
+                    selection.sizeDelta = new Vector2(
+                        UiButtonLayout.TabSelectionSize,
+                        UiButtonLayout.TabSelectionSize);
+                    EditorUtility.SetDirty(selection);
+                }
+
+                var icon = child.Find("Icon")?.GetComponent<RectTransform>();
+                if (icon != null)
+                {
+                    icon.sizeDelta = new Vector2(UiButtonLayout.TabIconSize, UiButtonLayout.TabIconSize);
+                    EditorUtility.SetDirty(icon);
+                }
+
+                var caption = child.Find("Text")?.gameObject;
+                if (caption != null)
+                    UiButtonLayout.ConfigureTabCaption(caption);
+            }
+
+            EditorUtility.SetDirty(bottomBar);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log(
+                $"Bottom bar layout fixed: TopGlow ignored by layout, " +
+                $"bar {UiButtonLayout.BottomBarHeight}px, icons {UiButtonLayout.TabIconSize}px.");
+        }
+
         static void ForceCreateTabIcons()
         {
             string[] paths =
