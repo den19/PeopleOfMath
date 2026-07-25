@@ -28,6 +28,22 @@ namespace PeopleOfMath.Editor
             EditorUtility.SetDirty(vlg);
         }
 
+        public static void ConfigureBrowseGrid(GridLayoutGroup grid)
+        {
+            if (grid == null)
+                return;
+
+            grid.padding = new RectOffset(0, 0, UiLayoutMetrics.GroupPaddingTop, UiLayoutMetrics.GroupPaddingBottom);
+            grid.cellSize = new Vector2(UiLayoutMetrics.CategoryTileCellWidth, UiLayoutMetrics.CategoryTileCellHeight);
+            grid.spacing = new Vector2(UiLayoutMetrics.CategoryTileSpacing, UiLayoutMetrics.CategoryTileSpacing);
+            grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+            grid.childAlignment = TextAnchor.UpperLeft;
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = CategoryTileMetrics.Columns;
+            EditorUtility.SetDirty(grid);
+        }
+
         public static void ConfigureSectionLabel(GameObject go)
         {
             var rt = go.GetComponent<RectTransform>();
@@ -144,6 +160,12 @@ namespace PeopleOfMath.Editor
             {
                 if (vlg.gameObject.name.EndsWith("Group"))
                     ConfigureBrowseGroup(vlg);
+            }
+
+            foreach (var grid in panel.GetComponentsInChildren<GridLayoutGroup>(true))
+            {
+                if (grid.gameObject.name.EndsWith("Group"))
+                    ConfigureBrowseGrid(grid);
             }
 
             foreach (var tmp in panel.GetComponentsInChildren<TextMeshProUGUI>(true))

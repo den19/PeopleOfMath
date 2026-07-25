@@ -93,6 +93,112 @@ namespace PeopleOfMath.Editor
             Debug.Log("Search support patched in Main scene.");
         }
 
+        [MenuItem("PeopleOfMath/Patch Home Category Tiles")]
+        public static void PatchHomeCategoryTiles()
+        {
+            if (DeferUntilEditMode(PatchHomeCategoryTiles))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var tilePrefab = CreateCategoryTilePrefab();
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var home = GameObject.Find("HomePanel");
+            var nav = Object.FindFirstObjectByType<NavigationController>();
+            var repo = Object.FindFirstObjectByType<MathematicianRepository>();
+
+            if (home == null)
+            {
+                Debug.LogError("HomePanel not found in Main scene.");
+                return;
+            }
+
+            EnsureHomeGridGroup(home.transform.Find("HomeScroll/Viewport/Content/CenturyGroup"));
+            EnsureHomeGridGroup(home.transform.Find("HomeScroll/Viewport/Content/CountryGroup"));
+            EnsureHomeGridGroup(home.transform.Find("HomeScroll/Viewport/Content/BranchGroup"));
+
+            var homePanel = home.GetComponent<HomePanel>();
+            if (homePanel != null)
+            {
+                var so = new SerializedObject(homePanel);
+                so.FindProperty("repository").objectReferenceValue = repo;
+                so.FindProperty("categoryTilePrefab").objectReferenceValue = tilePrefab;
+                so.FindProperty("filterButtonPrefab").objectReferenceValue = tilePrefab;
+                var century = home.transform.Find("HomeScroll/Viewport/Content/CenturyGroup");
+                var country = home.transform.Find("HomeScroll/Viewport/Content/CountryGroup");
+                var branch = home.transform.Find("HomeScroll/Viewport/Content/BranchGroup");
+                if (century != null)
+                    so.FindProperty("centuryContainer").objectReferenceValue = century;
+                if (country != null)
+                    so.FindProperty("countryContainer").objectReferenceValue = country;
+                if (branch != null)
+                    so.FindProperty("branchContainer").objectReferenceValue = branch;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            HomeListPanelLayout.ApplyToPanel(home);
+            EnsureBottomTabIcons(GameObject.Find("BottomBar")?.transform);
+
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/CategoryTile.prefab", UiCardVariant.Filter);
+            EnsureThemedCardOnPrefab("Assets/Resources/CategoryTile.prefab", UiCardVariant.Filter);
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Home category tiles patched in Main scene.");
+        }
+
+        static void EnsureBottomTabIcons(Transform bottomBar)
+        {
+            if (bottomBar == null)
+                return;
+
+            EnsureTabIcon(bottomBar.Find("BrowseTab"), UiButtonLayout.BottomBrowse.IconGlyph);
+            EnsureTabIcon(bottomBar.Find("IndexTab"), UiButtonLayout.BottomIndex.IconGlyph);
+            EnsureTabIcon(bottomBar.Find("SettingsTab"), UiButtonLayout.BottomSettings.IconGlyph);
+            EnsureTabIcon(bottomBar.Find("FavoritesTab"), UiButtonLayout.BottomFavorites.IconGlyph);
+            EnsureTabIcon(bottomBar.Find("QuizTab"), UiButtonLayout.BottomQuiz.IconGlyph);
+        }
+
+        static void EnsureTabIcon(Transform tab, string glyph)
+        {
+            if (tab == null || string.IsNullOrEmpty(glyph))
+                return;
+
+            var icon = tab.Find("Icon");
+            if (icon == null)
+            {
+                var iconGo = CreateTmpChild(tab, "Icon", 18, FontStyles.Normal, new Vector2(0f, -6f));
+                icon = iconGo.transform;
+                var iconRt = iconGo.GetComponent<RectTransform>();
+                iconRt.anchorMin = new Vector2(0f, 1f);
+                iconRt.anchorMax = new Vector2(1f, 1f);
+                iconRt.pivot = new Vector2(0.5f, 1f);
+                iconRt.anchoredPosition = new Vector2(0f, -6f);
+                iconRt.sizeDelta = new Vector2(-16f, 28f);
+                var iconTmp = iconGo.GetComponent<TextMeshProUGUI>();
+                iconTmp.alignment = TextAlignmentOptions.Center;
+                iconTmp.raycastTarget = false;
+            }
+
+            var tmp = icon.GetComponent<TextMeshProUGUI>();
+            if (tmp != null)
+            {
+                tmp.text = glyph;
+                tmp.color = UiTheme.TextPrimary;
+            }
+
+            var label = tab.Find("Text")?.gameObject;
+            if (label != null)
+                UiButtonLayout.ConfigureTabIconLabel(label, true);
+
+            EditorUtility.SetDirty(tab.gameObject);
+        }
+
         [MenuItem("PeopleOfMath/Patch Detail Swipe Navigation")]
         public static void PatchDetailSwipeNavigation()
         {
@@ -1028,7 +1134,7 @@ namespace PeopleOfMath.Editor
             CreateGlassBackdrop(canvasGo.transform);
             var header = CreateHeader(canvasGo.transform, loc);
             var content = CreateContentArea(canvasGo.transform);
-            var home = CreateHomePanel(content.transform, navigation, loc);
+            var home = CreateHomePanel(content.transform, navigation, loc, repository);
             var index = CreateIndexPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var list = CreateListPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var favorites = CreateFavoritesPanel(content.transform, navigation, repository, listItemPrefab, loc);
@@ -1196,7 +1302,11 @@ namespace PeopleOfMath.Editor
             return CreatePanel(canvas, "ContentArea", new Vector2(0, 0), new Vector2(1, 1), new Vector2(0, 220), new Vector2(0, -120));
         }
 
-        static GameObject CreateHomePanel(Transform parent, NavigationController nav, LocalizationRefs loc)
+        static GameObject CreateHomePanel(
+            Transform parent,
+            NavigationController nav,
+            LocalizationRefs loc,
+            MathematicianRepository repository = null)
         {
             var panel = CreatePanel(parent, "HomePanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             AddHomeDecorGlow(panel.transform);
@@ -1211,22 +1321,25 @@ namespace PeopleOfMath.Editor
                 quizCardLe.preferredHeight = 128f;
 
             AddSectionLabel(content, loc.UiCollection, "section_century");
-            var centuryBox = CreateVerticalGroup(content, "CenturyGroup");
+            var centuryBox = CreateGridGroup(content, "CenturyGroup");
             AddSectionLabel(content, loc.UiCollection, "section_country");
-            var countryBox = CreateVerticalGroup(content, "CountryGroup");
+            var countryBox = CreateGridGroup(content, "CountryGroup");
             AddSectionLabel(content, loc.UiCollection, "section_branch");
-            var branchBox = CreateVerticalGroup(content, "BranchGroup");
+            var branchBox = CreateGridGroup(content, "BranchGroup");
 
             var home = panel.AddComponent<HomePanel>();
-            var filterPrefab = CreateFilterButtonPrefab();
+            var tilePrefab = CreateCategoryTilePrefab();
+            var repo = repository != null ? repository : Object.FindFirstObjectByType<MathematicianRepository>();
             var so = new SerializedObject(home);
             so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("repository").objectReferenceValue = repo;
             so.FindProperty("searchBar").objectReferenceValue = searchBar.GetComponent<SearchBar>();
             so.FindProperty("quizButton").objectReferenceValue = quizCard.GetComponent<Button>();
             so.FindProperty("centuryContainer").objectReferenceValue = centuryBox;
             so.FindProperty("countryContainer").objectReferenceValue = countryBox;
             so.FindProperty("branchContainer").objectReferenceValue = branchBox;
-            so.FindProperty("filterButtonPrefab").objectReferenceValue = filterPrefab;
+            so.FindProperty("categoryTilePrefab").objectReferenceValue = tilePrefab;
+            so.FindProperty("filterButtonPrefab").objectReferenceValue = tilePrefab;
             so.ApplyModifiedPropertiesWithoutUndo();
             panel.SetActive(true);
             return panel;
@@ -1567,6 +1680,178 @@ namespace PeopleOfMath.Editor
             return prefab.GetComponent<Button>();
         }
 
+        static Button CreateCategoryTilePrefab()
+        {
+            if (!Directory.Exists(PrefabFolder))
+                Directory.CreateDirectory(PrefabFolder);
+            if (!Directory.Exists("Assets/Resources"))
+                Directory.CreateDirectory("Assets/Resources");
+
+            var path = $"{PrefabFolder}/CategoryTile.prefab";
+            var resourcesPath = "Assets/Resources/CategoryTile.prefab";
+            var go = BuildCategoryTileRoot();
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
+            if (File.Exists(resourcesPath))
+                AssetDatabase.DeleteAsset(resourcesPath);
+            AssetDatabase.CopyAsset(path, resourcesPath);
+            Object.DestroyImmediate(go);
+            return prefab.GetComponent<Button>();
+        }
+
+        public static void ConfigureCategoryTile(GameObject go)
+        {
+            if (go == null)
+                return;
+
+            var rt = go.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchorMin = new Vector2(0f, 1f);
+                rt.anchorMax = new Vector2(0f, 1f);
+                rt.pivot = new Vector2(0.5f, 1f);
+                rt.sizeDelta = new Vector2(
+                    UiLayoutMetrics.CategoryTileCellWidth,
+                    UiLayoutMetrics.CategoryTileCellHeight);
+            }
+
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.preferredWidth = UiLayoutMetrics.CategoryTileCellWidth;
+            le.preferredHeight = UiLayoutMetrics.CategoryTileCellHeight;
+            le.minWidth = UiLayoutMetrics.CategoryTileCellWidth;
+            le.minHeight = UiLayoutMetrics.CategoryTileCellHeight;
+
+            EnsureCategoryTileChildren(go.transform);
+            LayoutCategoryTileChildren(go.transform);
+            UiStyleBuilder.ApplyCardStyle(go, UiCardVariant.Filter);
+            EnsureThemedCard(go, UiCardVariant.Filter);
+            EditorUtility.SetDirty(go);
+        }
+
+        static GameObject BuildCategoryTileRoot()
+        {
+            var go = new GameObject(
+                "CategoryTile",
+                typeof(RectTransform),
+                typeof(Image),
+                typeof(Button),
+                typeof(LayoutElement));
+            go.GetComponent<Image>().color = Color.clear;
+            EnsureCategoryTileChildren(go.transform);
+            ConfigureCategoryTile(go);
+            return go;
+        }
+
+        static void EnsureCategoryTileChildren(Transform root)
+        {
+            var media = root.Find("Media");
+            if (media == null)
+            {
+                var mediaGo = new GameObject("Media", typeof(RectTransform), typeof(Image), typeof(RectMask2D));
+                mediaGo.transform.SetParent(root, false);
+                media = mediaGo.transform;
+                var mediaImage = mediaGo.GetComponent<Image>();
+                mediaImage.raycastTarget = false;
+                UiSpriteFactory.EnsureSprites();
+                mediaImage.sprite = UiSpriteFactory.RoundedRect;
+                mediaImage.type = Image.Type.Sliced;
+            }
+
+            if (media.Find("Glyph") == null)
+            {
+                var glyph = CreateTmpChild(
+                    media,
+                    "Glyph",
+                    CategoryTileMetrics.GlyphBaseFontSize,
+                    FontStyles.Bold,
+                    Vector2.zero);
+                StretchToParent(glyph.GetComponent<RectTransform>());
+                var glyphTmp = glyph.GetComponent<TextMeshProUGUI>();
+                glyphTmp.alignment = TextAlignmentOptions.Center;
+                glyphTmp.raycastTarget = false;
+            }
+
+            if (root.Find("Label") == null)
+            {
+                CreateTmpChild(
+                    root,
+                    "Label",
+                    CategoryTileMetrics.TitleBaseFontSize,
+                    FontStyles.Bold,
+                    CategoryTileMetrics.LabelOffset);
+            }
+
+            if (root.Find("Count") == null)
+            {
+                CreateTmpChild(
+                    root,
+                    "Count",
+                    CategoryTileMetrics.CountBaseFontSize,
+                    FontStyles.Normal,
+                    CategoryTileMetrics.CountOffset);
+            }
+        }
+
+        static void LayoutCategoryTileChildren(Transform root)
+        {
+            var media = root.Find("Media")?.GetComponent<RectTransform>();
+            if (media != null)
+            {
+                media.anchorMin = new Vector2(0f, 1f);
+                media.anchorMax = new Vector2(1f, 1f);
+                media.pivot = new Vector2(0.5f, 1f);
+                media.anchoredPosition = Vector2.zero;
+                media.sizeDelta = new Vector2(0f, CategoryTileMetrics.MediaHeight);
+            }
+
+            var label = root.Find("Label");
+            if (label != null)
+            {
+                var labelRt = label.GetComponent<RectTransform>();
+                labelRt.anchorMin = new Vector2(0f, 1f);
+                labelRt.anchorMax = new Vector2(1f, 1f);
+                labelRt.pivot = new Vector2(0f, 1f);
+                labelRt.anchoredPosition = CategoryTileMetrics.LabelOffset;
+                labelRt.sizeDelta = new Vector2(
+                    -CategoryTileMetrics.LabelHorizontalInset * 2f,
+                    CategoryTileMetrics.LabelHeight);
+                var labelTmp = label.GetComponent<TextMeshProUGUI>();
+                if (labelTmp != null)
+                {
+                    labelTmp.fontSize = UiLayoutMetrics.CategoryTileTitleFontSize;
+                    labelTmp.alignment = TextAlignmentOptions.MidlineLeft;
+                    labelTmp.enableAutoSizing = true;
+                    labelTmp.fontSizeMin = UiLayoutMetrics.CategoryTileTitleFontSize * 0.55f;
+                    labelTmp.fontSizeMax = UiLayoutMetrics.CategoryTileTitleFontSize;
+                    labelTmp.textWrappingMode = TextWrappingModes.NoWrap;
+                    labelTmp.overflowMode = TextOverflowModes.Ellipsis;
+                }
+            }
+
+            var count = root.Find("Count");
+            if (count != null)
+            {
+                var countRt = count.GetComponent<RectTransform>();
+                countRt.anchorMin = new Vector2(0f, 1f);
+                countRt.anchorMax = new Vector2(1f, 1f);
+                countRt.pivot = new Vector2(0f, 1f);
+                countRt.anchoredPosition = CategoryTileMetrics.CountOffset;
+                countRt.sizeDelta = new Vector2(
+                    -CategoryTileMetrics.LabelHorizontalInset * 2f,
+                    CategoryTileMetrics.CountHeight);
+                var countTmp = count.GetComponent<TextMeshProUGUI>();
+                if (countTmp != null)
+                {
+                    countTmp.fontSize = UiLayoutMetrics.CategoryTileCountFontSize;
+                    countTmp.alignment = TextAlignmentOptions.MidlineLeft;
+                    countTmp.color = UiTheme.TextSecondary;
+                }
+            }
+
+            var glyph = root.Find("Media/Glyph")?.GetComponent<TextMeshProUGUI>();
+            if (glyph != null)
+                glyph.fontSize = UiLayoutMetrics.CategoryTileGlyphFontSize;
+        }
+
         static Button EnsureDetailTagButtonPrefab()
         {
             var path = $"{PrefabFolder}/DetailTagButton.prefab";
@@ -1638,6 +1923,45 @@ namespace PeopleOfMath.Editor
             var le = go.AddComponent<LayoutElement>();
             le.flexibleWidth = 1;
             return go.transform;
+        }
+
+        static Transform CreateGridGroup(Transform parent, string name)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(GridLayoutGroup), typeof(ContentSizeFitter));
+            go.transform.SetParent(parent, false);
+            var grid = go.GetComponent<GridLayoutGroup>();
+            HomeListPanelLayout.ConfigureBrowseGrid(grid);
+            var fitter = go.GetComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            var le = go.AddComponent<LayoutElement>();
+            le.flexibleWidth = 1;
+            return go.transform;
+        }
+
+        public static Transform EnsureHomeGridGroup(Transform group)
+        {
+            if (group == null)
+                return null;
+
+            var vlg = group.GetComponent<VerticalLayoutGroup>();
+            if (vlg != null)
+                Object.DestroyImmediate(vlg);
+
+            var grid = group.GetComponent<GridLayoutGroup>();
+            if (grid == null)
+                grid = group.gameObject.AddComponent<GridLayoutGroup>();
+
+            HomeListPanelLayout.ConfigureBrowseGrid(grid);
+
+            var fitter = group.GetComponent<ContentSizeFitter>() ?? group.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+            var le = group.GetComponent<LayoutElement>() ?? group.gameObject.AddComponent<LayoutElement>();
+            le.flexibleWidth = 1;
+            EditorUtility.SetDirty(group.gameObject);
+            return group;
         }
 
         static ScrollRect CreateScrollView(Transform parent, string name)
@@ -3048,8 +3372,28 @@ namespace PeopleOfMath.Editor
             UiButtonLayout.ApplyTopLeftAnchoredRect(go.GetComponent<RectTransform>(), spec.Position, spec.Size);
             go.GetComponent<Image>().color = UiTheme.CardFill;
 
+            var hasIcon = !string.IsNullOrEmpty(spec.IconGlyph);
+            if (hasIcon)
+            {
+                var icon = CreateTmpChild(go.transform, "Icon", 18, FontStyles.Normal, new Vector2(12f, -8f));
+                var iconRt = icon.GetComponent<RectTransform>();
+                iconRt.anchorMin = new Vector2(0f, 1f);
+                iconRt.anchorMax = new Vector2(1f, 1f);
+                iconRt.pivot = new Vector2(0.5f, 1f);
+                iconRt.anchoredPosition = new Vector2(0f, -6f);
+                iconRt.sizeDelta = new Vector2(-16f, 28f);
+                var iconTmp = icon.GetComponent<TextMeshProUGUI>();
+                iconTmp.text = spec.IconGlyph;
+                iconTmp.alignment = TextAlignmentOptions.Center;
+                iconTmp.color = UiTheme.TextPrimary;
+                iconTmp.raycastTarget = false;
+            }
+
             var label = CreateTmpChild(go.transform, "Text", UiButtonLayout.StandardLabelFontBase, FontStyles.Normal, UiButtonLayout.StandardLabelOffset);
-            UiButtonLayout.ConfigureStandardLabel(label);
+            if (hasIcon)
+                UiButtonLayout.ConfigureTabIconLabel(label, true);
+            else
+                UiButtonLayout.ConfigureStandardLabel(label);
             var lse = label.AddComponent<LocalizeStringEvent>();
             var so = new SerializedObject(lse);
             AssignLocalized(so.FindProperty("m_StringReference"), MakeLocalized(collection, spec.LocalizationKey));
@@ -3061,7 +3405,10 @@ namespace PeopleOfMath.Editor
             else
                 UiStyleBuilder.ApplySecondaryButton(go);
 
-            UiButtonLayout.ConfigureStandardLabel(label);
+            if (hasIcon)
+                UiButtonLayout.ConfigureTabIconLabel(label, true);
+            else
+                UiButtonLayout.ConfigureStandardLabel(label);
             return go;
         }
 
@@ -3384,6 +3731,8 @@ namespace PeopleOfMath.Editor
             }
 
             EnsureThemedCardOnPrefab($"{PrefabFolder}/FilterButton.prefab", UiCardVariant.Filter);
+            EnsureThemedCardOnPrefab($"{PrefabFolder}/CategoryTile.prefab", UiCardVariant.Filter);
+            EnsureThemedCardOnPrefab("Assets/Resources/CategoryTile.prefab", UiCardVariant.Filter);
             EnsureThemedCardOnPrefab($"{PrefabFolder}/DetailTagButton.prefab", UiCardVariant.Filter);
             EnsureThemedCardOnPrefab($"{PrefabFolder}/SearchBar.prefab", UiCardVariant.Filter);
             EnsureThemedCardOnPrefab($"{PrefabFolder}/MathematicianListItem.prefab", UiCardVariant.ListItem);

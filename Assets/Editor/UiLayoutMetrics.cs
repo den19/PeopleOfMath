@@ -20,6 +20,13 @@ namespace PeopleOfMath.Editor
             FilterButtonMetrics.Height - FilterButtonMetrics.VerticalPadding;
         public static Vector2 FilterButtonLabelOffset => FilterButtonMetrics.LabelOffset;
 
+        public static float CategoryTileCellWidth => CategoryTileMetrics.CellWidth;
+        public static float CategoryTileCellHeight => CategoryTileMetrics.CellHeight;
+        public static float CategoryTileSpacing => CategoryTileMetrics.Spacing;
+        public static float CategoryTileTitleFontSize => ScaleFont(CategoryTileMetrics.TitleBaseFontSize) * 2f;
+        public static float CategoryTileCountFontSize => ScaleFont(CategoryTileMetrics.CountBaseFontSize) * 2f;
+        public static float CategoryTileGlyphFontSize => ScaleFont(CategoryTileMetrics.GlyphBaseFontSize) * 2f;
+
         public const float SearchBarBaseHeight = 56f;
         public const int SearchBarMarginTop = 24;
         public const int SearchBarMarginBottom = 16;

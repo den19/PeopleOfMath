@@ -11,6 +11,8 @@ namespace PeopleOfMath.UI
         const string GlowChildName = "Glow";
         const string FillChildName = "Fill";
         const string PortraitChildName = "Portrait";
+        const string MediaChildName = "Media";
+        const string GlyphChildName = "Glyph";
 
         [SerializeField] UiCardVariant variant = UiCardVariant.Filter;
         [SerializeField] FilterKind filterKind = FilterKind.Century;
@@ -45,7 +47,8 @@ namespace PeopleOfMath.UI
             if (fill != null)
             {
                 var glassSurface = fill.GetComponent<UiGlassSurface>();
-                if (variant == UiCardVariant.Filter)
+                var hasMedia = transform.Find(MediaChildName) != null;
+                if (variant == UiCardVariant.Filter && !hasMedia)
                 {
                     var fillColor = UiTheme.GetFilterFill(filterKind);
                     if (ThemeHelper.IsGlassmorphism && glassSurface != null)
@@ -90,6 +93,33 @@ namespace PeopleOfMath.UI
             var portrait = transform.Find(PortraitChildName)?.GetComponent<Image>();
             if (portrait != null)
                 portrait.color = portrait.sprite != null ? Color.white : UiTheme.PortraitPlaceholder;
+
+            ApplyMediaColors();
+        }
+
+        void ApplyMediaColors()
+        {
+            var media = transform.Find(MediaChildName)?.GetComponent<Image>();
+            if (media == null)
+                return;
+
+            if (variant == UiCardVariant.Filter)
+            {
+                var accent = UiTheme.GetFilterAccent(filterKind);
+                media.color = new Color(accent.r, accent.g, accent.b, ThemeHelper.IsGlassmorphism ? 0.55f : 0.78f);
+            }
+            else
+            {
+                media.color = UiTheme.PortraitPlaceholder;
+            }
+
+            var glyph = transform.Find($"{MediaChildName}/{GlyphChildName}")?.GetComponent<TMP_Text>();
+            if (glyph != null)
+            {
+                glyph.color = variant == UiCardVariant.Filter
+                    ? UiTheme.GetFilterTextPrimary(filterKind)
+                    : UiTheme.CardTextPrimary;
+            }
         }
 
         void ApplyCardTextColors()
@@ -100,6 +130,11 @@ namespace PeopleOfMath.UI
                 {
                     case "Label" when variant == UiCardVariant.Filter:
                         text.color = UiTheme.GetFilterTextPrimary(filterKind);
+                        break;
+                    case "Count":
+                        text.color = variant == UiCardVariant.Filter
+                            ? UiTheme.GetFilterTextSecondary(filterKind)
+                            : UiTheme.CardTextSecondary;
                         break;
                     case "Name":
                     case "Label":

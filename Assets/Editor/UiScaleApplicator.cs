@@ -13,6 +13,7 @@ namespace PeopleOfMath.Editor
         static readonly string[] PrefabPaths =
         {
             "Assets/Prefabs/UI/FilterButton.prefab",
+            "Assets/Prefabs/UI/CategoryTile.prefab",
             "Assets/Prefabs/UI/DetailTagButton.prefab",
             "Assets/Prefabs/UI/LetterButton.prefab",
             "Assets/Prefabs/UI/MathematicianListItem.prefab",
@@ -199,15 +200,23 @@ namespace PeopleOfMath.Editor
 
         static void ApplyToPrefab(string path)
         {
+            if (!System.IO.File.Exists(path))
+                return;
+
             var root = PrefabUtility.LoadPrefabContents(path);
             try
             {
                 var isFilter = path.EndsWith("FilterButton.prefab", System.StringComparison.OrdinalIgnoreCase);
+                var isCategoryTile = path.EndsWith("CategoryTile.prefab", System.StringComparison.OrdinalIgnoreCase);
                 var isDetailTag = path.EndsWith("DetailTagButton.prefab", System.StringComparison.OrdinalIgnoreCase);
                 var isLetter = path.EndsWith("LetterButton.prefab", System.StringComparison.OrdinalIgnoreCase);
                 if (isFilter)
                 {
                     PeopleOfMathProjectSetup.ConfigureFilterButton(root);
+                }
+                else if (isCategoryTile)
+                {
+                    PeopleOfMathProjectSetup.ConfigureCategoryTile(root);
                 }
                 else if (isDetailTag)
                 {

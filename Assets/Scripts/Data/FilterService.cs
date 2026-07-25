@@ -17,6 +17,24 @@ namespace PeopleOfMath.Data
                 .ToList();
         }
 
+        public static int Count(
+            IEnumerable<MathematicianData> source,
+            FilterKind kind,
+            string key)
+        {
+            if (source == null)
+                return 0;
+
+            var total = 0;
+            foreach (var m in source)
+            {
+                if (Matches(m, kind, key))
+                    total++;
+            }
+
+            return total;
+        }
+
         static bool Matches(MathematicianData data, FilterKind kind, string key)
         {
             return kind switch

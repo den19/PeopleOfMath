@@ -23,16 +23,39 @@ namespace PeopleOfMath.Editor
             public Vector2 Size { get; }
             public string LocalizationKey { get; }
             public UiButtonStyle Style { get; }
+            public string IconGlyph { get; }
 
-            public SceneButton(string name, Vector2 position, Vector2 size, string localizationKey, UiButtonStyle style)
+            public SceneButton(
+                string name,
+                Vector2 position,
+                Vector2 size,
+                string localizationKey,
+                UiButtonStyle style,
+                string iconGlyph = null)
             {
                 Name = name;
                 Position = position;
                 Size = size;
                 LocalizationKey = localizationKey;
                 Style = style;
+                IconGlyph = iconGlyph;
             }
         }
+
+        public static readonly SceneButton BottomBrowse = new(
+            "BrowseTab", new Vector2(19f, -110f), new Vector2(347f, 96f), "tab_browse", UiButtonStyle.Secondary, "▦");
+
+        public static readonly SceneButton BottomIndex = new(
+            "IndexTab", new Vector2(366f, -110f), new Vector2(347f, 96f), "tab_index", UiButtonStyle.Secondary, "Aa");
+
+        public static readonly SceneButton BottomSettings = new(
+            "SettingsTab", new Vector2(713f, -110f), new Vector2(347f, 96f), "tab_settings", UiButtonStyle.Secondary, "⚙");
+
+        public static readonly SceneButton BottomFavorites = new(
+            "FavoritesTab", new Vector2(19f, -22f), new Vector2(511f, 96f), "btn_favorites", UiButtonStyle.Secondary, "♥");
+
+        public static readonly SceneButton BottomQuiz = new(
+            "QuizTab", new Vector2(537f, -22f), new Vector2(524f, 96f), "tab_quiz", UiButtonStyle.Secondary, "?");
 
         public static readonly SceneButton HeaderBack = new(
             "BackButton", new Vector2(20f, -60f), new Vector2(160f, 56f), "btn_back", UiButtonStyle.Secondary);
@@ -66,21 +89,6 @@ namespace PeopleOfMath.Editor
 
         public static readonly SceneButton SettingsThemeGlass = new(
             "GlassThemeButton", new Vector2(40f, -1040f), new Vector2(400f, 64f), "btn_theme_glass", UiButtonStyle.Secondary);
-
-        public static readonly SceneButton BottomBrowse = new(
-            "BrowseTab", new Vector2(19f, -110f), new Vector2(347f, 72f), "tab_browse", UiButtonStyle.Secondary);
-
-        public static readonly SceneButton BottomIndex = new(
-            "IndexTab", new Vector2(366f, -110f), new Vector2(347f, 72f), "tab_index", UiButtonStyle.Secondary);
-
-        public static readonly SceneButton BottomSettings = new(
-            "SettingsTab", new Vector2(713f, -110f), new Vector2(347f, 72f), "tab_settings", UiButtonStyle.Secondary);
-
-        public static readonly SceneButton BottomFavorites = new(
-            "FavoritesTab", new Vector2(19f, -22f), new Vector2(511f, 72f), "btn_favorites", UiButtonStyle.Secondary);
-
-        public static readonly SceneButton BottomQuiz = new(
-            "QuizTab", new Vector2(537f, -22f), new Vector2(524f, 72f), "tab_quiz", UiButtonStyle.Secondary);
 
         public static void ApplyTopLeftAnchoredRect(RectTransform rt, Vector2 position, Vector2 size)
         {
@@ -142,6 +150,24 @@ namespace PeopleOfMath.Editor
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = UiTheme.TextPrimary;
             tmp.raycastTarget = false;
+        }
+
+        public static void ConfigureTabIconLabel(GameObject labelGo, bool hasIcon)
+        {
+            ConfigureStandardLabel(labelGo);
+            if (!hasIcon || labelGo == null)
+                return;
+
+            var rt = labelGo.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchoredPosition = new Vector2(12f, -42f);
+                rt.sizeDelta = new Vector2(-20f, 22f);
+            }
+
+            var tmp = labelGo.GetComponent<TextMeshProUGUI>();
+            if (tmp != null)
+                tmp.fontSize = UiLayoutMetrics.ScaleFont(13f);
         }
     }
 }
