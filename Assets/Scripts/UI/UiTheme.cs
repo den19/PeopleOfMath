@@ -348,6 +348,45 @@ namespace PeopleOfMath.UI
             _ => AccentTertiary
         };
 
+        /// <summary>
+        /// Calm analogous arc around PrimaryAccent (Itten), with Favorites on the warm complementary.
+        /// </summary>
+        public static Color GetTabAccent(NavTabId tab)
+        {
+            Color.RGBToHSV(PrimaryAccent, out var primaryHue, out var primarySat, out var primaryVal);
+            primaryHue *= 360f;
+
+            return tab switch
+            {
+                NavTabId.Browse => PrimaryAccent,
+                NavTabId.Index => AccentSecondary,
+                NavTabId.Favorites => AccentWarm,
+                NavTabId.Quiz => AccentTertiary,
+                NavTabId.Settings => TabAccentFromHue(WrapHue(primaryHue + 40f), primarySat, primaryVal),
+                NavTabId.About => TabAccentFromHue(WrapHue(primaryHue + 70f), primarySat * 0.85f, primaryVal),
+                _ => PrimaryAccent
+            };
+        }
+
+        static float WrapHue(float hue)
+        {
+            while (hue < 0f)
+                hue += 360f;
+            while (hue >= 360f)
+                hue -= 360f;
+            return hue;
+        }
+
+        static Color TabAccentFromHue(float hue, float sourceSat, float sourceVal)
+        {
+            return ThemeHelper.Current switch
+            {
+                AppTheme.Light => FromHsl(hue, Mathf.Clamp01(sourceSat * 0.92f + 0.08f), 0.42f),
+                AppTheme.Glassmorphism => FromHsl(hue, Mathf.Clamp01(sourceSat * 0.7f + 0.25f), 0.68f),
+                _ => FromHsl(hue, Mathf.Clamp01(sourceSat * 0.85f + 0.15f), Mathf.Clamp01(sourceVal * 0.55f + 0.35f))
+            };
+        }
+
         public static bool IsTextToken(UiThemeToken token) => token switch
         {
             UiThemeToken.TextPrimary or UiThemeToken.TextSecondary

@@ -539,7 +539,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000018
-    m_Localized: Choose a century, country, or branch of mathematics to quickly find mathematicians.
+    m_Localized: Choose a century, country, or branch of mathematics to quickly find
+      mathematicians.
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000019
@@ -547,7 +548,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000020
-    m_Localized: On a mathematician profile, swipe left and right to move between biography sections.
+    m_Localized: On a mathematician profile, swipe left and right to move between
+      biography sections.
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000021
@@ -555,7 +557,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000022
-    m_Localized: Test your knowledge in the quiz using portraits, facts, or a mixed mode.
+    m_Localized: Test your knowledge in the quiz using portraits, facts, or a mixed
+      mode.
     m_Metadata:
       m_Items: []
   - m_Id: 9100000000000023
@@ -572,6 +575,14 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 9100000000000026
     m_Localized: Get started
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18652230574956544
+    m_Localized: About
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18652230608510976
+    m_Localized: About
     m_Metadata:
       m_Items: []
   references:

@@ -10,7 +10,8 @@ namespace PeopleOfMath.Core
         Detail,
         Settings,
         Favorites,
-        Quiz
+        Quiz,
+        About
     }
 
     public enum DetailOrigin
@@ -43,6 +44,8 @@ namespace PeopleOfMath.Core
         public static ScreenContext Quiz() => new() { Screen = AppScreen.Quiz };
 
         public static ScreenContext Favorites() => new() { Screen = AppScreen.Favorites };
+
+        public static ScreenContext About() => new() { Screen = AppScreen.About };
 
         public static ScreenContext ListFilter(FilterKind kind, string key, bool fromDetail = false, string mathematicianId = null) =>
             new()

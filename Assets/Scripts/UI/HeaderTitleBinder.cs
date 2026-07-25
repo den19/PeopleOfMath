@@ -16,6 +16,7 @@ namespace PeopleOfMath.UI
         [SerializeField] LocalizeStringEvent settingsTitleEvent;
         [SerializeField] LocalizeStringEvent favoritesTitleEvent;
         [SerializeField] LocalizeStringEvent quizTitleEvent;
+        [SerializeField] LocalizeStringEvent aboutTitleEvent;
         [SerializeField] LocalizedString detailTitle;
 
         void OnEnable()
@@ -48,6 +49,7 @@ namespace PeopleOfMath.UI
             ApplyTitleColor(settingsTitleEvent, color);
             ApplyTitleColor(favoritesTitleEvent, color);
             ApplyTitleColor(quizTitleEvent, color);
+            ApplyTitleColor(aboutTitleEvent, color);
         }
 
         static void ApplyTitleColor(LocalizeStringEvent titleEvent, Color color)
@@ -75,17 +77,25 @@ namespace PeopleOfMath.UI
             Search,
             Detail,
             Favorites,
-            Quiz
+            Quiz,
+            About
+        }
+
+        void HideLocalizedTitles()
+        {
+            homeTitleEvent?.gameObject.SetActive(false);
+            indexTitleEvent?.gameObject.SetActive(false);
+            settingsTitleEvent?.gameObject.SetActive(false);
+            favoritesTitleEvent?.gameObject.SetActive(false);
+            quizTitleEvent?.gameObject.SetActive(false);
+            aboutTitleEvent?.gameObject.SetActive(false);
         }
 
         public void SetHomeTitle()
         {
             _mode = TitleMode.Home;
+            HideLocalizedTitles();
             homeTitleEvent?.gameObject.SetActive(true);
-            indexTitleEvent?.gameObject.SetActive(false);
-            settingsTitleEvent?.gameObject.SetActive(false);
-            favoritesTitleEvent?.gameObject.SetActive(false);
-            quizTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             if (homeTitleEvent != null)
@@ -100,11 +110,8 @@ namespace PeopleOfMath.UI
         public void SetIndexTitle()
         {
             _mode = TitleMode.Index;
-            homeTitleEvent?.gameObject.SetActive(false);
+            HideLocalizedTitles();
             indexTitleEvent?.gameObject.SetActive(true);
-            settingsTitleEvent?.gameObject.SetActive(false);
-            favoritesTitleEvent?.gameObject.SetActive(false);
-            quizTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             indexTitleEvent?.RefreshString();
@@ -114,11 +121,8 @@ namespace PeopleOfMath.UI
         public void SetSettingsTitle()
         {
             _mode = TitleMode.Settings;
-            homeTitleEvent?.gameObject.SetActive(false);
-            indexTitleEvent?.gameObject.SetActive(false);
+            HideLocalizedTitles();
             settingsTitleEvent?.gameObject.SetActive(true);
-            favoritesTitleEvent?.gameObject.SetActive(false);
-            quizTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             settingsTitleEvent?.RefreshString();
@@ -128,11 +132,8 @@ namespace PeopleOfMath.UI
         public void SetFavoritesTitle()
         {
             _mode = TitleMode.Favorites;
-            homeTitleEvent?.gameObject.SetActive(false);
-            indexTitleEvent?.gameObject.SetActive(false);
-            settingsTitleEvent?.gameObject.SetActive(false);
+            HideLocalizedTitles();
             favoritesTitleEvent?.gameObject.SetActive(true);
-            quizTitleEvent?.gameObject.SetActive(false);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             favoritesTitleEvent?.RefreshString();
@@ -142,14 +143,22 @@ namespace PeopleOfMath.UI
         public void SetQuizTitle()
         {
             _mode = TitleMode.Quiz;
-            homeTitleEvent?.gameObject.SetActive(false);
-            indexTitleEvent?.gameObject.SetActive(false);
-            settingsTitleEvent?.gameObject.SetActive(false);
-            favoritesTitleEvent?.gameObject.SetActive(false);
+            HideLocalizedTitles();
             quizTitleEvent?.gameObject.SetActive(true);
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             quizTitleEvent?.RefreshString();
+            RefreshTitleColors();
+        }
+
+        public void SetAboutTitle()
+        {
+            _mode = TitleMode.About;
+            HideLocalizedTitles();
+            aboutTitleEvent?.gameObject.SetActive(true);
+            if (titleText != null)
+                titleText.gameObject.SetActive(false);
+            aboutTitleEvent?.RefreshString();
             RefreshTitleColors();
         }
 
@@ -158,11 +167,7 @@ namespace PeopleOfMath.UI
             _mode = TitleMode.Filter;
             _pendingKind = kind;
             _pendingKey = key;
-            homeTitleEvent?.gameObject.SetActive(false);
-            indexTitleEvent?.gameObject.SetActive(false);
-            settingsTitleEvent?.gameObject.SetActive(false);
-            favoritesTitleEvent?.gameObject.SetActive(false);
-            quizTitleEvent?.gameObject.SetActive(false);
+            HideLocalizedTitles();
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
             RefreshFilterTitle();
@@ -174,11 +179,7 @@ namespace PeopleOfMath.UI
             _mode = TitleMode.Search;
             _pendingSearchQuery = query;
             _pendingSearchCount = count;
-            homeTitleEvent?.gameObject.SetActive(false);
-            indexTitleEvent?.gameObject.SetActive(false);
-            settingsTitleEvent?.gameObject.SetActive(false);
-            favoritesTitleEvent?.gameObject.SetActive(false);
-            quizTitleEvent?.gameObject.SetActive(false);
+            HideLocalizedTitles();
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
             RefreshSearchTitle();
@@ -188,11 +189,7 @@ namespace PeopleOfMath.UI
         public void SetDetailTitle()
         {
             _mode = TitleMode.Detail;
-            homeTitleEvent?.gameObject.SetActive(false);
-            indexTitleEvent?.gameObject.SetActive(false);
-            settingsTitleEvent?.gameObject.SetActive(false);
-            favoritesTitleEvent?.gameObject.SetActive(false);
-            quizTitleEvent?.gameObject.SetActive(false);
+            HideLocalizedTitles();
             if (titleText != null)
                 titleText.gameObject.SetActive(true);
             if (detailTitle != null && titleText != null)
@@ -203,11 +200,7 @@ namespace PeopleOfMath.UI
         public void SetDetailSectionTitle(string title)
         {
             _mode = TitleMode.Detail;
-            homeTitleEvent?.gameObject.SetActive(false);
-            indexTitleEvent?.gameObject.SetActive(false);
-            settingsTitleEvent?.gameObject.SetActive(false);
-            favoritesTitleEvent?.gameObject.SetActive(false);
-            quizTitleEvent?.gameObject.SetActive(false);
+            HideLocalizedTitles();
             if (titleText != null)
             {
                 titleText.gameObject.SetActive(true);
@@ -235,6 +228,9 @@ namespace PeopleOfMath.UI
                     break;
                 case TitleMode.Quiz:
                     SetQuizTitle();
+                    break;
+                case TitleMode.About:
+                    SetAboutTitle();
                     break;
                 case TitleMode.Filter:
                     if (_pendingKind.HasValue && _pendingKey != null)

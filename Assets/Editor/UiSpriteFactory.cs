@@ -12,7 +12,13 @@ namespace PeopleOfMath.Editor
         const string ShareIconPath = "Assets/Resources/UI/ShareIcon.png";
         const string HeartOutlinePath = "Assets/Resources/UI/HeartOutline.png";
         const string HeartFilledPath = "Assets/Resources/UI/HeartFilled.png";
+        const string TabBrowsePath = "Assets/Resources/UI/TabBrowse.png";
+        const string TabIndexPath = "Assets/Resources/UI/TabIndex.png";
+        const string TabQuizPath = "Assets/Resources/UI/TabQuiz.png";
+        const string TabSettingsPath = "Assets/Resources/UI/TabSettings.png";
+        const string TabAboutPath = "Assets/Resources/UI/TabAbout.png";
         const int TextureSize = 64;
+        const int TabIconSize = 128;
         const int CornerRadius = 18;
         const int Border = 22;
 
@@ -21,6 +27,11 @@ namespace PeopleOfMath.Editor
         static Sprite _shareIcon;
         static Sprite _heartOutline;
         static Sprite _heartFilled;
+        static Sprite _tabBrowse;
+        static Sprite _tabIndex;
+        static Sprite _tabQuiz;
+        static Sprite _tabSettings;
+        static Sprite _tabAbout;
 
         public static Sprite RoundedRect
         {
@@ -67,6 +78,71 @@ namespace PeopleOfMath.Editor
             }
         }
 
+        public static Sprite TabBrowse
+        {
+            get
+            {
+                EnsureSprites();
+                return _tabBrowse;
+            }
+        }
+
+        public static Sprite TabIndex
+        {
+            get
+            {
+                EnsureSprites();
+                return _tabIndex;
+            }
+        }
+
+        public static Sprite TabQuiz
+        {
+            get
+            {
+                EnsureSprites();
+                return _tabQuiz;
+            }
+        }
+
+        public static Sprite TabSettings
+        {
+            get
+            {
+                EnsureSprites();
+                return _tabSettings;
+            }
+        }
+
+        public static Sprite TabAbout
+        {
+            get
+            {
+                EnsureSprites();
+                return _tabAbout;
+            }
+        }
+
+        public static Sprite GetTabIcon(PeopleOfMath.UI.NavTabId tab) => tab switch
+        {
+            PeopleOfMath.UI.NavTabId.Browse => TabBrowse,
+            PeopleOfMath.UI.NavTabId.Index => TabIndex,
+            PeopleOfMath.UI.NavTabId.Favorites => HeartOutline,
+            PeopleOfMath.UI.NavTabId.Quiz => TabQuiz,
+            PeopleOfMath.UI.NavTabId.Settings => TabSettings,
+            PeopleOfMath.UI.NavTabId.About => TabAbout,
+            _ => TabBrowse
+        };
+
+        public static void ResetTabIconCache()
+        {
+            _tabBrowse = null;
+            _tabIndex = null;
+            _tabQuiz = null;
+            _tabSettings = null;
+            _tabAbout = null;
+        }
+
         public static void EnsureSprites()
         {
             if (!Directory.Exists(SpriteFolder))
@@ -90,6 +166,21 @@ namespace PeopleOfMath.Editor
 
             if (_heartFilled == null)
                 _heartFilled = LoadOrCreateHeartIcon(HeartFilledPath, filled: true);
+
+            if (_tabBrowse == null)
+                _tabBrowse = LoadOrCreateTabIcon(TabBrowsePath, DrawTabBrowseIcon);
+
+            if (_tabIndex == null)
+                _tabIndex = LoadOrCreateTabIcon(TabIndexPath, DrawTabIndexIcon);
+
+            if (_tabQuiz == null)
+                _tabQuiz = LoadOrCreateTabIcon(TabQuizPath, DrawTabQuizIcon);
+
+            if (_tabSettings == null)
+                _tabSettings = LoadOrCreateTabIcon(TabSettingsPath, DrawTabSettingsIcon);
+
+            if (_tabAbout == null)
+                _tabAbout = LoadOrCreateTabIcon(TabAboutPath, DrawTabAboutIcon);
         }
 
         static Sprite LoadOrCreateRoundedRect()
@@ -272,6 +363,211 @@ namespace PeopleOfMath.Editor
             DrawCircle(pixels, size, bottom, 6f, white);
             DrawLine(pixels, size, left, top, 3f, white);
             DrawLine(pixels, size, left, bottom, 3f, white);
+        }
+
+        delegate void TabIconDrawer(Color32[] pixels, int size);
+
+        static Sprite LoadOrCreateTabIcon(string path, TabIconDrawer drawer)
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (existing != null)
+                return existing;
+
+            var size = TabIconSize;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            tex.filterMode = FilterMode.Bilinear;
+            tex.wrapMode = TextureWrapMode.Clamp;
+
+            var pixels = new Color32[size * size];
+            for (var i = 0; i < pixels.Length; i++)
+                pixels[i] = new Color32(0, 0, 0, 0);
+
+            drawer(pixels, size);
+            tex.SetPixels32(pixels);
+            tex.Apply();
+
+            var png = tex.EncodeToPNG();
+            File.WriteAllBytes(path, png);
+            Object.DestroyImmediate(tex);
+
+            AssetDatabase.ImportAsset(path);
+            ConfigureSpriteImporter(path, 0);
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+
+        static void DrawTabBrowseIcon(Color32[] pixels, int size)
+        {
+            var white = new Color32(255, 255, 255, 255);
+            var pad = size * 0.18f;
+            var gap = size * 0.1f;
+            var cell = (size - pad * 2f - gap) * 0.5f;
+            var radius = cell * 0.22f;
+            var stroke = size * 0.055f;
+
+            DrawRoundedRectOutline(pixels, size, new Rect(pad, pad + cell + gap, cell, cell), radius, stroke, white);
+            DrawRoundedRectOutline(pixels, size, new Rect(pad + cell + gap, pad + cell + gap, cell, cell), radius, stroke, white);
+            DrawRoundedRectOutline(pixels, size, new Rect(pad, pad, cell, cell), radius, stroke, white);
+            DrawRoundedRectOutline(pixels, size, new Rect(pad + cell + gap, pad, cell, cell), radius, stroke, white);
+        }
+
+        static void DrawTabIndexIcon(Color32[] pixels, int size)
+        {
+            var white = new Color32(255, 255, 255, 255);
+            var stroke = size * 0.07f;
+            var left = size * 0.22f;
+            var right = size * 0.78f;
+            var y1 = size * 0.30f;
+            var y2 = size * 0.50f;
+            var y3 = size * 0.70f;
+            var bullet = size * 0.055f;
+
+            DrawCircle(pixels, size, new Vector2(left, y1), bullet, white);
+            DrawCircle(pixels, size, new Vector2(left, y2), bullet, white);
+            DrawCircle(pixels, size, new Vector2(left, y3), bullet, white);
+            DrawLine(pixels, size, new Vector2(left + size * 0.12f, y1), new Vector2(right, y1), stroke, white);
+            DrawLine(pixels, size, new Vector2(left + size * 0.12f, y2), new Vector2(right, y2), stroke, white);
+            DrawLine(pixels, size, new Vector2(left + size * 0.12f, y3), new Vector2(right * 0.82f, y3), stroke, white);
+        }
+
+        static void DrawTabQuizIcon(Color32[] pixels, int size)
+        {
+            var white = new Color32(255, 255, 255, 255);
+            var center = new Vector2(size * 0.5f, size * 0.5f);
+            var radius = size * 0.36f;
+            var stroke = size * 0.07f;
+            DrawCircleOutline(pixels, size, center, radius, stroke, white);
+
+            // Question mark stem + curve + dot
+            var cx = size * 0.5f;
+            DrawLine(pixels, size, new Vector2(cx, size * 0.58f), new Vector2(cx, size * 0.48f), stroke, white);
+            DrawCircleOutline(pixels, size, new Vector2(cx, size * 0.38f), size * 0.11f, stroke, white);
+            DrawCircle(pixels, size, new Vector2(cx + size * 0.08f, size * 0.34f), stroke * 0.55f, white);
+            DrawCircle(pixels, size, new Vector2(cx, size * 0.70f), stroke * 0.65f, white);
+        }
+
+        static void DrawTabSettingsIcon(Color32[] pixels, int size)
+        {
+            var white = new Color32(255, 255, 255, 255);
+            var center = new Vector2(size * 0.5f, size * 0.5f);
+            var outer = size * 0.38f;
+            var inner = size * 0.18f;
+            var stroke = size * 0.065f;
+            var teeth = 8;
+
+            for (var i = 0; i < teeth; i++)
+            {
+                var angle = i / (float)teeth * Mathf.PI * 2f;
+                var tip = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (outer + size * 0.08f);
+                var baseA = center + new Vector2(Mathf.Cos(angle - 0.22f), Mathf.Sin(angle - 0.22f)) * outer;
+                var baseB = center + new Vector2(Mathf.Cos(angle + 0.22f), Mathf.Sin(angle + 0.22f)) * outer;
+                DrawLine(pixels, size, baseA, tip, stroke, white);
+                DrawLine(pixels, size, tip, baseB, stroke, white);
+            }
+
+            DrawCircleOutline(pixels, size, center, outer, stroke, white);
+            DrawCircleOutline(pixels, size, center, inner, stroke, white);
+        }
+
+        static void DrawTabAboutIcon(Color32[] pixels, int size)
+        {
+            var white = new Color32(255, 255, 255, 255);
+            var center = new Vector2(size * 0.5f, size * 0.5f);
+            var radius = size * 0.36f;
+            var stroke = size * 0.07f;
+            DrawCircleOutline(pixels, size, center, radius, stroke, white);
+            DrawCircle(pixels, size, new Vector2(center.x, size * 0.34f), stroke * 0.7f, white);
+            DrawLine(
+                pixels,
+                size,
+                new Vector2(center.x, size * 0.46f),
+                new Vector2(center.x, size * 0.70f),
+                stroke,
+                white);
+        }
+
+        static void DrawCircleOutline(Color32[] pixels, int size, Vector2 center, float radius, float stroke, Color32 color)
+        {
+            var outer = radius + stroke * 0.5f;
+            var inner = Mathf.Max(0f, radius - stroke * 0.5f);
+            var outer2 = outer * outer;
+            var inner2 = inner * inner;
+            var minX = Mathf.Max(0, Mathf.FloorToInt(center.x - outer));
+            var maxX = Mathf.Min(size - 1, Mathf.CeilToInt(center.x + outer));
+            var minY = Mathf.Max(0, Mathf.FloorToInt(center.y - outer));
+            var maxY = Mathf.Min(size - 1, Mathf.CeilToInt(center.y + outer));
+
+            for (var y = minY; y <= maxY; y++)
+            {
+                for (var x = minX; x <= maxX; x++)
+                {
+                    var dx = x - center.x;
+                    var dy = y - center.y;
+                    var d2 = dx * dx + dy * dy;
+                    if (d2 <= outer2 && d2 >= inner2)
+                        pixels[y * size + x] = color;
+                }
+            }
+        }
+
+        static void DrawRoundedRectOutline(Color32[] pixels, int size, Rect rect, float radius, float stroke, Color32 color)
+        {
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var outside = !IsInsideRoundedRectBounds(x, y, rect, radius);
+                    var inside = IsInsideRoundedRectBounds(x, y, new Rect(
+                        rect.x + stroke,
+                        rect.y + stroke,
+                        Mathf.Max(0f, rect.width - stroke * 2f),
+                        Mathf.Max(0f, rect.height - stroke * 2f)), Mathf.Max(0f, radius - stroke));
+                    if (!outside && !inside)
+                        pixels[y * size + x] = color;
+                }
+            }
+        }
+
+        static bool IsInsideRoundedRectBounds(float x, float y, Rect rect, float radius)
+        {
+            if (x < rect.x || x > rect.xMax || y < rect.y || y > rect.yMax)
+                return false;
+
+            var left = rect.x + radius;
+            var right = rect.xMax - radius;
+            var bottom = rect.y + radius;
+            var top = rect.yMax - radius;
+
+            if (x >= left && x <= right)
+                return true;
+            if (y >= bottom && y <= top)
+                return true;
+
+            float cx;
+            float cy;
+            if (x < left && y < bottom)
+            {
+                cx = left;
+                cy = bottom;
+            }
+            else if (x > right && y < bottom)
+            {
+                cx = right;
+                cy = bottom;
+            }
+            else if (x < left && y > top)
+            {
+                cx = left;
+                cy = top;
+            }
+            else
+            {
+                cx = right;
+                cy = top;
+            }
+
+            var dx = x - cx;
+            var dy = y - cy;
+            return dx * dx + dy * dy <= radius * radius;
         }
 
         static void DrawCircle(Color32[] pixels, int size, Vector2 center, float radius, Color32 color)

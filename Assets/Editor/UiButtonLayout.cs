@@ -13,8 +13,14 @@ namespace PeopleOfMath.Editor
         public static readonly Vector2 SectionNavBarPosition = new(0f, 45f);
         public static readonly Vector2 SectionNavBarSize = new(0f, 90f);
 
-        public static readonly Vector2 BottomBarPosition = new(0f, 110f);
-        public static readonly Vector2 BottomBarSize = new(0f, 220f);
+        /// <summary>Single-row Figma-style tab bar height (reference 1080 canvas).</summary>
+        public const float BottomBarHeight = 132f;
+        public static readonly Vector2 BottomBarPosition = new(0f, BottomBarHeight * 0.5f);
+        public static readonly Vector2 BottomBarSize = new(0f, BottomBarHeight);
+
+        public const float TabIconSize = 40f;
+        public const float TabSelectionSize = 64f;
+        public const float TabCaptionFontBase = 11f;
 
         public readonly struct SceneButton
         {
@@ -24,6 +30,7 @@ namespace PeopleOfMath.Editor
             public string LocalizationKey { get; }
             public UiButtonStyle Style { get; }
             public string IconGlyph { get; }
+            public NavTabId? TabId { get; }
 
             public SceneButton(
                 string name,
@@ -31,7 +38,8 @@ namespace PeopleOfMath.Editor
                 Vector2 size,
                 string localizationKey,
                 UiButtonStyle style,
-                string iconGlyph = null)
+                string iconGlyph = null,
+                NavTabId? tabId = null)
             {
                 Name = name;
                 Position = position;
@@ -39,23 +47,27 @@ namespace PeopleOfMath.Editor
                 LocalizationKey = localizationKey;
                 Style = style;
                 IconGlyph = iconGlyph;
+                TabId = tabId;
             }
         }
 
         public static readonly SceneButton BottomBrowse = new(
-            "BrowseTab", new Vector2(19f, -110f), new Vector2(347f, 96f), "tab_browse", UiButtonStyle.Secondary, "▦");
+            "BrowseTab", Vector2.zero, Vector2.zero, "tab_browse", UiButtonStyle.Secondary, tabId: NavTabId.Browse);
 
         public static readonly SceneButton BottomIndex = new(
-            "IndexTab", new Vector2(366f, -110f), new Vector2(347f, 96f), "tab_index", UiButtonStyle.Secondary, "Aa");
-
-        public static readonly SceneButton BottomSettings = new(
-            "SettingsTab", new Vector2(713f, -110f), new Vector2(347f, 96f), "tab_settings", UiButtonStyle.Secondary, "⚙");
+            "IndexTab", Vector2.zero, Vector2.zero, "tab_index", UiButtonStyle.Secondary, tabId: NavTabId.Index);
 
         public static readonly SceneButton BottomFavorites = new(
-            "FavoritesTab", new Vector2(19f, -22f), new Vector2(511f, 96f), "btn_favorites", UiButtonStyle.Secondary, "♥");
+            "FavoritesTab", Vector2.zero, Vector2.zero, "btn_favorites", UiButtonStyle.Secondary, tabId: NavTabId.Favorites);
 
         public static readonly SceneButton BottomQuiz = new(
-            "QuizTab", new Vector2(537f, -22f), new Vector2(524f, 96f), "tab_quiz", UiButtonStyle.Secondary, "?");
+            "QuizTab", Vector2.zero, Vector2.zero, "tab_quiz", UiButtonStyle.Secondary, tabId: NavTabId.Quiz);
+
+        public static readonly SceneButton BottomSettings = new(
+            "SettingsTab", Vector2.zero, Vector2.zero, "tab_settings", UiButtonStyle.Secondary, tabId: NavTabId.Settings);
+
+        public static readonly SceneButton BottomAbout = new(
+            "AboutTab", Vector2.zero, Vector2.zero, "tab_about", UiButtonStyle.Secondary, tabId: NavTabId.About);
 
         public static readonly SceneButton HeaderBack = new(
             "BackButton", new Vector2(20f, -60f), new Vector2(160f, 56f), "btn_back", UiButtonStyle.Secondary);
@@ -152,22 +164,34 @@ namespace PeopleOfMath.Editor
             tmp.raycastTarget = false;
         }
 
-        public static void ConfigureTabIconLabel(GameObject labelGo, bool hasIcon)
+        public static void ConfigureTabCaption(GameObject labelGo)
         {
-            ConfigureStandardLabel(labelGo);
-            if (!hasIcon || labelGo == null)
+            if (labelGo == null)
                 return;
 
             var rt = labelGo.GetComponent<RectTransform>();
             if (rt != null)
             {
-                rt.anchoredPosition = new Vector2(12f, -42f);
-                rt.sizeDelta = new Vector2(-20f, 22f);
+                rt.anchorMin = new Vector2(0f, 0f);
+                rt.anchorMax = new Vector2(1f, 0f);
+                rt.pivot = new Vector2(0.5f, 0f);
+                rt.anchoredPosition = new Vector2(0f, 10f);
+                rt.sizeDelta = new Vector2(-8f, 28f);
             }
 
             var tmp = labelGo.GetComponent<TextMeshProUGUI>();
-            if (tmp != null)
-                tmp.fontSize = UiLayoutMetrics.ScaleFont(13f);
+            if (tmp == null)
+                return;
+
+            tmp.fontSize = UiLayoutMetrics.ScaleFont(TabCaptionFontBase);
+            tmp.enableAutoSizing = true;
+            tmp.fontSizeMin = 10f;
+            tmp.fontSizeMax = UiLayoutMetrics.ScaleFont(TabCaptionFontBase);
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = UiTheme.TextSecondary;
+            tmp.raycastTarget = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
+            tmp.overflowMode = TextOverflowModes.Ellipsis;
         }
     }
 }

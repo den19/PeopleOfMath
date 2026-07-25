@@ -16,6 +16,7 @@ namespace PeopleOfMath.Core
         [SerializeField] SettingsPanel settingsPanel;
         [SerializeField] FavoritesPanel favoritesPanel;
         [SerializeField] QuizPanel quizPanel;
+        [SerializeField] AboutPanel aboutPanel;
         [SerializeField] UiPanelSlideTransition favoritesTransition;
         [SerializeField] GameObject headerBackButton;
         [SerializeField] HeaderTitleBinder headerTitle;
@@ -24,6 +25,7 @@ namespace PeopleOfMath.Core
         [SerializeField] Button settingsTab;
         [SerializeField] Button favoritesButton;
         [SerializeField] Button quizTab;
+        [SerializeField] Button aboutTab;
 
         readonly List<ScreenContext> _stack = new();
         int _lastBackFrame = -1;
@@ -62,6 +64,7 @@ namespace PeopleOfMath.Core
             settingsPanel?.gameObject.SetActive(false);
             favoritesPanel?.gameObject.SetActive(false);
             quizPanel?.gameObject.SetActive(false);
+            aboutPanel?.gameObject.SetActive(false);
         }
 
         void HideAllPanelsExceptFavorites()
@@ -72,6 +75,7 @@ namespace PeopleOfMath.Core
             detailPanel?.gameObject.SetActive(false);
             settingsPanel?.gameObject.SetActive(false);
             quizPanel?.gameObject.SetActive(false);
+            aboutPanel?.gameObject.SetActive(false);
         }
 
         UiPanelSlideTransition GetFavoritesTransition()
@@ -162,6 +166,12 @@ namespace PeopleOfMath.Core
                         quizPanel.ShowMenu();
                     headerBackButton.SetActive(true);
                     headerTitle?.SetQuizTitle();
+                    break;
+                case AppScreen.About:
+                    if (aboutPanel != null)
+                        aboutPanel.gameObject.SetActive(true);
+                    headerBackButton.SetActive(false);
+                    headerTitle?.SetAboutTitle();
                     break;
             }
 
@@ -256,6 +266,8 @@ namespace PeopleOfMath.Core
 
         public void ShowQuiz() => SetRoot(ScreenContext.Quiz());
 
+        public void ShowAbout() => SetRoot(ScreenContext.About());
+
         DetailOrigin GetDetailOrigin()
         {
             if (_stack.Count < 2 || _stack[^1].Screen != AppScreen.Detail)
@@ -289,30 +301,32 @@ namespace PeopleOfMath.Core
                 || (ctx.Screen == AppScreen.Detail && detailOrigin == DetailOrigin.Favorites);
             var quizActive = ctx.Screen == AppScreen.Quiz
                 || (ctx.Screen == AppScreen.Detail && detailOrigin == DetailOrigin.Quiz);
+            var aboutActive = ctx.Screen == AppScreen.About;
 
-            ApplyTabStyle(browseTab, browseActive, UiTheme.PrimaryAccent);
-            ApplyTabStyle(indexTab, indexActive, UiTheme.AccentSecondary);
-            ApplyTabStyle(settingsTab, settingsActive, UiTheme.PrimaryAccent);
-            if (favoritesButton != null)
-                ApplyTabStyle(favoritesButton, favoritesActive, UiTheme.AccentWarm);
-            if (quizTab != null)
-                ApplyTabStyle(quizTab, quizActive, UiTheme.AccentTertiary);
+            ApplyTabStyle(browseTab, browseActive);
+            ApplyTabStyle(indexTab, indexActive);
+            ApplyTabStyle(settingsTab, settingsActive);
+            ApplyTabStyle(favoritesButton, favoritesActive);
+            ApplyTabStyle(quizTab, quizActive);
+            ApplyTabStyle(aboutTab, aboutActive);
 
             EventSystem.current?.SetSelectedGameObject(null);
         }
 
-        static void ApplyTabStyle(Button button, bool active, Color indicatorColor)
+        static void ApplyTabStyle(Button button, bool active)
         {
             if (button == null)
                 return;
 
-            UiButtonStyler.Apply(button, active ? UiButtonStyle.Primary : UiButtonStyle.Secondary, showTabIndicator: active);
-            if (!active)
+            var tabView = button.GetComponent<NavTabView>();
+            if (tabView != null)
+            {
+                tabView.Apply(active);
                 return;
+            }
 
-            var indicator = button.transform.Find("TabIndicator")?.GetComponent<Image>();
-            if (indicator != null)
-                indicator.color = indicatorColor;
+            // Legacy tabs without NavTabView.
+            UiButtonStyler.Apply(button, active ? UiButtonStyle.Primary : UiButtonStyle.Secondary, showTabIndicator: active);
         }
 
         public void HandleBack()
@@ -334,6 +348,7 @@ namespace PeopleOfMath.Core
                 case AppScreen.Index:
                 case AppScreen.Settings:
                 case AppScreen.Favorites:
+                case AppScreen.About:
                     ShowHome();
                     break;
                 case AppScreen.Quiz:
@@ -368,5 +383,7 @@ namespace PeopleOfMath.Core
         }
 
         public void OnQuizTabClicked() => ShowQuiz();
+
+        public void OnAboutTabClicked() => ShowAbout();
     }
 }

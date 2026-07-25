@@ -73,6 +73,7 @@ namespace PeopleOfMath.Input
                     break;
                 case AppScreen.Settings:
                 case AppScreen.Index:
+                case AppScreen.About:
                     navigation.ShowHome();
                     break;
                 default:
