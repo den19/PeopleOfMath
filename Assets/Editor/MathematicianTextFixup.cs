@@ -21,11 +21,11 @@ namespace PeopleOfMath.Editor
                 if (data == null)
                     continue;
 
-                if (FixField(ref data.fullNameRu) |
-                    FixField(ref data.shortBioRu) |
-                    FixField(ref data.achievementsRu) |
-                    FixField(ref data.personalLifeRu) |
-                    FixField(ref data.interestingFactsRu))
+                if (FixUnicodeField(ref data.fullNameRu) |
+                    FixUnicodeField(ref data.shortBioRu) |
+                    FixUnicodeField(ref data.achievementsRu) |
+                    FixUnicodeField(ref data.personalLifeRu) |
+                    FixUnicodeField(ref data.interestingFactsRu))
                 {
                     EditorUtility.SetDirty(data);
                     fixedCount++;
@@ -36,7 +36,43 @@ namespace PeopleOfMath.Editor
             Debug.Log($"Unicode text fixed on {fixedCount} mathematician assets.");
         }
 
-        static bool FixField(ref string field)
+        [MenuItem("PeopleOfMath/Proofread Mathematician Cards")]
+        public static void ProofreadAllAssets()
+        {
+            var guids = AssetDatabase.FindAssets("t:MathematicianData", new[] { DataFolder });
+            var fixedCount = 0;
+
+            foreach (var guid in guids)
+            {
+                var data = AssetDatabase.LoadAssetAtPath<MathematicianData>(
+                    AssetDatabase.GUIDToAssetPath(guid));
+                if (data == null)
+                    continue;
+
+                var changed =
+                    EditorialText.TryClean(ref data.fullNameRu) |
+                    EditorialText.TryClean(ref data.fullNameEn) |
+                    EditorialText.TryClean(ref data.shortBioRu) |
+                    EditorialText.TryClean(ref data.shortBioEn) |
+                    EditorialText.TryClean(ref data.achievementsRu) |
+                    EditorialText.TryClean(ref data.achievementsEn) |
+                    EditorialText.TryClean(ref data.personalLifeRu) |
+                    EditorialText.TryClean(ref data.personalLifeEn) |
+                    EditorialText.TryClean(ref data.interestingFactsRu) |
+                    EditorialText.TryClean(ref data.interestingFactsEn);
+
+                if (!changed)
+                    continue;
+
+                EditorUtility.SetDirty(data);
+                fixedCount++;
+            }
+
+            AssetDatabase.SaveAssets();
+            Debug.Log($"Editorial proofread cleaned {fixedCount} mathematician cards.");
+        }
+
+        static bool FixUnicodeField(ref string field)
         {
             if (string.IsNullOrEmpty(field) || !field.Contains('u'))
                 return false;

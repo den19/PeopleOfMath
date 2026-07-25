@@ -36,9 +36,19 @@ namespace PeopleOfMath.Editor
         public static void FixHomeTitleLayoutFromMenu()
         {
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-            FixHomeTitleLayout(scene);
+            FixHeaderTitlesLayout(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
+        }
+
+        [MenuItem("PeopleOfMath/Fix Header Titles Layout")]
+        public static void FixHeaderTitlesLayoutFromMenu()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            FixHeaderTitlesLayout(scene);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Header titles centered with larger font.");
         }
 
         public static void Apply()
@@ -62,7 +72,7 @@ namespace PeopleOfMath.Editor
             }
 
             FixDetailTextLayout(scene);
-            FixHomeTitleLayout(scene);
+            FixHeaderTitlesLayout(scene);
 
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
@@ -130,23 +140,33 @@ namespace PeopleOfMath.Editor
             EditorUtility.SetDirty(go);
         }
 
-        public static void FixHomeTitleLayout(UnityEngine.SceneManagement.Scene scene)
+        public static void FixHomeTitleLayout(UnityEngine.SceneManagement.Scene scene) =>
+            FixHeaderTitlesLayout(scene);
+
+        public static void FixHeaderTitlesLayout(UnityEngine.SceneManagement.Scene scene)
         {
+            string[] titleNames =
+            {
+                "HomeTitle", "SettingsTitle", "IndexTitle", "FavoritesTitle",
+                "QuizTitle", "AboutTitle", "PlainTitle"
+            };
+
             foreach (var tmp in Object.FindObjectsByType<TextMeshProUGUI>(
                          FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 if (tmp.gameObject.scene != scene)
                     continue;
-                if (tmp.gameObject.name != "HomeTitle")
+                if (System.Array.IndexOf(titleNames, tmp.gameObject.name) < 0)
                     continue;
 
-                PeopleOfMathProjectSetup.ConfigureHomeTitle(tmp.gameObject);
+                PeopleOfMathProjectSetup.ConfigureHeaderTitle(tmp.gameObject);
                 EditorUtility.SetDirty(tmp.gameObject);
             }
         }
 
         static bool IsHeaderTitle(GameObject go) =>
-            go.name is "HomeTitle" or "SettingsTitle";
+            go.name is "HomeTitle" or "SettingsTitle" or "IndexTitle"
+                or "FavoritesTitle" or "QuizTitle" or "AboutTitle" or "PlainTitle";
 
         static void ConfigureDetailContentVlg(UnityEngine.SceneManagement.Scene scene)
         {

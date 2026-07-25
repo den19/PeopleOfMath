@@ -31,7 +31,7 @@ namespace PeopleOfMath.Data
         static string Pick(bool english, string ru, string en)
         {
             var text = english && !string.IsNullOrWhiteSpace(en) ? en : ru;
-            return UnicodeText.Normalize(text);
+            return EditorialText.Clean(text);
         }
 
         public string GetFullName(bool english) => Pick(english, fullNameRu, fullNameEn);

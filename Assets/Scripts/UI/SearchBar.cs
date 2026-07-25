@@ -11,7 +11,6 @@ namespace PeopleOfMath.UI
     public class SearchBar : MonoBehaviour
     {
         const float DebounceSeconds = 0.28f;
-        const float BusySpinDegreesPerSecond = 220f;
         const float ClearHitSize = 88f;
         const float ClearVisualSize = 48f;
 
@@ -21,10 +20,10 @@ namespace PeopleOfMath.UI
         [SerializeField] UiThemedCard themedCard;
         [SerializeField] Image glowImage;
         [SerializeField] RectTransform busyIndicator;
-        [SerializeField] Image busyRing;
 
+        readonly Image[] _busyDots = new Image[3];
         Coroutine _debounceRoutine;
-        Coroutine _busySpinRoutine;
+        Coroutine _busyPulseRoutine;
         Coroutine _endBusyRoutine;
         bool _suppressCallbacks;
         bool _isBusy;
@@ -237,102 +236,123 @@ namespace PeopleOfMath.UI
 
             if (busy)
             {
-                if (_busySpinRoutine == null && isActiveAndEnabled)
-                    _busySpinRoutine = StartCoroutine(SpinBusyIndicator());
+                if (_busyPulseRoutine == null && isActiveAndEnabled)
+                    _busyPulseRoutine = StartCoroutine(PulseBusyDots());
             }
-            else if (_busySpinRoutine != null)
+            else if (_busyPulseRoutine != null)
             {
-                StopCoroutine(_busySpinRoutine);
-                _busySpinRoutine = null;
+                StopCoroutine(_busyPulseRoutine);
+                _busyPulseRoutine = null;
+                ResetBusyDots();
             }
 
             UpdateClearVisibility();
         }
 
-        IEnumerator SpinBusyIndicator()
+        IEnumerator PulseBusyDots()
         {
+            const float period = 0.9f;
             while (_isBusy && busyIndicator != null)
             {
-                busyIndicator.Rotate(0f, 0f, -BusySpinDegreesPerSecond * Time.unscaledDeltaTime);
+                var t = Time.unscaledTime;
+                for (var i = 0; i < _busyDots.Length; i++)
+                {
+                    var dot = _busyDots[i];
+                    if (dot == null)
+                        continue;
+
+                    var phase = (t / period) - i * 0.22f;
+                    var wave = 0.5f + 0.5f * Mathf.Sin(phase * Mathf.PI * 2f);
+                    var alpha = Mathf.Lerp(0.22f, 1f, wave);
+                    var scale = Mathf.Lerp(0.72f, 1.08f, wave);
+                    var c = dot.color;
+                    dot.color = new Color(c.r, c.g, c.b, alpha);
+                    dot.rectTransform.localScale = new Vector3(scale, scale, 1f);
+                }
+
                 yield return null;
             }
 
-            _busySpinRoutine = null;
+            _busyPulseRoutine = null;
+        }
+
+        void ResetBusyDots()
+        {
+            foreach (var dot in _busyDots)
+            {
+                if (dot == null)
+                    continue;
+                var c = dot.color;
+                dot.color = new Color(c.r, c.g, c.b, 0.45f);
+                dot.rectTransform.localScale = Vector3.one;
+            }
         }
 
         void EnsureBusyIndicator()
         {
             if (busyIndicator == null)
-            {
-                var existing = transform.Find("BusyIndicator") as RectTransform;
-                if (existing != null)
-                {
-                    busyIndicator = existing;
-                    busyRing = existing.GetComponent<Image>();
-                }
-            }
+                busyIndicator = transform.Find("BusyIndicator") as RectTransform;
 
             if (busyIndicator == null)
             {
-                var go = new GameObject("BusyIndicator", typeof(RectTransform), typeof(Image));
+                var go = new GameObject("BusyIndicator", typeof(RectTransform));
                 go.transform.SetParent(transform, false);
                 busyIndicator = go.GetComponent<RectTransform>();
-                busyRing = go.GetComponent<Image>();
             }
+
+            // Drop the old ring spinner if present.
+            var legacyRing = busyIndicator.GetComponent<Image>();
+            if (legacyRing != null)
+                Object.Destroy(legacyRing);
+            var hole = busyIndicator.Find("Hole");
+            if (hole != null)
+                Object.Destroy(hole.gameObject);
 
             busyIndicator.anchorMin = new Vector2(1f, 0.5f);
             busyIndicator.anchorMax = new Vector2(1f, 0.5f);
-            busyIndicator.pivot = new Vector2(0.5f, 0.5f);
-            busyIndicator.anchoredPosition = new Vector2(-46f, 0f);
-            busyIndicator.sizeDelta = new Vector2(44f, 44f);
+            busyIndicator.pivot = new Vector2(1f, 0.5f);
+            busyIndicator.anchoredPosition = new Vector2(-18f, 0f);
+            busyIndicator.sizeDelta = new Vector2(64f, 28f);
+            busyIndicator.localRotation = Quaternion.identity;
             busyIndicator.gameObject.SetActive(false);
 
-            if (busyRing != null)
+            for (var i = 0; i < 3; i++)
             {
-                busyRing.sprite = UiSprites.RoundedRect;
-                busyRing.type = Image.Type.Filled;
-                busyRing.fillMethod = Image.FillMethod.Radial360;
-                busyRing.fillOrigin = (int)Image.Origin360.Top;
-                busyRing.fillClockwise = true;
-                busyRing.fillAmount = 0.72f;
-                busyRing.raycastTarget = false;
-                ApplyBusyTheme();
+                var name = $"Dot{i}";
+                var existing = busyIndicator.Find(name) as RectTransform;
+                if (existing == null)
+                {
+                    var dotGo = new GameObject(name, typeof(RectTransform), typeof(Image));
+                    dotGo.transform.SetParent(busyIndicator, false);
+                    existing = dotGo.GetComponent<RectTransform>();
+                }
+
+                existing.anchorMin = new Vector2(0.5f, 0.5f);
+                existing.anchorMax = new Vector2(0.5f, 0.5f);
+                existing.pivot = new Vector2(0.5f, 0.5f);
+                existing.sizeDelta = new Vector2(10f, 10f);
+                existing.anchoredPosition = new Vector2(-22f + i * 16f, 0f);
+                existing.localScale = Vector3.one;
+
+                var image = existing.GetComponent<Image>();
+                image.sprite = UiSprites.RoundedRect;
+                image.type = Image.Type.Sliced;
+                image.raycastTarget = false;
+                _busyDots[i] = image;
             }
 
-            // Soft inner hole so the arc reads as a spinner ring.
-            var hole = busyIndicator.Find("Hole") as RectTransform;
-            if (hole == null)
-            {
-                var holeGo = new GameObject("Hole", typeof(RectTransform), typeof(Image));
-                holeGo.transform.SetParent(busyIndicator, false);
-                hole = holeGo.GetComponent<RectTransform>();
-                var holeImage = holeGo.GetComponent<Image>();
-                holeImage.sprite = UiSprites.RoundedRect;
-                holeImage.type = Image.Type.Sliced;
-                holeImage.raycastTarget = false;
-            }
-
-            hole.anchorMin = new Vector2(0.5f, 0.5f);
-            hole.anchorMax = new Vector2(0.5f, 0.5f);
-            hole.pivot = new Vector2(0.5f, 0.5f);
-            hole.anchoredPosition = Vector2.zero;
-            hole.sizeDelta = new Vector2(22f, 22f);
             ApplyBusyTheme();
         }
 
         void ApplyBusyTheme()
         {
-            if (busyRing != null)
+            var accent = UiTheme.PrimaryAccent;
+            foreach (var dot in _busyDots)
             {
-                var accent = UiTheme.PrimaryAccent;
-                busyRing.color = new Color(accent.r, accent.g, accent.b, 0.95f);
+                if (dot == null)
+                    continue;
+                dot.color = new Color(accent.r, accent.g, accent.b, 0.45f);
             }
-
-            var holeImage = busyIndicator != null
-                ? busyIndicator.Find("Hole")?.GetComponent<Image>()
-                : null;
-            if (holeImage != null)
-                holeImage.color = UiTheme.CardFill;
         }
 
         void EnsureClearButtonVisuals()

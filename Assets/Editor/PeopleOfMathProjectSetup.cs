@@ -1399,7 +1399,6 @@ namespace PeopleOfMath.Editor
             UiStyleBuilder.ApplyNavBarStyle(header);
 
             var homeTitle = CreateLocalizedTitle(header.transform, "HomeTitle", loc.HomeTitle);
-            ConfigureHomeTitle(homeTitle);
             var settingsTitle = CreateLocalizedTitle(header.transform, "SettingsTitle", loc.SettingsTitle);
             settingsTitle.SetActive(false);
             var indexTitle = CreateLocalizedTitle(header.transform, "IndexTitle", loc.IndexTitle);
@@ -1411,9 +1410,8 @@ namespace PeopleOfMath.Editor
             var aboutTitle = CreateLocalizedTitle(header.transform, "AboutTitle", loc.AboutTitle);
             aboutTitle.SetActive(false);
 
-            var plainTitle = CreateTmpChild(header.transform, "PlainTitle", 22, FontStyles.Bold, new Vector2(180, -50));
-            plainTitle.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, 40);
-            plainTitle.GetComponent<TextMeshProUGUI>().raycastTarget = false;
+            var plainTitle = CreateTmpChild(header.transform, "PlainTitle", 42, FontStyles.Bold, Vector2.zero);
+            ConfigureHeaderTitle(plainTitle);
             plainTitle.SetActive(false);
 
             var back = CreateSceneButton(header.transform, UiButtonLayout.HeaderBack, loc.UiCollection);
@@ -1451,9 +1449,8 @@ namespace PeopleOfMath.Editor
 
         static GameObject CreateLocalizedTitle(Transform parent, string name, LocalizedString localized)
         {
-            var go = CreateTmpChild(parent, name, 22, FontStyles.Bold, new Vector2(180, -50));
-            go.GetComponent<RectTransform>().sizeDelta = new Vector2(-40, 40);
-            go.GetComponent<TextMeshProUGUI>().raycastTarget = false;
+            var go = CreateTmpChild(parent, name, 42, FontStyles.Bold, Vector2.zero);
+            ConfigureHeaderTitle(go);
             var lse = go.AddComponent<LocalizeStringEvent>();
             var so = new SerializedObject(lse);
             AssignLocalized(so.FindProperty("m_StringReference"), localized);
@@ -1461,6 +1458,61 @@ namespace PeopleOfMath.Editor
             WireLocalizeStringToTmp(go);
             return go;
         }
+
+        public static void ConfigureHeaderTitle(GameObject go)
+        {
+            if (go == null)
+                return;
+
+            var rt = go.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchorMin = new Vector2(0f, 1f);
+                rt.anchorMax = new Vector2(1f, 1f);
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchoredPosition = new Vector2(0f, -60f);
+                rt.sizeDelta = new Vector2(-56f, 72f);
+            }
+
+            var tmp = go.GetComponent<TextMeshProUGUI>();
+            if (tmp == null)
+                return;
+
+            tmp.enableAutoSizing = true;
+            tmp.fontSizeMin = 26f;
+            tmp.fontSizeMax = 48f;
+            tmp.fontSize = 42f;
+            tmp.fontStyle = FontStyles.Bold;
+            tmp.color = UiTheme.NavBarText;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
+            tmp.overflowMode = TextOverflowModes.Ellipsis;
+            tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            tmp.verticalAlignment = VerticalAlignmentOptions.Middle;
+            tmp.raycastTarget = false;
+
+            var so = new SerializedObject(tmp);
+            var baseProp = so.FindProperty("m_fontSizeBase");
+            if (baseProp != null)
+                baseProp.floatValue = 42f;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            WireLocalizeStringToTmp(go);
+
+            var lse = go.GetComponent<LocalizeStringEvent>();
+            if (lse != null)
+            {
+                var lseSo = new SerializedObject(lse);
+                var waitProp = lseSo.FindProperty("m_WaitForCompletion");
+                if (waitProp != null)
+                    waitProp.boolValue = true;
+                lseSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            EditorUtility.SetDirty(go);
+        }
+
+        /// <summary>Legacy alias — home title uses the same centered header style.</summary>
+        public static void ConfigureHomeTitle(GameObject go) => ConfigureHeaderTitle(go);
 
         public static void WireLocalizeStringToTmp(GameObject go)
         {
@@ -1478,47 +1530,6 @@ namespace PeopleOfMath.Editor
             UnityEventTools.AddPersistentListener(lse.OnUpdateString, methodDelegate);
             lse.OnUpdateString.SetPersistentListenerState(0, UnityEventCallState.EditorAndRuntime);
             EditorUtility.SetDirty(lse);
-        }
-
-        public static void ConfigureHomeTitle(GameObject go)
-        {
-            if (go == null)
-                return;
-
-            var rt = go.GetComponent<RectTransform>();
-            if (rt == null)
-                return;
-
-            rt.anchorMin = new Vector2(0, 1);
-            rt.anchorMax = new Vector2(1, 1);
-            rt.pivot = new Vector2(0.5f, 1);
-            rt.anchoredPosition = new Vector2(0, -16);
-            rt.sizeDelta = new Vector2(-48, 120);
-
-            var tmp = go.GetComponent<TextMeshProUGUI>();
-            if (tmp == null)
-                return;
-
-            tmp.enableAutoSizing = true;
-            tmp.fontSizeMin = 18;
-            tmp.fontSizeMax = 40;
-            tmp.fontSize = 36;
-            tmp.color = UiTheme.TextPrimary;
-            tmp.textWrappingMode = TextWrappingModes.Normal;
-            tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
-            tmp.verticalAlignment = VerticalAlignmentOptions.Top;
-            WireLocalizeStringToTmp(go);
-
-            var lse = go.GetComponent<LocalizeStringEvent>();
-            if (lse == null)
-                return;
-
-            var lseSo = new SerializedObject(lse);
-            var waitProp = lseSo.FindProperty("m_WaitForCompletion");
-            if (waitProp != null)
-                waitProp.boolValue = true;
-            lseSo.ApplyModifiedPropertiesWithoutUndo();
-            lse.enabled = false;
         }
 
         static GameObject CreateContentArea(Transform canvas)
