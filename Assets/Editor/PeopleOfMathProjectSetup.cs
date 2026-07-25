@@ -263,6 +263,67 @@ namespace PeopleOfMath.Editor
             Debug.Log("Bottom tab bar patched (6 tabs, Figma-style single row).");
         }
 
+        [MenuItem("PeopleOfMath/Fix Nav Action Button Alignment")]
+        public static void FixNavActionButtonAlignment()
+        {
+            if (DeferUntilEditMode(FixNavActionButtonAlignment))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var header = GameObject.Find("Header");
+            var sectionNav = GameObject.Find("SectionNavBar");
+            var patched = 0;
+
+            if (header != null)
+            {
+                var headerBack = header.transform.Find("BackButton") as RectTransform;
+                if (headerBack != null)
+                {
+                    ApplySceneButtonRect(headerBack, UiButtonLayout.HeaderBack);
+                    EditorUtility.SetDirty(headerBack);
+                    patched++;
+                }
+            }
+
+            if (sectionNav != null)
+            {
+                var back = sectionNav.transform.Find("BackButton") as RectTransform;
+                var next = sectionNav.transform.Find("NextButton") as RectTransform;
+                if (back != null)
+                {
+                    ApplySceneButtonRect(back, UiButtonLayout.SectionNavBack);
+                    EditorUtility.SetDirty(back);
+                    patched++;
+                }
+
+                if (next != null)
+                {
+                    ApplySceneButtonRect(next, UiButtonLayout.SectionNavNext);
+                    EditorUtility.SetDirty(next);
+                    patched++;
+                }
+            }
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log($"Nav action buttons aligned ({patched} rects). Edge inset matches Browse/About tabs.");
+        }
+
+        static void ApplySceneButtonRect(RectTransform rt, UiButtonLayout.SceneButton button)
+        {
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = button.Position;
+            rt.sizeDelta = button.Size;
+        }
+
         [MenuItem("PeopleOfMath/Fix Bottom Bar Layout")]
         public static void FixBottomBarLayout()
         {
@@ -1631,20 +1692,39 @@ namespace PeopleOfMath.Editor
             clearRt.anchorMin = new Vector2(1, 0.5f);
             clearRt.anchorMax = new Vector2(1, 0.5f);
             clearRt.pivot = new Vector2(1, 0.5f);
-            clearRt.anchoredPosition = new Vector2(-12f, 0f);
-            clearRt.sizeDelta = new Vector2(UiLayoutMetrics.SearchBarClearButtonWidth, UiLayoutMetrics.SearchBarHeight - 16f);
+            clearRt.anchoredPosition = new Vector2(-10f, 0f);
+            clearRt.sizeDelta = new Vector2(UiLayoutMetrics.SearchBarClearButtonWidth, UiLayoutMetrics.SearchBarClearButtonWidth);
             clearGo.GetComponent<Image>().color = Color.clear;
+
+            var chipGo = new GameObject("Chip", typeof(RectTransform), typeof(Image));
+            chipGo.transform.SetParent(clearGo.transform, false);
+            var chipRt = chipGo.GetComponent<RectTransform>();
+            chipRt.anchorMin = new Vector2(0.5f, 0.5f);
+            chipRt.anchorMax = new Vector2(0.5f, 0.5f);
+            chipRt.pivot = new Vector2(0.5f, 0.5f);
+            chipRt.anchoredPosition = Vector2.zero;
+            chipRt.sizeDelta = new Vector2(
+                UiLayoutMetrics.SearchBarClearVisualSize,
+                UiLayoutMetrics.SearchBarClearVisualSize);
+            var chipImage = chipGo.GetComponent<Image>();
+            chipImage.sprite = Resources.Load<Sprite>("UI/RoundedRect");
+            chipImage.type = Image.Type.Sliced;
+            chipImage.raycastTarget = false;
+            chipImage.color = new Color(1f, 1f, 1f, 0.12f);
+
             var clearLabel = CreateTmpChild(
                 clearGo.transform,
                 "Label",
-                UiLayoutMetrics.SearchBarBaseFontSize,
+                22f,
                 FontStyles.Bold,
                 Vector2.zero);
             StretchToParent(clearLabel.GetComponent<RectTransform>());
             var clearTmp = clearLabel.GetComponent<TextMeshProUGUI>();
             clearTmp.text = "\u00d7";
+            clearTmp.fontSize = 36f;
             clearTmp.alignment = TextAlignmentOptions.Center;
-            clearTmp.color = UiTheme.TextSecondary;
+            clearTmp.color = UiTheme.TextPrimary;
+            clearTmp.raycastTarget = false;
             clearGo.SetActive(false);
 
             return go;

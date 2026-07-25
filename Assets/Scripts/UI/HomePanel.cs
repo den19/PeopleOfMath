@@ -24,6 +24,7 @@ namespace PeopleOfMath.UI
         [SerializeField] Button quizButton;
 
         readonly List<Button> _spawned = new();
+        bool _needsRebuild = true;
 
         Button TilePrefab => categoryTilePrefab != null ? categoryTilePrefab : filterButtonPrefab;
 
@@ -43,7 +44,8 @@ namespace PeopleOfMath.UI
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
             ThemeHelper.ThemeChanged += OnThemeChanged;
-            Rebuild();
+            if (_needsRebuild || _spawned.Count == 0)
+                Rebuild();
         }
 
         void OnDisable()
@@ -52,7 +54,12 @@ namespace PeopleOfMath.UI
             ThemeHelper.ThemeChanged -= OnThemeChanged;
         }
 
-        void OnLocaleChanged(UnityEngine.Localization.Locale _) => Rebuild();
+        void OnLocaleChanged(UnityEngine.Localization.Locale _)
+        {
+            _needsRebuild = true;
+            if (isActiveAndEnabled)
+                Rebuild();
+        }
 
         void OnThemeChanged() => ApplyFilterStyles();
 
@@ -68,6 +75,7 @@ namespace PeopleOfMath.UI
                 Taxonomy.Branches);
             ApplyFilterStyles();
             StyleQuizButton();
+            _needsRebuild = false;
         }
 
         void ClearSpawned()

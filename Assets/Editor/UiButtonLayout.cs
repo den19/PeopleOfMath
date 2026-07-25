@@ -13,6 +13,12 @@ namespace PeopleOfMath.Editor
         public static readonly Vector2 SectionNavBarPosition = new(0f, 45f);
         public static readonly Vector2 SectionNavBarSize = new(0f, 90f);
 
+        /// <summary>Matches BottomBar HorizontalLayoutGroup left/right padding.</summary>
+        public const float EdgeInset = 8f;
+        public const float ReferenceCanvasWidth = 1080f;
+        public const float NavActionButtonWidth = 220f;
+        public const float NavActionButtonHeight = 66f;
+
         /// <summary>Single-row Figma-style tab bar height (reference 1080 canvas).</summary>
         public const float BottomBarHeight = 148f;
         public static readonly Vector2 BottomBarPosition = new(0f, BottomBarHeight * 0.5f);
@@ -21,6 +27,18 @@ namespace PeopleOfMath.Editor
         public const float TabIconSize = 48f;
         public const float TabSelectionSize = 76f;
         public const float TabCaptionFontBase = 12f;
+
+        public static Vector2 SectionNavBackPosition =>
+            new(EdgeInset, -12f);
+
+        public static Vector2 SectionNavNextPosition =>
+            new(ReferenceCanvasWidth - EdgeInset - NavActionButtonWidth, -12f);
+
+        public static Vector2 HeaderBackPosition =>
+            new(EdgeInset, -48f);
+
+        public static Vector2 NavActionButtonSize =>
+            new(NavActionButtonWidth, NavActionButtonHeight);
 
         public readonly struct SceneButton
         {
@@ -70,13 +88,13 @@ namespace PeopleOfMath.Editor
             "AboutTab", Vector2.zero, Vector2.zero, "tab_about", UiButtonStyle.Secondary, tabId: NavTabId.About);
 
         public static readonly SceneButton HeaderBack = new(
-            "BackButton", new Vector2(20f, -60f), new Vector2(160f, 56f), "btn_back", UiButtonStyle.Secondary);
+            "BackButton", HeaderBackPosition, NavActionButtonSize, "btn_back", UiButtonStyle.Secondary);
 
         public static readonly SceneButton SectionNavBack = new(
-            "BackButton", new Vector2(45f, -12f), new Vector2(220f, 66f), "btn_back", UiButtonStyle.Secondary);
+            "BackButton", SectionNavBackPosition, NavActionButtonSize, "btn_back", UiButtonStyle.Secondary);
 
         public static readonly SceneButton SectionNavNext = new(
-            "NextButton", new Vector2(699f, -12f), new Vector2(220f, 66f), "btn_next", UiButtonStyle.Secondary);
+            "NextButton", SectionNavNextPosition, NavActionButtonSize, "btn_next", UiButtonStyle.Secondary);
 
         public static readonly SceneButton SettingsRussian = new(
             "RuButton", new Vector2(40f, -160f), new Vector2(400f, 64f), "btn_russian", UiButtonStyle.Primary);
@@ -185,13 +203,14 @@ namespace PeopleOfMath.Editor
 
             tmp.fontSize = UiLayoutMetrics.ScaleFont(TabCaptionFontBase);
             tmp.enableAutoSizing = true;
-            tmp.fontSizeMin = 10f;
-            tmp.fontSizeMax = UiLayoutMetrics.ScaleFont(TabCaptionFontBase);
+            tmp.fontSizeMin = 13f;
+            tmp.fontSizeMax = UiLayoutMetrics.ScaleFont(TabCaptionFontBase) + 1f;
             tmp.alignment = TextAlignmentOptions.Center;
-            tmp.color = UiTheme.TextSecondary;
+            tmp.color = UiTheme.GetNavTabInactiveLabelColor();
             tmp.raycastTarget = false;
             tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tmp.overflowMode = TextOverflowModes.Ellipsis;
+            tmp.fontStyle = FontStyles.Bold;
         }
     }
 }

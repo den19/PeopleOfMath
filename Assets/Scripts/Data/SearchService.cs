@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PeopleOfMath.Data
 {
@@ -25,14 +24,31 @@ namespace PeopleOfMath.Data
 
             var q = query.Trim();
             var comparison = StringComparison.CurrentCultureIgnoreCase;
+            var matches = new List<(MathematicianData data, MatchRank rank)>();
 
-            return source
-                .Select(m => (data: m, rank: GetMatchRank(m, q, comparison)))
-                .Where(x => x.rank != MatchRank.None)
-                .OrderByDescending(x => x.rank)
-                .ThenBy(x => x.data.GetFullName(english), StringComparer.CurrentCultureIgnoreCase)
-                .Select(x => x.data)
-                .ToList();
+            foreach (var m in source)
+            {
+                var rank = GetMatchRank(m, q, comparison);
+                if (rank != MatchRank.None)
+                    matches.Add((m, rank));
+            }
+
+            matches.Sort((a, b) =>
+            {
+                var byRank = ((int)b.rank).CompareTo((int)a.rank);
+                if (byRank != 0)
+                    return byRank;
+
+                return string.Compare(
+                    a.data.GetFullName(english),
+                    b.data.GetFullName(english),
+                    StringComparison.CurrentCultureIgnoreCase);
+            });
+
+            var results = new List<MathematicianData>(matches.Count);
+            for (var i = 0; i < matches.Count; i++)
+                results.Add(matches[i].data);
+            return results;
         }
 
         static MatchRank GetMatchRank(MathematicianData data, string query, StringComparison comparison)

@@ -43,14 +43,16 @@ namespace PeopleOfMath.UI
             _mode = ListMode.Filter;
             _kind = kind;
             _key = key;
-            Refresh();
+            if (isActiveAndEnabled)
+                Refresh();
         }
 
         public int BindSearch(string query)
         {
             _mode = ListMode.Search;
             _searchQuery = query?.Trim() ?? "";
-            Refresh();
+            if (isActiveAndEnabled)
+                Refresh();
             return _lastResultCount;
         }
 

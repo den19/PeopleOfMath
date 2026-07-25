@@ -32,7 +32,8 @@ namespace PeopleOfMath.Editor
         public const int SearchBarMarginBottom = 16;
         public const float SearchBarBaseFontSize = 16f;
         public const float SearchBarIconInset = 28f;
-        public const float SearchBarClearButtonWidth = 72f;
+        public const float SearchBarClearButtonWidth = 88f;
+        public const float SearchBarClearVisualSize = 48f;
 
         public static float SearchBarHeight => ScaleFont(SearchBarBaseHeight) * 2f;
         public static float SearchBarFontSize => ScaleFont(SearchBarBaseFontSize) * 2f;

@@ -34,20 +34,19 @@ namespace PeopleOfMath.UI
 
             if (iconImage != null)
             {
-                iconImage.color = active
-                    ? accent
-                    : new Color(
-                        UiTheme.TextSecondary.r,
-                        UiTheme.TextSecondary.g,
-                        UiTheme.TextSecondary.b,
-                        ThemeHelper.IsGlassmorphism ? 0.75f : 0.85f);
+                var inactive = UiTheme.GetNavTabInactiveIconColor();
+                iconImage.color = active ? accent : inactive;
             }
 
             if (labelText != null)
             {
                 labelText.color = active
                     ? accent
-                    : UiTheme.TextSecondary;
+                    : UiTheme.GetNavTabInactiveLabelColor();
+                // Bold inactive labels stay legible on near-white Light nav bars.
+                labelText.fontStyle = active || ThemeHelper.Current != AppTheme.Light
+                    ? FontStyles.Normal
+                    : FontStyles.Bold;
             }
         }
     }

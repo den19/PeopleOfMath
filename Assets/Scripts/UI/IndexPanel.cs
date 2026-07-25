@@ -23,6 +23,7 @@ namespace PeopleOfMath.UI
 
         readonly List<(Button button, char letter)> _letterButtons = new();
         char? _selectedLetter;
+        bool _needsRebuild = true;
 
         void Awake()
         {
@@ -35,7 +36,8 @@ namespace PeopleOfMath.UI
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
             FontSizeHelper.FontSizeChanged += OnFontSizeChanged;
             ThemeHelper.ThemeChanged += OnThemeChanged;
-            Rebuild();
+            if (_needsRebuild || _letterButtons.Count == 0)
+                Rebuild();
         }
 
         void OnDisable()
@@ -45,7 +47,12 @@ namespace PeopleOfMath.UI
             ThemeHelper.ThemeChanged -= OnThemeChanged;
         }
 
-        void OnLocaleChanged(UnityEngine.Localization.Locale _) => Rebuild();
+        void OnLocaleChanged(UnityEngine.Localization.Locale _)
+        {
+            _needsRebuild = true;
+            if (isActiveAndEnabled)
+                Rebuild();
+        }
 
         void OnFontSizeChanged() => RefreshList();
 
@@ -81,6 +88,7 @@ namespace PeopleOfMath.UI
             RebuildLetterButtons(english, usedLetters);
             EnsureLetterStripOnTop();
             RefreshList();
+            _needsRebuild = false;
         }
 
         void EnsureLetterStripOnTop()

@@ -221,6 +221,15 @@ namespace PeopleOfMath.Core
             if (_stack.Count > 0 && _stack[^1].Screen == AppScreen.List && _stack[^1].ListFromSearch)
             {
                 _stack[^1] = ScreenContext.ListSearch(query);
+                // Keep the list panel active — avoid HideAllPanels + full re-present.
+                if (listPanel != null && listPanel.gameObject.activeInHierarchy)
+                {
+                    var count = listPanel.BindSearch(query);
+                    headerTitle?.SetSearchTitle(query, count);
+                    RefreshTabStyles();
+                    return;
+                }
+
                 Present(_stack[^1]);
                 return;
             }
@@ -376,9 +385,6 @@ namespace PeopleOfMath.Core
 
         public void OnFavoritesButtonClicked()
         {
-            if (IsFavoritesAnimating())
-                return;
-
             ShowFavorites();
         }
 

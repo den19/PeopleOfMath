@@ -368,6 +368,23 @@ namespace PeopleOfMath.UI
             };
         }
 
+        /// <summary>
+        /// Light nav bar is near-white; TextSecondary alone reads too faint on phones.
+        /// </summary>
+        public static Color GetNavTabInactiveLabelColor() => ThemeHelper.Current switch
+        {
+            AppTheme.Light => new Color(0.22f, 0.21f, 0.28f, 0.92f),
+            AppTheme.Glassmorphism => new Color(1f, 1f, 1f, 0.78f),
+            _ => TextSecondary
+        };
+
+        public static Color GetNavTabInactiveIconColor() => ThemeHelper.Current switch
+        {
+            AppTheme.Light => new Color(0.28f, 0.27f, 0.34f, 0.88f),
+            AppTheme.Glassmorphism => new Color(1f, 1f, 1f, 0.75f),
+            _ => new Color(TextSecondary.r, TextSecondary.g, TextSecondary.b, 0.85f)
+        };
+
         static float WrapHue(float hue)
         {
             while (hue < 0f)

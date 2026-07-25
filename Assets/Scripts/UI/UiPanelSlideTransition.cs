@@ -28,6 +28,15 @@ namespace PeopleOfMath.UI
             SnapClosed();
         }
 
+        void OnDisable()
+        {
+            // Deactivating mid-open (e.g. switching tabs) stops coroutines without cleanup.
+            StopRoutine();
+            IsAnimating = false;
+            if (_canvasGroup != null)
+                _canvasGroup.blocksRaycasts = false;
+        }
+
         void EnsureSlideRoot()
         {
             if (slideRoot != null)
