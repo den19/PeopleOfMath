@@ -2123,10 +2123,11 @@ namespace PeopleOfMath.Editor
             }
 
             var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            // Prefer size only — fixed minWidth fights AdaptiveBrowseGrid on narrow canvases.
             le.preferredWidth = UiLayoutMetrics.CategoryTileCellWidth;
             le.preferredHeight = UiLayoutMetrics.CategoryTileCellHeight;
-            le.minWidth = UiLayoutMetrics.CategoryTileCellWidth;
-            le.minHeight = UiLayoutMetrics.CategoryTileCellHeight;
+            le.minWidth = -1f;
+            le.minHeight = -1f;
 
             EnsureCategoryTileChildren(go.transform);
             LayoutCategoryTileChildren(go.transform);

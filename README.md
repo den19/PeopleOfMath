@@ -2,6 +2,8 @@
 
 Справочник о математиках для Android. Unity **6000.4.5f1**, URP 2D, одна сцена `Main`.
 
+Архитектура runtime-кода, модель данных, UI и квиз: **[docs/PROGRAMMER.md](docs/PROGRAMMER.md)**.
+
 ## Требования
 
 - Unity Hub с редактором **6000.4.5f1**
@@ -86,10 +88,11 @@
 
 ## Структура
 
-- `Assets/Scripts` — логика и UI (`PortraitGalleryView`, `GalleryScrollSnap`)
+- `Assets/Scripts` — логика и UI (см. [документацию программиста](docs/PROGRAMMER.md))
 - `Assets/Data/Mathematicians` — ScriptableObject карточки
-- `Assets/Data/Images/{id}` — портреты
+- `Assets/Resources/Portraits/{id}` — портреты runtime
 - `Assets/Data/mathematicians_catalog.json` — каталог импорта
 - `Assets/Editor` — `MathematicianImportPipeline`, `WikimediaPortraitImporter`
 - `Assets/Localization` — String Table UI
 - `Assets/Scenes/Main.unity` — основная сцена
+- `docs/PROGRAMMER.md` — документация для разработчиков
