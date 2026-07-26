@@ -70,6 +70,15 @@ namespace PeopleOfMath.UI
             text.fontSize = Mathf.Round(baseSize * Multiplier);
         }
 
+        public static void SetBaseSize(TMP_Text text, float baseSize)
+        {
+            if (text == null || baseSize < 1f)
+                return;
+
+            BaseSizes[text.GetInstanceID()] = baseSize;
+            text.fontSize = Mathf.Round(baseSize * Multiplier);
+        }
+
         public static string GetLevelLabel(bool english, FontSizeLevel level) => level switch
         {
             FontSizeLevel.Large => english ? "Large" : "Крупный",

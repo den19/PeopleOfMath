@@ -11,8 +11,16 @@ namespace PeopleOfMath.UI
     public class SearchBar : MonoBehaviour
     {
         const float DebounceSeconds = 2f;
-        const float ClearHitSize = 88f;
-        const float ClearVisualSize = 48f;
+        const float ClearHitSize = 88f * 1.5f;
+        const float ClearVisualSize = 48f * 1.5f;
+        const float ClearLabelFontSize = 36f * 1.5f;
+        const float InputFontSize = 46f * 1.5f;
+        const float BusyScale = 3f;
+        const float BusyDotSize = 10f * BusyScale;
+        const float BusyDotSpacing = 16f * BusyScale;
+        const float BusyDotStartX = -22f * BusyScale;
+        const float BusyIndicatorWidth = 64f * BusyScale;
+        const float BusyIndicatorHeight = 28f * BusyScale;
 
         [SerializeField] NavigationController navigation;
         [SerializeField] TMP_InputField inputField;
@@ -35,6 +43,8 @@ namespace PeopleOfMath.UI
         {
             EnsureClearButtonVisuals();
             EnsureBusyIndicator();
+            EnsureInputTextAlignment();
+            ApplyInputFontSizes();
 
             if (inputField != null)
             {
@@ -56,6 +66,7 @@ namespace PeopleOfMath.UI
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
             FontSizeHelper.FontSizeChanged += OnFontSizeChanged;
             ThemeHelper.ThemeChanged += OnThemeChanged;
+            ApplyInputFontSizes();
             RefreshPlaceholder();
             RefreshInputTextColor();
             ApplyClearTheme();
@@ -75,7 +86,43 @@ namespace PeopleOfMath.UI
 
         void OnLocaleChanged(UnityEngine.Localization.Locale _) => RefreshPlaceholder();
 
-        void OnFontSizeChanged() => RefreshPlaceholder();
+        void OnFontSizeChanged()
+        {
+            ApplyInputFontSizes();
+            RefreshPlaceholder();
+        }
+
+        void ApplyInputFontSizes()
+        {
+            if (inputField?.textComponent is TMP_Text text)
+                FontSizeHelper.SetBaseSize(text, InputFontSize);
+
+            if (inputField?.placeholder is TMP_Text placeholder)
+                FontSizeHelper.SetBaseSize(placeholder, InputFontSize);
+        }
+
+        void EnsureInputTextAlignment()
+        {
+            // Midline makes TMP caret sit at the top of the field; Middle keeps caret with text.
+            AlignInputText(inputField != null ? inputField.textComponent : null);
+            if (inputField?.placeholder is TMP_Text placeholder)
+                AlignInputText(placeholder);
+        }
+
+        static void AlignInputText(TMP_Text text)
+        {
+            if (text == null)
+                return;
+
+            text.alignment = TextAlignmentOptions.Left;
+            var rt = text.rectTransform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+            rt.sizeDelta = Vector2.zero;
+        }
 
         void OnThemeChanged()
         {
@@ -251,7 +298,7 @@ namespace PeopleOfMath.UI
 
         IEnumerator PulseBusyDots()
         {
-            const float period = 0.9f;
+            const float period = 0.75f;
             while (_isBusy && busyIndicator != null)
             {
                 var t = Time.unscaledTime;
@@ -263,8 +310,9 @@ namespace PeopleOfMath.UI
 
                     var phase = (t / period) - i * 0.22f;
                     var wave = 0.5f + 0.5f * Mathf.Sin(phase * Mathf.PI * 2f);
-                    var alpha = Mathf.Lerp(0.22f, 1f, wave);
-                    var scale = Mathf.Lerp(0.72f, 1.08f, wave);
+                    // Stronger value/alpha contrast (Itten) so the pulse reads clearly.
+                    var alpha = Mathf.Lerp(0.4f, 1f, wave);
+                    var scale = Mathf.Lerp(0.7f, 1.28f, wave);
                     var c = dot.color;
                     dot.color = new Color(c.r, c.g, c.b, alpha);
                     dot.rectTransform.localScale = new Vector3(scale, scale, 1f);
@@ -283,7 +331,7 @@ namespace PeopleOfMath.UI
                 if (dot == null)
                     continue;
                 var c = dot.color;
-                dot.color = new Color(c.r, c.g, c.b, 0.45f);
+                dot.color = new Color(c.r, c.g, c.b, 0.55f);
                 dot.rectTransform.localScale = Vector3.one;
             }
         }
@@ -311,8 +359,8 @@ namespace PeopleOfMath.UI
             busyIndicator.anchorMin = new Vector2(1f, 0.5f);
             busyIndicator.anchorMax = new Vector2(1f, 0.5f);
             busyIndicator.pivot = new Vector2(1f, 0.5f);
-            busyIndicator.anchoredPosition = new Vector2(-18f, 0f);
-            busyIndicator.sizeDelta = new Vector2(64f, 28f);
+            busyIndicator.anchoredPosition = new Vector2(-12f, 0f);
+            busyIndicator.sizeDelta = new Vector2(BusyIndicatorWidth, BusyIndicatorHeight);
             busyIndicator.localRotation = Quaternion.identity;
             busyIndicator.gameObject.SetActive(false);
 
@@ -330,8 +378,8 @@ namespace PeopleOfMath.UI
                 existing.anchorMin = new Vector2(0.5f, 0.5f);
                 existing.anchorMax = new Vector2(0.5f, 0.5f);
                 existing.pivot = new Vector2(0.5f, 0.5f);
-                existing.sizeDelta = new Vector2(10f, 10f);
-                existing.anchoredPosition = new Vector2(-22f + i * 16f, 0f);
+                existing.sizeDelta = new Vector2(BusyDotSize, BusyDotSize);
+                existing.anchoredPosition = new Vector2(BusyDotStartX + i * BusyDotSpacing, 0f);
                 existing.localScale = Vector3.one;
 
                 var image = existing.GetComponent<Image>();
@@ -346,12 +394,13 @@ namespace PeopleOfMath.UI
 
         void ApplyBusyTheme()
         {
-            var accent = UiTheme.PrimaryAccent;
+            // Warm complementary to PrimaryAccent purple — high contrast per Itten.
+            var accent = UiTheme.AccentWarm;
             foreach (var dot in _busyDots)
             {
                 if (dot == null)
                     continue;
-                dot.color = new Color(accent.r, accent.g, accent.b, 0.45f);
+                dot.color = new Color(accent.r, accent.g, accent.b, 0.55f);
             }
         }
 
@@ -395,7 +444,7 @@ namespace PeopleOfMath.UI
                 label.raycastTarget = false;
             }
 
-            label.fontSize = 36f;
+            label.fontSize = ClearLabelFontSize;
             label.fontStyle = FontStyles.Bold;
             label.raycastTarget = false;
 

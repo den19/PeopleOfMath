@@ -1720,7 +1720,7 @@ namespace PeopleOfMath.Editor
             var inputRt = inputRoot.GetComponent<RectTransform>();
             StretchToParent(inputRt);
             inputRt.offsetMin = new Vector2(UiLayoutMetrics.SearchBarIconInset + 40f, 8f);
-            inputRt.offsetMax = new Vector2(-UiLayoutMetrics.SearchBarClearButtonWidth, -8f);
+            inputRt.offsetMax = new Vector2(-UiLayoutMetrics.SearchBarClearHitSize, -8f);
 
             var textArea = new GameObject("TextArea", typeof(RectTransform), typeof(RectMask2D));
             textArea.transform.SetParent(inputRoot.transform, false);
@@ -1733,9 +1733,10 @@ namespace PeopleOfMath.Editor
                 FontStyles.Italic,
                 Vector2.zero);
             StretchToParent(placeholder.GetComponent<RectTransform>());
+            placeholder.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
             var placeholderTmp = placeholder.GetComponent<TextMeshProUGUI>();
             placeholderTmp.color = UiTheme.TextSecondary;
-            placeholderTmp.alignment = TextAlignmentOptions.MidlineLeft;
+            placeholderTmp.alignment = TextAlignmentOptions.Left;
 
             var text = CreateTmpChild(
                 textArea.transform,
@@ -1744,8 +1745,9 @@ namespace PeopleOfMath.Editor
                 FontStyles.Normal,
                 Vector2.zero);
             StretchToParent(text.GetComponent<RectTransform>());
+            text.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
             var textTmp = text.GetComponent<TextMeshProUGUI>();
-            textTmp.alignment = TextAlignmentOptions.MidlineLeft;
+            textTmp.alignment = TextAlignmentOptions.Left;
 
             var inputField = inputRoot.AddComponent<TMP_InputField>();
             inputField.textViewport = textArea.GetComponent<RectTransform>();
@@ -1761,7 +1763,7 @@ namespace PeopleOfMath.Editor
             clearRt.anchorMax = new Vector2(1, 0.5f);
             clearRt.pivot = new Vector2(1, 0.5f);
             clearRt.anchoredPosition = new Vector2(-10f, 0f);
-            clearRt.sizeDelta = new Vector2(UiLayoutMetrics.SearchBarClearButtonWidth, UiLayoutMetrics.SearchBarClearButtonWidth);
+            clearRt.sizeDelta = new Vector2(UiLayoutMetrics.SearchBarClearHitSize, UiLayoutMetrics.SearchBarClearHitSize);
             clearGo.GetComponent<Image>().color = Color.clear;
 
             var chipGo = new GameObject("Chip", typeof(RectTransform), typeof(Image));
@@ -1789,7 +1791,7 @@ namespace PeopleOfMath.Editor
             StretchToParent(clearLabel.GetComponent<RectTransform>());
             var clearTmp = clearLabel.GetComponent<TextMeshProUGUI>();
             clearTmp.text = "\u00d7";
-            clearTmp.fontSize = 36f;
+            clearTmp.fontSize = 36f * 1.5f;
             clearTmp.alignment = TextAlignmentOptions.Center;
             clearTmp.color = UiTheme.TextPrimary;
             clearTmp.raycastTarget = false;
@@ -1814,19 +1816,25 @@ namespace PeopleOfMath.Editor
                 {
                     inputField.textComponent.fontSize = UiLayoutMetrics.SearchBarFontSize;
                     inputField.textComponent.color = UiTheme.TextPrimary;
+                    inputField.textComponent.alignment = TextAlignmentOptions.Left;
+                    var textRt = inputField.textComponent.rectTransform;
+                    textRt.pivot = new Vector2(0.5f, 0.5f);
                 }
 
                 if (inputField.placeholder is TextMeshProUGUI placeholder)
                 {
                     placeholder.fontSize = UiLayoutMetrics.SearchBarFontSize;
                     placeholder.color = UiTheme.TextSecondary;
+                    placeholder.alignment = TextAlignmentOptions.Left;
+                    var placeholderRt = placeholder.rectTransform;
+                    placeholderRt.pivot = new Vector2(0.5f, 0.5f);
                 }
             }
 
             var icon = go.transform.Find("Icon")?.GetComponent<TextMeshProUGUI>();
             if (icon != null)
             {
-                icon.fontSize = UiLayoutMetrics.SearchBarFontSize;
+                icon.fontSize = UiLayoutMetrics.SearchBarIconFontSize;
                 icon.color = UiTheme.TextSecondary;
             }
 
