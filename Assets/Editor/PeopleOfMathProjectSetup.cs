@@ -208,8 +208,8 @@ namespace PeopleOfMath.Editor
             }
 
             var aboutPanel = contentArea.Find("AboutPanel")?.gameObject;
-            if (aboutPanel == null)
-                aboutPanel = CreateAboutPanel(contentArea);
+            if (aboutPanel == null || aboutPanel.transform.Find("AboutScroll") == null)
+                aboutPanel = EnsureAboutPanel(contentArea, loc);
 
             var oldBar = canvas.Find("BottomBar");
             if (oldBar != null)
@@ -883,6 +883,36 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "section_links", "Ссылки", "Links");
             AddUiEntry(collection, "link_wikipedia", "Открыть Wikipedia", "Open Wikipedia");
             AddUiEntry(collection, "link_wikidata", "Открыть Wikidata", "Open Wikidata");
+            AddUiEntry(collection, "about_subtitle",
+                "• История математики",
+                "• History of Mathematics");
+            AddUiEntry(collection, "about_tagline",
+                "Карманный справочник математиков — от Пифагора до современников. Без контрольной и без „сдайте телефоны“.",
+                "A pocket guide to mathematicians — from Pythagoras to contemporaries. No pop quiz, and no “phones away”.");
+            AddUiEntry(collection, "about_body",
+                "PeopleOfMath помогает быстро найти эпоху, страну и раздел математики, открыть карточку учёного и освежить факты перед уроком или лекцией. Каталог работает офлайн — даже если Wi‑Fi в кабинете решил сдаться раньше класса.",
+                "PeopleOfMath helps you quickly find an era, country, and field of mathematics, open a scholar’s card, and refresh facts before a lesson or lecture. The catalog works offline — even if classroom Wi‑Fi gives up before the class does.");
+            AddUiEntry(collection, "about_features_title", "Что внутри", "What’s inside");
+            AddUiEntry(collection, "about_features_body",
+                "Справочник с фильтрами · алфавитный индекс · избранное · мини-квиз · темы и крупный шрифт.",
+                "Filterable directory · alphabetical index · favorites · mini-quiz · themes and large type.");
+            AddUiEntry(collection, "about_rate_title", "Оценить в RuStore", "Rate on RuStore");
+            AddUiEntry(collection, "about_rate_body",
+                "Если приложение выручило на уроке или семинаре — короткая оценка в RuStore помогает коллегам его найти. Пять звёзд не обязательны по теореме, но очень приятны empirically.",
+                "If the app helped in a lesson or seminar, a short RuStore rating helps colleagues find it. Five stars aren’t required by theorem — but they’re very welcome empirically.");
+            AddUiEntry(collection, "about_btn_rate", "Оценить в RuStore", "Rate on RuStore");
+            AddUiEntry(collection, "about_more_title", "Другие приложения", "More apps");
+            AddUiEntry(collection, "about_more_body",
+                "Ещё приложения densappstudio в RuStore — загляните, вдруг пригодится рядом с журналом.",
+                "More densappstudio apps on RuStore — take a look; one might sit nicely next to the gradebook.");
+            AddUiEntry(collection, "about_btn_more", "Другие приложения", "More apps");
+            AddUiEntry(collection, "about_contact_title", "Связь", "Contact");
+            AddUiEntry(collection, "about_btn_email", "Написать разработчику", "Email the developer");
+            AddUiEntry(collection, "about_disclaimer",
+                "Биографии собраны для образовательных целей; при расхождениях сверяйтесь с учебником и первоисточниками.",
+                "Biographies are compiled for educational use; when sources disagree, check textbooks and primary references.");
+            AddUiEntry(collection, "about_version", "PeopleOfMath · v{0}", "PeopleOfMath · v{0}");
+            AddUiEntry(collection, "about_copyright", "© densappstudio", "© densappstudio");
 
             if (!LocalizationEditorSettings.GetLocales().Contains(ru))
                 LocalizationEditorSettings.AddLocale(ru);
@@ -1424,7 +1454,7 @@ namespace PeopleOfMath.Editor
             var list = CreateListPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var favorites = CreateFavoritesPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var quiz = CreateQuizPanel(content.transform, navigation, repository, loc);
-            var about = CreateAboutPanel(content.transform);
+            var about = CreateAboutPanel(content.transform, loc);
             var headerBinder = header.root.GetComponent<HeaderTitleBinder>();
             var detail = CreateDetailPanel(content.transform, repository, navigation, headerBinder, loc);
             var settings = CreateSettingsPanel(content.transform, loc);
@@ -3857,12 +3887,381 @@ namespace PeopleOfMath.Editor
             WireButtonClick(backButton.GetComponent<Button>(), nav.OnBackButtonClicked);
         }
 
-        static GameObject CreateAboutPanel(Transform parent)
+        static GameObject CreateAboutPanel(Transform parent, LocalizationRefs loc)
         {
             var panel = CreatePanel(parent, "AboutPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             panel.SetActive(false);
-            panel.AddComponent<AboutPanel>();
+            panel.AddComponent<FontSizeScope>();
+            AddThemeBinding(panel, UiThemeToken.Background);
+
+            var scroll = CreateScrollView(panel.transform, "AboutScroll");
+            var content = scroll.content;
+            var contentImage = content.GetComponent<Image>();
+            if (contentImage != null)
+                contentImage.color = Color.clear;
+
+            var vlg = content.GetComponent<VerticalLayoutGroup>();
+            vlg.padding = new RectOffset(40, 40, 32, Mathf.RoundToInt(UiButtonLayout.BottomBarHeight));
+            vlg.spacing = UiButtonLayout.AboutSectionSpacing;
+            vlg.childAlignment = TextAnchor.UpperLeft;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+
+            var collection = loc.UiCollection;
+
+            CreateAboutText(
+                content,
+                "AppName",
+                28,
+                FontStyles.Bold,
+                UiThemeToken.TextPrimary,
+                "PeopleOfMath",
+                localizationKey: null,
+                collection);
+
+            CreateAboutText(
+                content,
+                "Subtitle",
+                18,
+                FontStyles.Normal,
+                UiThemeToken.TextSecondary,
+                null,
+                "about_subtitle",
+                collection);
+
+            CreateAboutText(
+                content,
+                "Tagline",
+                16,
+                FontStyles.Normal,
+                UiThemeToken.TextSecondary,
+                null,
+                "about_tagline",
+                collection);
+
+            var version = CreateAboutText(
+                content,
+                "Version",
+                15,
+                FontStyles.Italic,
+                UiThemeToken.TextSecondary,
+                "PeopleOfMath · v",
+                localizationKey: null,
+                collection);
+
+            CreateAboutText(
+                content,
+                "Pitch",
+                16,
+                FontStyles.Normal,
+                UiThemeToken.TextPrimary,
+                null,
+                "about_body",
+                collection);
+
+            CreateAboutText(
+                content,
+                "FeaturesTitle",
+                18,
+                FontStyles.Bold,
+                UiThemeToken.TextPrimary,
+                null,
+                "about_features_title",
+                collection);
+
+            CreateAboutText(
+                content,
+                "FeaturesBody",
+                16,
+                FontStyles.Normal,
+                UiThemeToken.TextSecondary,
+                null,
+                "about_features_body",
+                collection);
+
+            var rateSection = CreateAboutSection(content, "RateSection");
+            CreateAboutText(
+                rateSection.transform,
+                "RateTitle",
+                18,
+                FontStyles.Bold,
+                UiThemeToken.TextPrimary,
+                null,
+                "about_rate_title",
+                collection);
+            CreateAboutText(
+                rateSection.transform,
+                "RateBody",
+                15,
+                FontStyles.Normal,
+                UiThemeToken.TextSecondary,
+                null,
+                "about_rate_body",
+                collection);
+            var rateBtn = CreateAboutLayoutButton(
+                rateSection.transform,
+                UiButtonLayout.AboutRate,
+                collection,
+                accentWarm: true);
+
+            var moreSection = CreateAboutSection(content, "MoreAppsSection");
+            CreateAboutText(
+                moreSection.transform,
+                "MoreTitle",
+                18,
+                FontStyles.Bold,
+                UiThemeToken.TextPrimary,
+                null,
+                "about_more_title",
+                collection);
+            CreateAboutText(
+                moreSection.transform,
+                "MoreBody",
+                15,
+                FontStyles.Normal,
+                UiThemeToken.TextSecondary,
+                null,
+                "about_more_body",
+                collection);
+            var moreBtn = CreateAboutLayoutButton(
+                moreSection.transform,
+                UiButtonLayout.AboutMore,
+                collection,
+                accentWarm: false);
+
+            CreateAboutText(
+                content,
+                "ContactTitle",
+                18,
+                FontStyles.Bold,
+                UiThemeToken.TextPrimary,
+                null,
+                "about_contact_title",
+                collection);
+            var emailBtn = CreateAboutLayoutButton(
+                content,
+                UiButtonLayout.AboutEmail,
+                collection,
+                accentWarm: false);
+
+            CreateAboutText(
+                content,
+                "Disclaimer",
+                14,
+                FontStyles.Italic,
+                UiThemeToken.TextSecondary,
+                null,
+                "about_disclaimer",
+                collection);
+
+            CreateAboutText(
+                content,
+                "Copyright",
+                14,
+                FontStyles.Normal,
+                UiThemeToken.TextSecondary,
+                null,
+                "about_copyright",
+                collection);
+
+            var about = panel.AddComponent<AboutPanel>();
+            var so = new SerializedObject(about);
+            so.FindProperty("versionText").objectReferenceValue = version;
+            so.FindProperty("rateButton").objectReferenceValue = rateBtn.GetComponent<Button>();
+            so.FindProperty("moreAppsButton").objectReferenceValue = moreBtn.GetComponent<Button>();
+            so.FindProperty("emailButton").objectReferenceValue = emailBtn.GetComponent<Button>();
+            so.FindProperty("rateSection").objectReferenceValue = rateSection;
+            so.FindProperty("moreAppsSection").objectReferenceValue = moreSection;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            WireButtonClick(rateBtn.GetComponent<Button>(), about.OnRateClicked);
+            WireButtonClick(moreBtn.GetComponent<Button>(), about.OnMoreAppsClicked);
+            WireButtonClick(emailBtn.GetComponent<Button>(), about.OnEmailClicked);
             return panel;
+        }
+
+        static GameObject CreateAboutSection(Transform parent, string name)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(LayoutElement));
+            go.transform.SetParent(parent, false);
+            var vlg = go.GetComponent<VerticalLayoutGroup>();
+            vlg.spacing = UiButtonLayout.AboutBlockSpacing;
+            vlg.childAlignment = TextAnchor.UpperLeft;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+            var fitter = go.GetComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var le = go.GetComponent<LayoutElement>();
+            le.flexibleWidth = 1f;
+            return go;
+        }
+
+        static TMP_Text CreateAboutText(
+            Transform parent,
+            string name,
+            float size,
+            FontStyles style,
+            UiThemeToken token,
+            string literalText,
+            string localizationKey,
+            StringTableCollection collection)
+        {
+            var go = CreateTmpChild(parent, name, size, style, Vector2.zero);
+            var tmp = go.GetComponent<TextMeshProUGUI>();
+            tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.color = UiTheme.GetToken(token);
+            tmp.raycastTarget = false;
+            tmp.alignment = TextAlignmentOptions.TopLeft;
+
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = new Vector2(0f, 24f);
+
+            var le = go.AddComponent<LayoutElement>();
+            le.flexibleWidth = 1f;
+            le.minHeight = 24f;
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var layoutHeight = go.AddComponent<TmpLayoutHeight>();
+            var lhSo = new SerializedObject(layoutHeight);
+            lhSo.FindProperty("minHeight").floatValue = 24f;
+            lhSo.FindProperty("padding").floatValue = 4f;
+            lhSo.ApplyModifiedPropertiesWithoutUndo();
+
+            AddThemeBinding(go, token);
+
+            if (!string.IsNullOrEmpty(localizationKey) && collection != null)
+            {
+                var lse = go.AddComponent<LocalizeStringEvent>();
+                var so = new SerializedObject(lse);
+                AssignLocalized(so.FindProperty("m_StringReference"), MakeLocalized(collection, localizationKey));
+                so.ApplyModifiedPropertiesWithoutUndo();
+                WireLocalizeStringToTmp(go);
+            }
+            else if (!string.IsNullOrEmpty(literalText))
+            {
+                tmp.text = literalText;
+            }
+
+            return tmp;
+        }
+
+        static GameObject CreateAboutLayoutButton(
+            Transform parent,
+            UiButtonLayout.SceneButton spec,
+            StringTableCollection collection,
+            bool accentWarm)
+        {
+            var go = new GameObject(spec.Name, typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            go.transform.SetParent(parent, false);
+
+            var le = go.GetComponent<LayoutElement>();
+            le.flexibleWidth = 1f;
+            le.minHeight = UiButtonLayout.AboutButtonHeight;
+            le.preferredHeight = UiButtonLayout.AboutButtonHeight;
+
+            var label = CreateTmpChild(
+                go.transform,
+                "Text",
+                UiButtonLayout.StandardLabelFontBase,
+                FontStyles.Normal,
+                Vector2.zero);
+            ConfigureAboutButtonLabel(label);
+
+            var lse = label.AddComponent<LocalizeStringEvent>();
+            var so = new SerializedObject(lse);
+            AssignLocalized(so.FindProperty("m_StringReference"), MakeLocalized(collection, spec.LocalizationKey));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            WireLocalizeStringToTmp(label);
+
+            if (accentWarm)
+                UiStyleBuilder.ApplyAccentWarmButton(go);
+            else
+                UiStyleBuilder.ApplySecondaryButton(go);
+
+            ConfigureAboutButtonLabel(label);
+            return go;
+        }
+
+        static void ConfigureAboutButtonLabel(GameObject labelGo)
+        {
+            if (labelGo == null)
+                return;
+
+            var rt = labelGo.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchoredPosition = Vector2.zero;
+                rt.sizeDelta = new Vector2(-24f, -12f);
+            }
+
+            var tmp = labelGo.GetComponent<TextMeshProUGUI>();
+            if (tmp == null)
+                return;
+
+            var fontSize = UiLayoutMetrics.ScaleFont(UiButtonLayout.StandardLabelFontBase);
+            tmp.fontSize = fontSize;
+            tmp.enableAutoSizing = true;
+            tmp.fontSizeMin = Mathf.Max(14f, fontSize * 0.55f);
+            tmp.fontSizeMax = fontSize;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
+            tmp.overflowMode = TextOverflowModes.Ellipsis;
+            tmp.raycastTarget = false;
+        }
+
+        /// <summary>Creates About panel or rebuilds an empty/legacy stub without scroll content.</summary>
+        static GameObject EnsureAboutPanel(Transform parent, LocalizationRefs loc)
+        {
+            var existing = parent.Find("AboutPanel");
+            if (existing != null && existing.Find("AboutScroll") != null)
+            {
+                EnsureAboutAppSubtitle(existing, loc);
+                return existing.gameObject;
+            }
+
+            if (existing != null)
+                Object.DestroyImmediate(existing.gameObject);
+
+            return CreateAboutPanel(parent, loc);
+        }
+
+        static void EnsureAboutAppSubtitle(Transform aboutPanel, LocalizationRefs loc)
+        {
+            var content = aboutPanel.Find("AboutScroll/Viewport/Content");
+            if (content == null)
+                return;
+
+            if (content.Find("Subtitle") != null)
+                return;
+
+            var subtitle = CreateAboutText(
+                content,
+                "Subtitle",
+                18,
+                FontStyles.Normal,
+                UiThemeToken.TextSecondary,
+                null,
+                "about_subtitle",
+                loc.UiCollection);
+
+            var appName = content.Find("AppName");
+            if (appName != null)
+                subtitle.transform.SetSiblingIndex(appName.GetSiblingIndex() + 1);
         }
 
         static void WireButtonClick(Button button, UnityEngine.Events.UnityAction action)
@@ -4140,6 +4539,54 @@ namespace PeopleOfMath.Editor
             EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
         }
 
+        [MenuItem("PeopleOfMath/Patch About Screen")]
+        public static void PatchAboutScreen()
+        {
+            if (DeferUntilEditMode(PatchAboutScreen))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            UiSpriteFactory.EnsureSprites();
+            var loc = SetupLocalization();
+            AssetDatabase.SaveAssets();
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var navigation = Object.FindFirstObjectByType<NavigationController>();
+            var contentArea = GameObject.Find("ContentArea")?.transform;
+            if (navigation == null || contentArea == null)
+            {
+                Debug.LogError("NavigationController or ContentArea not found in Main scene.");
+                return;
+            }
+
+            var existing = contentArea.Find("AboutPanel");
+            if (existing != null)
+                Object.DestroyImmediate(existing.gameObject);
+
+            var aboutGo = CreateAboutPanel(contentArea, loc);
+            var listPanel = contentArea.Find("ListPanel");
+            if (listPanel != null)
+                aboutGo.transform.SetSiblingIndex(listPanel.GetSiblingIndex() + 1);
+
+            var navSo = new SerializedObject(navigation);
+            navSo.FindProperty("aboutPanel").objectReferenceValue = aboutGo.GetComponent<AboutPanel>();
+            navSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var canvas = GameObject.Find("Canvas")?.transform;
+            if (canvas != null)
+                TagThemeBindings(canvas);
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("About screen patched in Main scene.");
+        }
+
         [MenuItem("PeopleOfMath/Patch Quiz Support")]
         public static void PatchQuizSupport()
         {
@@ -4394,7 +4841,7 @@ namespace PeopleOfMath.Editor
             if (home != null && list != null && detail != null && settings != null && backButton != null && headerBinder != null
                 && browseTab != null && indexTab != null && settingsTab != null)
             {
-                var aboutGo = contentArea.Find("AboutPanel")?.gameObject ?? CreateAboutPanel(contentArea);
+                var aboutGo = EnsureAboutPanel(contentArea, loc);
                 WireNavigation(
                     navigation,
                     home,
@@ -4552,7 +4999,7 @@ namespace PeopleOfMath.Editor
                 && settings != null && backButton != null && headerBinder != null
                 && browseTab != null && indexTab != null && settingsTab != null && favoritesButton != null && quizTab != null)
             {
-                var aboutGo = contentArea.Find("AboutPanel")?.gameObject ?? CreateAboutPanel(contentArea);
+                var aboutGo = EnsureAboutPanel(contentArea, loc);
                 WireNavigation(
                     navigation,
                     homeGo,
@@ -4741,7 +5188,7 @@ namespace PeopleOfMath.Editor
                 && backButton != null && headerBinder != null && browseTab != null && indexTab != null
                 && settingsTab != null && favoritesButton != null)
             {
-                var aboutGo = contentArea.Find("AboutPanel")?.gameObject ?? CreateAboutPanel(contentArea);
+                var aboutGo = EnsureAboutPanel(contentArea, loc);
                 WireNavigation(
                     navigation,
                     home,

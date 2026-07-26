@@ -124,6 +124,20 @@ namespace PeopleOfMath.Editor
         public static readonly SceneButton SettingsThemeGlass = new(
             "GlassThemeButton", new Vector2(40f, -1040f), new Vector2(400f, 64f), "btn_theme_glass", UiButtonStyle.Secondary);
 
+        /// <summary>About CTA height (layout-driven; position unused).</summary>
+        public const float AboutButtonHeight = 64f;
+        public const float AboutSectionSpacing = 20f;
+        public const float AboutBlockSpacing = 12f;
+
+        public static readonly SceneButton AboutRate = new(
+            "RateButton", Vector2.zero, new Vector2(0f, AboutButtonHeight), "about_btn_rate", UiButtonStyle.Primary);
+
+        public static readonly SceneButton AboutMore = new(
+            "MoreAppsButton", Vector2.zero, new Vector2(0f, AboutButtonHeight), "about_btn_more", UiButtonStyle.Secondary);
+
+        public static readonly SceneButton AboutEmail = new(
+            "EmailButton", Vector2.zero, new Vector2(0f, AboutButtonHeight), "about_btn_email", UiButtonStyle.Secondary);
+
         public static void ApplyTopLeftAnchoredRect(RectTransform rt, Vector2 position, Vector2 size)
         {
             if (rt == null)

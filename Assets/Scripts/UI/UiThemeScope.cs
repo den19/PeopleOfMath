@@ -59,6 +59,8 @@ namespace PeopleOfMath.UI
             navigation?.RefreshTabStyles();
             settingsPanel?.RefreshStatus();
             portraitGallery?.RefreshTheme();
+            foreach (var about in GetComponentsInChildren<AboutPanel>(true))
+                about.RefreshTheme();
             RefreshSecondaryButtons();
             RefreshHeaderTitles();
         }

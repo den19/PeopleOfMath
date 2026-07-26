@@ -111,6 +111,33 @@ namespace PeopleOfMath.Editor
             SetLabelColor(root.transform, UiTheme.TextPrimary);
         }
 
+        public static void ApplyAccentWarmButton(GameObject root)
+        {
+            if (root == null)
+                return;
+
+            UiSpriteFactory.EnsureSprites();
+            var sprite = UiSpriteFactory.RoundedRect;
+            var warm = UiTheme.AccentWarm;
+
+            ClearRootImage(root);
+
+            var glow = GetOrCreateChild(root.transform, GlowChildName);
+            ConfigureStretchLayer(glow, GlowExpand, sprite, new Color(warm.r, warm.g, warm.b, 0.22f));
+
+            var fill = GetOrCreateChild(root.transform, FillChildName);
+            ConfigureStretchLayer(fill, 1f, sprite, warm, raycastTarget: true);
+
+            var border = fill.GetComponent<Outline>() ?? fill.AddComponent<Outline>();
+            border.effectColor = new Color(warm.r, warm.g, warm.b, 0.55f);
+            border.effectDistance = new Vector2(1f, -1f);
+            border.useGraphicAlpha = true;
+
+            ConfigureButton(root, fill.GetComponent<Image>());
+            MoveLabelAboveFill(root.transform);
+            SetLabelColor(root.transform, new Color(0.110f, 0.106f, 0.133f, 1f));
+        }
+
         public static void ApplyNavBarStyle(GameObject bar)
         {
             if (bar == null)

@@ -589,6 +589,79 @@ MonoBehaviour:
     m_Localized: No internet connection. Unable to open the website.
     m_Metadata:
       m_Items: []
+  - m_Id: 18991898919198734
+    m_Localized: "\u2022 History of Mathematics"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898864672768
+    m_Localized: "A pocket guide to mathematicians \u2014 from Pythagoras to contemporaries.
+      No pop quiz, and no \u201Cphones away\u201D."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198720
+    m_Localized: "PeopleOfMath helps you quickly find an era, country, and field
+      of mathematics, open a scholar\u2019s card, and refresh facts before a lesson
+      or lecture. The catalog works offline \u2014 even if classroom Wi\u2011Fi gives
+      up before the class does."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198721
+    m_Localized: "What\u2019s inside"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198722
+    m_Localized: "Filterable directory \xB7 alphabetical index \xB7 favorites \xB7
+      mini-quiz \xB7 themes and large type."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198723
+    m_Localized: Rate on RuStore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198724
+    m_Localized: "If the app helped in a lesson or seminar, a short RuStore rating
+      helps colleagues find it. Five stars aren\u2019t required by theorem \u2014
+      but they\u2019re very welcome empirically."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198725
+    m_Localized: Rate on RuStore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198726
+    m_Localized: More apps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198727
+    m_Localized: "More densappstudio apps on RuStore \u2014 take a look; one might
+      sit nicely next to the gradebook."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198728
+    m_Localized: More apps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198729
+    m_Localized: Contact
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198730
+    m_Localized: Email the developer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198731
+    m_Localized: Biographies are compiled for educational use; when sources disagree,
+      check textbooks and primary references.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198732
+    m_Localized: "PeopleOfMath \xB7 v{0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198733
+    m_Localized: "\xA9 densappstudio"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

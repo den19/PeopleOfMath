@@ -32,6 +32,41 @@ namespace PeopleOfMath.UI
             button.GetComponent<UiButtonPressFeedback>()?.RefreshNormalFillColor();
         }
 
+        /// <summary>Warm complementary CTA (rate / highlight actions). Dark label for contrast on amber.</summary>
+        public static void ApplyAccentWarm(Button button)
+        {
+            if (button == null)
+                return;
+
+            button.transition = Selectable.Transition.None;
+            EnsurePressFeedback(button);
+
+            var glow = GetGlowImage(button);
+            var fill = GetFillImage(button);
+            var roundedSprite = UiSprites.RoundedRect;
+            if (glow == null || fill == null || roundedSprite == null)
+                return;
+
+            RestoreDefaultMaterial(fill);
+            RestoreDefaultMaterial(glow);
+
+            glow.sprite = roundedSprite;
+            glow.type = Image.Type.Sliced;
+            glow.color = new Color(UiTheme.AccentWarm.r, UiTheme.AccentWarm.g, UiTheme.AccentWarm.b, 0.22f);
+
+            fill.sprite = roundedSprite;
+            fill.type = Image.Type.Sliced;
+            fill.color = UiTheme.AccentWarm;
+
+            var border = fill.GetComponent<Outline>();
+            if (border != null)
+                border.effectColor = new Color(UiTheme.AccentWarm.r, UiTheme.AccentWarm.g, UiTheme.AccentWarm.b, 0.55f);
+
+            ApplyTabIndicator(button, false, UiTheme.AccentWarm);
+            ApplyLabelColorValue(button, new Color(0.110f, 0.106f, 0.133f, 1f));
+            button.GetComponent<UiButtonPressFeedback>()?.RefreshNormalFillColor();
+        }
+
         static void EnsurePressFeedback(Button button)
         {
             if (button.GetComponent<UiButtonPressFeedback>() == null)
@@ -190,6 +225,11 @@ namespace PeopleOfMath.UI
                 color = ThemeHelper.IsGlassmorphism ? UiTheme.PrimaryButtonText : UiTheme.TextPrimary;
             }
 
+            ApplyLabelColorValue(button, color);
+        }
+
+        static void ApplyLabelColorValue(Button button, Color color)
+        {
             foreach (Transform child in button.transform)
             {
                 if (child.name is GlowChildName or FillChildName or TabIndicatorChildName)

@@ -371,6 +371,70 @@ MonoBehaviour:
     m_Key: link_offline
     m_Metadata:
       m_Items: []
+  - m_Id: 18991898919198734
+    m_Key: about_subtitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898864672768
+    m_Key: about_tagline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198720
+    m_Key: about_body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198721
+    m_Key: about_features_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198722
+    m_Key: about_features_body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198723
+    m_Key: about_rate_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198724
+    m_Key: about_rate_body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198725
+    m_Key: about_btn_rate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198726
+    m_Key: about_more_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198727
+    m_Key: about_more_body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198728
+    m_Key: about_btn_more
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198729
+    m_Key: about_contact_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198730
+    m_Key: about_btn_email
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198731
+    m_Key: about_disclaimer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198732
+    m_Key: about_version
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18991898919198733
+    m_Key: about_copyright
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
