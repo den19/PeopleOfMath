@@ -10,7 +10,7 @@ namespace PeopleOfMath.UI
 {
     public class SearchBar : MonoBehaviour
     {
-        const float DebounceSeconds = 0.28f;
+        const float DebounceSeconds = 2f;
         const float ClearHitSize = 88f;
         const float ClearVisualSize = 48f;
 

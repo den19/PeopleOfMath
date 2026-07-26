@@ -2186,6 +2186,7 @@ namespace PeopleOfMath.Editor
             go.transform.SetParent(parent, false);
             var grid = go.GetComponent<GridLayoutGroup>();
             HomeListPanelLayout.ConfigureBrowseGrid(grid);
+            go.AddComponent<AdaptiveBrowseGrid>();
             var fitter = go.GetComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
@@ -2208,6 +2209,9 @@ namespace PeopleOfMath.Editor
                 grid = group.gameObject.AddComponent<GridLayoutGroup>();
 
             HomeListPanelLayout.ConfigureBrowseGrid(grid);
+
+            if (group.GetComponent<AdaptiveBrowseGrid>() == null)
+                group.gameObject.AddComponent<AdaptiveBrowseGrid>();
 
             var fitter = group.GetComponent<ContentSizeFitter>() ?? group.gameObject.AddComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;

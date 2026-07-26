@@ -25,6 +25,7 @@ namespace PeopleOfMath.UI
 
         readonly List<Button> _spawned = new();
         bool _needsRebuild = true;
+        string _boundLocaleCode;
 
         Button TilePrefab => categoryTilePrefab != null ? categoryTilePrefab : filterButtonPrefab;
 
@@ -38,19 +39,24 @@ namespace PeopleOfMath.UI
                 quizButton.onClick.RemoveAllListeners();
                 quizButton.onClick.AddListener(() => navigation?.ShowQuiz());
             }
+
+            LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+        }
+
+        void OnDestroy()
+        {
+            LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
         }
 
         void OnEnable()
         {
-            LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
             ThemeHelper.ThemeChanged += OnThemeChanged;
-            if (_needsRebuild || _spawned.Count == 0)
+            if (_needsRebuild || _spawned.Count == 0 || LocaleCodeChanged())
                 Rebuild();
         }
 
         void OnDisable()
         {
-            LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
             ThemeHelper.ThemeChanged -= OnThemeChanged;
         }
 
@@ -61,11 +67,18 @@ namespace PeopleOfMath.UI
                 Rebuild();
         }
 
+        bool LocaleCodeChanged()
+        {
+            var code = LocalizationSettings.SelectedLocale?.Identifier.Code ?? "";
+            return code != _boundLocaleCode;
+        }
+
         void OnThemeChanged() => ApplyFilterStyles();
 
         void Rebuild()
         {
             ClearSpawned();
+            _boundLocaleCode = LocalizationSettings.SelectedLocale?.Identifier.Code ?? "";
             SpawnGroup(centuryContainer, FilterKind.Century, Taxonomy.AllCenturyKeys, Taxonomy.Centuries);
             SpawnGroup(countryContainer, FilterKind.Country, Taxonomy.AllCountryKeys, Taxonomy.Countries);
             SpawnGroup(
@@ -123,8 +136,22 @@ namespace PeopleOfMath.UI
                 _spawned.Add(btn);
             }
 
+            EnsureAdaptiveGrid(parent);
+
             if (parent is RectTransform parentRt)
+            {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(parentRt);
+                parent.GetComponent<AdaptiveBrowseGrid>()?.Apply();
+            }
+        }
+
+        static void EnsureAdaptiveGrid(Transform parent)
+        {
+            if (parent == null || parent.GetComponent<GridLayoutGroup>() == null)
+                return;
+
+            if (parent.GetComponent<AdaptiveBrowseGrid>() == null)
+                parent.gameObject.AddComponent<AdaptiveBrowseGrid>();
         }
 
         static void BindTile(Button btn, FilterKind kind, string key, string label, int count)

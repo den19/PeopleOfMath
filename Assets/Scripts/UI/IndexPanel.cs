@@ -24,25 +24,33 @@ namespace PeopleOfMath.UI
         readonly List<(Button button, char letter)> _letterButtons = new();
         char? _selectedLetter;
         bool _needsRebuild = true;
+        string _boundLocaleCode;
 
         void Awake()
         {
             if (itemPrefab == null)
                 itemPrefab = Resources.Load<MathematicianListItem>(ListItemResourceName);
+
+            LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+        }
+
+        void OnDestroy()
+        {
+            LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
         }
 
         void OnEnable()
         {
-            LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
             FontSizeHelper.FontSizeChanged += OnFontSizeChanged;
             ThemeHelper.ThemeChanged += OnThemeChanged;
-            if (_needsRebuild || _letterButtons.Count == 0)
+            if (_needsRebuild || _letterButtons.Count == 0 || LocaleCodeChanged())
                 Rebuild();
+            else
+                RefreshList();
         }
 
         void OnDisable()
         {
-            LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
             FontSizeHelper.FontSizeChanged -= OnFontSizeChanged;
             ThemeHelper.ThemeChanged -= OnThemeChanged;
         }
@@ -50,6 +58,7 @@ namespace PeopleOfMath.UI
         void OnLocaleChanged(UnityEngine.Localization.Locale _)
         {
             _needsRebuild = true;
+            _selectedLetter = null;
             if (isActiveAndEnabled)
                 Rebuild();
         }
@@ -57,6 +66,12 @@ namespace PeopleOfMath.UI
         void OnFontSizeChanged() => RefreshList();
 
         void OnThemeChanged() => RefreshTheme();
+
+        bool LocaleCodeChanged()
+        {
+            var code = LocalizationSettings.SelectedLocale?.Identifier.Code ?? "";
+            return code != _boundLocaleCode;
+        }
 
         void RefreshTheme()
         {
@@ -83,6 +98,7 @@ namespace PeopleOfMath.UI
                 return;
 
             var english = LocaleHelper.IsEnglish;
+            _boundLocaleCode = LocalizationSettings.SelectedLocale?.Identifier.Code ?? "";
             var usedLetters = IndexService.GetUsedLetters(repository.All, english);
             EnsureSelectedLetter(usedLetters, english);
             RebuildLetterButtons(english, usedLetters);

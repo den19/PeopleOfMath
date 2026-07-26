@@ -585,6 +585,10 @@ MonoBehaviour:
     m_Localized: About
     m_Metadata:
       m_Items: []
+  - m_Id: 9100000000000027
+    m_Localized: No internet connection. Unable to open the website.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

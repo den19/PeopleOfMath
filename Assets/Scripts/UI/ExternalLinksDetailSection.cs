@@ -53,7 +53,7 @@ namespace PeopleOfMath.UI
                 label.text = labelText;
 
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => Application.OpenURL(url));
+            button.onClick.AddListener(() => ExternalLinkOpener.Open(url));
         }
     }
 }
