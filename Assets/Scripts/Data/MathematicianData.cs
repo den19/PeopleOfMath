@@ -34,16 +34,31 @@ namespace PeopleOfMath.Data
             return EditorialText.Clean(text);
         }
 
+        /// <summary>
+        /// Locale-specific text with no cross-locale fallback.
+        /// Empty EN stays empty when <paramref name="english"/> is true (unlike <see cref="Pick"/>).
+        /// </summary>
+        static string PickExact(bool english, string ru, string en) =>
+            EditorialText.Clean(english ? en : ru);
+
         public string GetFullName(bool english) => Pick(english, fullNameRu, fullNameEn);
 
-        public string GetShortBio(bool english) => Pick(english, shortBioRu, shortBioEn);
+        public string GetShortBio(bool english, bool fallbackToOtherLocale = true) =>
+            fallbackToOtherLocale
+                ? Pick(english, shortBioRu, shortBioEn)
+                : PickExact(english, shortBioRu, shortBioEn);
 
-        public string GetAchievements(bool english) => Pick(english, achievementsRu, achievementsEn);
+        public string GetAchievements(bool english, bool fallbackToOtherLocale = true) =>
+            fallbackToOtherLocale
+                ? Pick(english, achievementsRu, achievementsEn)
+                : PickExact(english, achievementsRu, achievementsEn);
 
         public string GetPersonalLife(bool english) => Pick(english, personalLifeRu, personalLifeEn);
 
-        public string GetInterestingFacts(bool english) =>
-            Pick(english, interestingFactsRu, interestingFactsEn);
+        public string GetInterestingFacts(bool english, bool fallbackToOtherLocale = true) =>
+            fallbackToOtherLocale
+                ? Pick(english, interestingFactsRu, interestingFactsEn)
+                : PickExact(english, interestingFactsRu, interestingFactsEn);
 
         public IReadOnlyList<PortraitEntry> GetValidPortraits() =>
             portraits.Where(p => p != null && p.sprite != null).ToList();

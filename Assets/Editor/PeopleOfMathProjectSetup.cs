@@ -3007,7 +3007,8 @@ namespace PeopleOfMath.Editor
             var promptText = CreateTmpChild(view.transform, "PromptText", 18, FontStyles.Normal, new Vector2(40, -72));
             var promptRt = promptText.GetComponent<RectTransform>();
             // Stretch X: with pivot.x=0, pos.x=40 and sizeDelta.x=-80 → 40px left+right.
-            promptRt.sizeDelta = new Vector2(-80, 320);
+            // Height leaves room for 4×208 answer buttons above FeedbackView (title ~y=220).
+            promptRt.sizeDelta = new Vector2(-80, 400);
             var promptTmp = promptText.GetComponent<TextMeshProUGUI>();
             promptTmp.alignment = TextAlignmentOptions.TopLeft;
             promptTmp.textWrappingMode = TextWrappingModes.Normal;
@@ -3019,9 +3020,9 @@ namespace PeopleOfMath.Editor
             var answersRt = answers.GetComponent<RectTransform>();
             answersRt.anchorMin = new Vector2(0, 0);
             answersRt.anchorMax = new Vector2(1, 1);
-            // Bottom inset reserves space for FeedbackView actions.
-            answersRt.offsetMin = new Vector2(40, 300);
-            answersRt.offsetMax = new Vector2(-40, -420);
+            // Bottom inset clears FeedbackView (title at y=220 + height 40); top sits under PromptText.
+            answersRt.offsetMin = new Vector2(40, 360);
+            answersRt.offsetMax = new Vector2(-40, -480);
             var vlg = answers.GetComponent<VerticalLayoutGroup>();
             vlg.spacing = 16f;
             vlg.childControlHeight = true;
@@ -4915,6 +4916,20 @@ namespace PeopleOfMath.Editor
                 var listPanel = contentArea.Find("ListPanel");
                 if (listPanel != null)
                     quizPanelGo.transform.SetSiblingIndex(listPanel.GetSiblingIndex() + 1);
+            }
+            else
+            {
+                var playingView = quizPanelGo.transform.Find("PlayingView");
+                var promptRt = playingView?.Find("PromptText")?.GetComponent<RectTransform>();
+                if (promptRt != null)
+                    promptRt.sizeDelta = new Vector2(-80, 400);
+
+                var answersRt = playingView?.Find("Answers")?.GetComponent<RectTransform>();
+                if (answersRt != null)
+                {
+                    answersRt.offsetMin = new Vector2(40, 360);
+                    answersRt.offsetMax = new Vector2(-40, -480);
+                }
             }
 
             var header = GameObject.Find("Header");

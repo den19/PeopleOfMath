@@ -104,7 +104,17 @@ namespace PeopleOfMath.UI
             button.onClick.AddListener(action);
         }
 
-        void OnLocaleChanged(UnityEngine.Localization.Locale _) => RefreshVisibleState();
+        void OnLocaleChanged(UnityEngine.Localization.Locale _)
+        {
+            // PromptText is baked at GenerateRound; rebuild so fact copy matches the new locale.
+            if (IsInActiveRound)
+            {
+                StartRound();
+                return;
+            }
+
+            RefreshVisibleState();
+        }
 
         void OnThemeChanged() => RefreshModeButtons();
 
