@@ -815,8 +815,8 @@ namespace PeopleOfMath.Editor
                 collection = LocalizationEditorSettings.CreateStringTableCollection("UI", collectionPath);
 
             AddUiEntry(collection, "title_home",
-                "Математики: века, страны, разделы математики",
-                "Mathematicians: centuries, countries, branches of mathematics");
+                "История математики",
+                "History of Mathematics");
             AddUiEntry(collection, "title_settings", "Настройки", "Settings");
             AddUiEntry(collection, "title_index", "Все математики A–Я", "All mathematicians A–Z");
             AddUiEntry(collection, "title_detail", "Карточка", "Profile");
@@ -1494,6 +1494,7 @@ namespace PeopleOfMath.Editor
             UiStyleBuilder.ApplyNavBarStyle(header);
 
             var homeTitle = CreateLocalizedTitle(header.transform, "HomeTitle", loc.HomeTitle);
+            ConfigureHomeTitle(homeTitle);
             var settingsTitle = CreateLocalizedTitle(header.transform, "SettingsTitle", loc.SettingsTitle);
             settingsTitle.SetActive(false);
             var indexTitle = CreateLocalizedTitle(header.transform, "IndexTitle", loc.IndexTitle);
@@ -1554,7 +1555,22 @@ namespace PeopleOfMath.Editor
             return go;
         }
 
-        public static void ConfigureHeaderTitle(GameObject go)
+        public static void ConfigureHeaderTitle(GameObject go) =>
+            ConfigureHeaderTitle(
+                go,
+                UiLayoutMetrics.HeaderTitleFontSize,
+                UiLayoutMetrics.HeaderTitleFontSizeMin,
+                UiLayoutMetrics.HeaderTitleFontSizeMax);
+
+        /// <summary>Home brand title — same layout as other header titles, larger type.</summary>
+        public static void ConfigureHomeTitle(GameObject go) =>
+            ConfigureHeaderTitle(
+                go,
+                UiLayoutMetrics.HomeTitleFontSize,
+                UiLayoutMetrics.HomeTitleFontSizeMin,
+                UiLayoutMetrics.HomeTitleFontSizeMax);
+
+        static void ConfigureHeaderTitle(GameObject go, float fontSize, float fontSizeMin, float fontSizeMax)
         {
             if (go == null)
                 return;
@@ -1574,9 +1590,9 @@ namespace PeopleOfMath.Editor
                 return;
 
             tmp.enableAutoSizing = true;
-            tmp.fontSizeMin = 26f;
-            tmp.fontSizeMax = 48f;
-            tmp.fontSize = 42f;
+            tmp.fontSizeMin = fontSizeMin;
+            tmp.fontSizeMax = fontSizeMax;
+            tmp.fontSize = fontSize;
             tmp.fontStyle = FontStyles.Bold;
             tmp.color = UiTheme.NavBarText;
             tmp.textWrappingMode = TextWrappingModes.NoWrap;
@@ -1588,7 +1604,7 @@ namespace PeopleOfMath.Editor
             var so = new SerializedObject(tmp);
             var baseProp = so.FindProperty("m_fontSizeBase");
             if (baseProp != null)
-                baseProp.floatValue = 42f;
+                baseProp.floatValue = fontSize;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             WireLocalizeStringToTmp(go);
@@ -1605,9 +1621,6 @@ namespace PeopleOfMath.Editor
 
             EditorUtility.SetDirty(go);
         }
-
-        /// <summary>Legacy alias — home title uses the same centered header style.</summary>
-        public static void ConfigureHomeTitle(GameObject go) => ConfigureHeaderTitle(go);
 
         public static void WireLocalizeStringToTmp(GameObject go)
         {

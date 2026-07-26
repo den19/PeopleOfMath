@@ -115,6 +115,14 @@ namespace PeopleOfMath.Editor
         public static Vector2 EmptyStatePosition => new Vector2(80f, -400f);
         public static float EmptyStateLineHeight = 48f;
 
+        // Header bar titles (Settings / Index / …); home is larger for the short brand line.
+        public const float HeaderTitleFontSize = 42f;
+        public const float HeaderTitleFontSizeMin = 26f;
+        public const float HeaderTitleFontSizeMax = 48f;
+        public const float HomeTitleFontSize = 56f;
+        public const float HomeTitleFontSizeMin = 32f;
+        public const float HomeTitleFontSizeMax = 60f;
+
         public const float DetailContentScale = 2f;
         public const float DetailSectionPadding = 24f;
         public const float DetailSectionSpacing = 16f;

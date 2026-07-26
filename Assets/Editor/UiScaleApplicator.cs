@@ -159,7 +159,10 @@ namespace PeopleOfMath.Editor
                 if (System.Array.IndexOf(titleNames, tmp.gameObject.name) < 0)
                     continue;
 
-                PeopleOfMathProjectSetup.ConfigureHeaderTitle(tmp.gameObject);
+                if (tmp.gameObject.name == "HomeTitle")
+                    PeopleOfMathProjectSetup.ConfigureHomeTitle(tmp.gameObject);
+                else
+                    PeopleOfMathProjectSetup.ConfigureHeaderTitle(tmp.gameObject);
                 EditorUtility.SetDirty(tmp.gameObject);
             }
         }
