@@ -14,7 +14,7 @@ namespace PeopleOfMath.Editor
         public static readonly Vector2 SectionNavBarSize = new(0f, 90f);
 
         /// <summary>Matches BottomBar HorizontalLayoutGroup left/right padding.</summary>
-        public const float EdgeInset = 8f;
+        public const float EdgeInset = 4f;
         public const float ReferenceCanvasWidth = 1080f;
         public const float NavActionButtonWidth = 220f;
         public const float NavActionButtonHeight = 66f;
@@ -24,9 +24,13 @@ namespace PeopleOfMath.Editor
         public static readonly Vector2 BottomBarPosition = new(0f, BottomBarHeight * 0.5f);
         public static readonly Vector2 BottomBarSize = new(0f, BottomBarHeight);
 
-        public const float TabIconSize = 48f;
-        public const float TabSelectionSize = 76f;
-        public const float TabCaptionFontBase = 12f;
+        /// <summary>Icon/selection sit in the upper portion of each equal-width tab cell.</summary>
+        public const float TabIconAnchorY = 0.64f;
+        public const float TabIconSize = 72f;
+        public const float TabSelectionSize = 104f;
+        public const float TabCaptionFontBase = 18f;
+        public const float TabCaptionHeight = 36f;
+        public const float TabCaptionBottomPad = 6f;
 
         public static Vector2 SectionNavBackPosition =>
             new(EdgeInset, -12f);
@@ -182,6 +186,30 @@ namespace PeopleOfMath.Editor
             tmp.raycastTarget = false;
         }
 
+        public static void ConfigureTabIcon(RectTransform iconRt)
+        {
+            if (iconRt == null)
+                return;
+
+            iconRt.anchorMin = new Vector2(0.5f, TabIconAnchorY);
+            iconRt.anchorMax = new Vector2(0.5f, TabIconAnchorY);
+            iconRt.pivot = new Vector2(0.5f, 0.5f);
+            iconRt.anchoredPosition = Vector2.zero;
+            iconRt.sizeDelta = new Vector2(TabIconSize, TabIconSize);
+        }
+
+        public static void ConfigureTabSelection(RectTransform selectionRt)
+        {
+            if (selectionRt == null)
+                return;
+
+            selectionRt.anchorMin = new Vector2(0.5f, TabIconAnchorY);
+            selectionRt.anchorMax = new Vector2(0.5f, TabIconAnchorY);
+            selectionRt.pivot = new Vector2(0.5f, 0.5f);
+            selectionRt.anchoredPosition = Vector2.zero;
+            selectionRt.sizeDelta = new Vector2(TabSelectionSize, TabSelectionSize);
+        }
+
         public static void ConfigureTabCaption(GameObject labelGo)
         {
             if (labelGo == null)
@@ -193,18 +221,19 @@ namespace PeopleOfMath.Editor
                 rt.anchorMin = new Vector2(0f, 0f);
                 rt.anchorMax = new Vector2(1f, 0f);
                 rt.pivot = new Vector2(0.5f, 0f);
-                rt.anchoredPosition = new Vector2(0f, 10f);
-                rt.sizeDelta = new Vector2(-8f, 28f);
+                rt.anchoredPosition = new Vector2(0f, TabCaptionBottomPad);
+                rt.sizeDelta = new Vector2(-4f, TabCaptionHeight);
             }
 
             var tmp = labelGo.GetComponent<TextMeshProUGUI>();
             if (tmp == null)
                 return;
 
-            tmp.fontSize = UiLayoutMetrics.ScaleFont(TabCaptionFontBase);
+            var fontSize = UiLayoutMetrics.ScaleFont(TabCaptionFontBase);
+            tmp.fontSize = fontSize;
             tmp.enableAutoSizing = true;
-            tmp.fontSizeMin = 13f;
-            tmp.fontSizeMax = UiLayoutMetrics.ScaleFont(TabCaptionFontBase) + 1f;
+            tmp.fontSizeMin = Mathf.Max(14f, fontSize * 0.55f);
+            tmp.fontSizeMax = fontSize + 1f;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = UiTheme.GetNavTabInactiveLabelColor();
             tmp.raycastTarget = false;

@@ -358,6 +358,13 @@ namespace PeopleOfMath.Editor
                 EditorUtility.SetDirty(contentRt);
             }
 
+            var hlg = bottomBar.GetComponent<HorizontalLayoutGroup>();
+            if (hlg != null)
+            {
+                hlg.padding = new RectOffset(4, 4, 4, 4);
+                EditorUtility.SetDirty(hlg);
+            }
+
             foreach (Transform child in bottomBar.transform)
             {
                 if (child.name == "TopGlow")
@@ -368,22 +375,23 @@ namespace PeopleOfMath.Editor
                 var selection = child.Find("SelectionBg")?.GetComponent<RectTransform>();
                 if (selection != null)
                 {
-                    selection.sizeDelta = new Vector2(
-                        UiButtonLayout.TabSelectionSize,
-                        UiButtonLayout.TabSelectionSize);
+                    UiButtonLayout.ConfigureTabSelection(selection);
                     EditorUtility.SetDirty(selection);
                 }
 
                 var icon = child.Find("Icon")?.GetComponent<RectTransform>();
                 if (icon != null)
                 {
-                    icon.sizeDelta = new Vector2(UiButtonLayout.TabIconSize, UiButtonLayout.TabIconSize);
+                    UiButtonLayout.ConfigureTabIcon(icon);
                     EditorUtility.SetDirty(icon);
                 }
 
                 var caption = child.Find("Text")?.gameObject;
                 if (caption != null)
+                {
                     UiButtonLayout.ConfigureTabCaption(caption);
+                    EditorUtility.SetDirty(caption);
+                }
             }
 
             EditorUtility.SetDirty(bottomBar);
@@ -3674,7 +3682,7 @@ namespace PeopleOfMath.Editor
                 rootImage.raycastTarget = true;
 
             var hlg = bar.AddComponent<HorizontalLayoutGroup>();
-            hlg.padding = new RectOffset(8, 8, 8, 8);
+            hlg.padding = new RectOffset(4, 4, 4, 4);
             hlg.spacing = 0f;
             hlg.childAlignment = TextAnchor.MiddleCenter;
             hlg.childControlWidth = true;
@@ -3731,10 +3739,7 @@ namespace PeopleOfMath.Editor
             var selectionGo = new GameObject("SelectionBg", typeof(RectTransform), typeof(Image));
             selectionGo.transform.SetParent(go.transform, false);
             var selectionRt = selectionGo.GetComponent<RectTransform>();
-            selectionRt.anchorMin = new Vector2(0.5f, 0.55f);
-            selectionRt.anchorMax = new Vector2(0.5f, 0.55f);
-            selectionRt.pivot = new Vector2(0.5f, 0.5f);
-            selectionRt.sizeDelta = new Vector2(UiButtonLayout.TabSelectionSize, UiButtonLayout.TabSelectionSize);
+            UiButtonLayout.ConfigureTabSelection(selectionRt);
             var selectionImage = selectionGo.GetComponent<Image>();
             selectionImage.sprite = UiSpriteFactory.RoundedRect;
             selectionImage.type = Image.Type.Sliced;
@@ -3744,10 +3749,7 @@ namespace PeopleOfMath.Editor
             var iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
             iconGo.transform.SetParent(go.transform, false);
             var iconRt = iconGo.GetComponent<RectTransform>();
-            iconRt.anchorMin = new Vector2(0.5f, 0.55f);
-            iconRt.anchorMax = new Vector2(0.5f, 0.55f);
-            iconRt.pivot = new Vector2(0.5f, 0.5f);
-            iconRt.sizeDelta = new Vector2(UiButtonLayout.TabIconSize, UiButtonLayout.TabIconSize);
+            UiButtonLayout.ConfigureTabIcon(iconRt);
             var iconImage = iconGo.GetComponent<Image>();
             iconImage.sprite = UiSpriteFactory.GetTabIcon(tabId);
             iconImage.preserveAspect = true;
