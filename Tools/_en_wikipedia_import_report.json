@@ -1,0 +1,807 @@
+{
+  "updated_assets": 3,
+  "no_enwiki": 4,
+  "errors": 82,
+  "results": [
+    {
+      "id": "apollonius",
+      "updated": [],
+      "skipped": [
+        "all_filled"
+      ],
+      "errors": []
+    },
+    {
+      "id": "cardano",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "no_enwiki"
+      ]
+    },
+    {
+      "id": "amdahl",
+      "updated": [],
+      "skipped": [
+        "all_filled"
+      ],
+      "errors": []
+    },
+    {
+      "id": "bernoulli_daniel",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "no_enwiki"
+      ]
+    },
+    {
+      "id": "archimedes",
+      "updated": [],
+      "skipped": [
+        "all_filled"
+      ],
+      "errors": []
+    },
+    {
+      "id": "al_khwarizmi",
+      "updated": [],
+      "skipped": [
+        "all_filled"
+      ],
+      "errors": []
+    },
+    {
+      "id": "atiyah",
+      "updated": [],
+      "skipped": [
+        "all_filled"
+      ],
+      "errors": []
+    },
+    {
+      "id": "arnold",
+      "updated": [],
+      "skipped": [
+        "all_filled"
+      ],
+      "errors": []
+    },
+    {
+      "id": "artin",
+      "updated": [],
+      "skipped": [
+        "all_filled"
+      ],
+      "errors": []
+    },
+    {
+      "id": "abel",
+      "updated": [],
+      "skipped": [
+        "all_filled"
+      ],
+      "errors": []
+    },
+    {
+      "id": "cartan",
+      "updated": [
+        "shortBio"
+      ],
+      "skipped": [],
+      "errors": []
+    },
+    {
+      "id": "banach",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Anyon: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "cantor",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Georg%2520Cantor: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "bernoulli_jakob",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Jean-%25C3%2589tienne%2520Liotard: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "boole",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=George%2520Boole: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "bhaskara",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Sawahlunto: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "brouwer",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=L.%2520E.%2520J.%2520Brouwer: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "brahmagupta",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Brahmagupta: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "bolzano",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Bernard%2520Bolzano: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "cauchy",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Augustin-Louis%2520Cauchy: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "erdos",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Paul%2520Erd%25C5%2591s: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "cayley",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Arthur%2520Cayley: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "euclid",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Euclid: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "descartes",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Ren%25C3%25A9%2520Descartes: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "euler",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Leonhard%2520Euler: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "dedekind",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Richard%2520Dedekind: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "chebyshev",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Pafnuty%2520Chebyshev: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "diophantus",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Diophantus: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "eratosthenes",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Eratosthenes: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "deligne",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Pierre%2520Deligne: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "frege",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Gottlob%2520Frege: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "faltings",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Gerd%2520Faltings: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "galois",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=%25C3%2589variste%2520Galois: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "hamilton",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "no_enwiki"
+      ]
+    },
+    {
+      "id": "gauss",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Carl%2520Friedrich%2520Gauss: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "galileo",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Galileo%2520Galilei: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "godel",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Kurt%2520G%25C3%25B6del: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "fibonacci",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Fibonacci: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "fermat",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Pierre%2520de%2520Fermat: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "fourier",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Category%253AElections%2520in%2520Venezuela: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "gromov",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Mikhael%2520Gromov%2520%2528mathematician%2529: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "jacobi",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Carl%2520Gustav%2520Jacob%2520Jacobi: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "gelfand",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Israel%2520Gelfand: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "grothendieck",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Alexander%2520Grothendieck: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "hardy",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=G.%2520H.%2520Hardy: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "heron",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Hero%2520of%2520Alexandria: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "hilbert",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=David%2520Hilbert: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "kepler",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Johannes%2520Kepler: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "hypatia",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Hypatia: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "huygens",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Christiaan%2520Huygens: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "knuth",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Donald%2520Knuth: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "klein",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Felix%2520Klein: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "laplace",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Pierre-Simon%2520Laplace: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "kovalevskaya",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Sofya%2520Kovalevskaya: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "lobachevsky",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Nikolai%2520Lobachevsky: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "lagrange",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Joseph-Louis%2520Lagrange: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "lebesgue",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Henri%2520Lebesgue: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "kolmogorov",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Andrey%2520Kolmogorov: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "legendre",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Adrien-Marie%2520Legendre: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "leibniz",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Gottfried%2520Wilhelm%2520Leibniz: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "lovasz",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=L%25C3%25A1szl%25C3%25B3%2520Lov%25C3%25A1sz: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "mandelbrot",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Benoit%2520Mandelbrot: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "markov",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Andrey%2520Markov: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "napier",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=John%2520Napier: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "nash",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=John%2520Forbes%2520Nash%2520Jr.: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "newton",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Isaac%2520Newton: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "minkowski",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Hermann%2520Minkowski: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "mirzakhani",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Maryam%2520Mirzakhani: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "ptolemy",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Ptolemy: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "omar_khayyam",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Omar%2520Khayyam: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "pascal",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Blaise%2520Pascal: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "noether",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Emmy%2520Noether: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "ramanujan",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Srinivasa%2520Ramanujan: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "peano",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Giuseppe%2520Peano: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "perelman",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Grigori%2520Perelman: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "poincare",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Henri%2520Poincar%25C3%25A9: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "pontryagin",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Lev%2520Pontryagin: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "pythagoras",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Pythagoras: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "russell",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Bertrand%2520Russell: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "shafarevich",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Igor%2520Shafarevich: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "regiomontanus",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Regiomontanus: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "selberg",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Atle%2520Selberg: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "vinogradov",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "no_enwiki"
+      ]
+    },
+    {
+      "id": "shannon",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Claude%2520Shannon: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "sobolev",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Sergei%2520Sobolev: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "riemann",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Bernhard%2520Riemann: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "serre",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Jean-Pierre%2520Serre: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "turing",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Alan%2520Turing: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "thales",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Thales%2520of%2520Miletus: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "von_neumann",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=John%2520von%2520Neumann: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "torricelli",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Evangelista%2520Torricelli: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "tao",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Terence%2520Tao: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "wallis",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=John%2520Wallis: HTTP Error 429: Too Many Requests"
+      ]
+    },
+    {
+      "id": "zhu_shijie",
+      "updated": [
+        "shortBio"
+      ],
+      "skipped": [],
+      "errors": []
+    },
+    {
+      "id": "vieta",
+      "updated": [],
+      "skipped": [],
+      "errors": []
+    },
+    {
+      "id": "wiener",
+      "updated": [
+        "shortBio"
+      ],
+      "skipped": [],
+      "errors": []
+    },
+    {
+      "id": "weyl",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Hermann%2520Weyl: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "weierstrass",
+      "updated": [],
+      "skipped": [],
+      "errors": []
+    },
+    {
+      "id": "wiles",
+      "updated": [],
+      "skipped": [],
+      "errors": []
+    },
+    {
+      "id": "weil",
+      "updated": [],
+      "skipped": [],
+      "errors": [
+        "GET failed https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&titles=Andr%25C3%25A9%2520Weil: HTTP Error 429: Too many requests (f061ab2)"
+      ]
+    },
+    {
+      "id": "witten",
+      "updated": [],
+      "skipped": [],
+      "errors": []
+    }
+  ]
+}

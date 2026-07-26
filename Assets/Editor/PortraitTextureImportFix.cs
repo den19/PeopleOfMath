@@ -7,6 +7,7 @@ namespace PeopleOfMath.Editor
     public static class PortraitTextureImportFix
     {
         const string ResourcesRoot = "Assets/Resources/Portraits";
+        const int PortraitMaxSize = 512;
 
         [MenuItem("PeopleOfMath/Fix Portrait Texture Import (Sprite)")]
         public static void FixAll()
@@ -14,7 +15,7 @@ namespace PeopleOfMath.Editor
             var count = ReimportAll();
             AssetDatabase.Refresh();
             WikimediaPortraitImporter.LinkAllFromFolders();
-            Debug.Log($"Reimported {count} portrait textures as Sprites.");
+            Debug.Log($"Reimported {count} portrait textures as Sprites (max {PortraitMaxSize}, crunch on).");
         }
 
         public static int ReimportAll()
@@ -52,17 +53,52 @@ namespace PeopleOfMath.Editor
         {
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Single;
-            importer.maxTextureSize = 512;
+            importer.maxTextureSize = PortraitMaxSize;
+            importer.mipmapEnabled = false;
+            importer.isReadable = false;
+            importer.textureCompression = TextureImporterCompression.Compressed;
+            importer.compressionQuality = 50;
+            importer.crunchedCompression = true;
 
             var settings = new TextureImporterSettings();
             importer.ReadTextureSettings(settings);
             settings.spriteMeshType = SpriteMeshType.FullRect;
+            settings.mipmapEnabled = false;
+            settings.readable = false;
 
             var ext = Path.GetExtension(assetPath).ToLowerInvariant();
             if (ext is ".jpg" or ".jpeg")
                 settings.alphaIsTransparency = false;
 
             importer.SetTextureSettings(settings);
+
+            ApplyPlatform(importer, "DefaultTexturePlatform", overridden: false, TextureImporterFormat.Automatic);
+            // ASTC 8x8: strong size win for UI portraits while remaining recognizable.
+            ApplyPlatform(importer, "Android", overridden: true, TextureImporterFormat.ASTC_8x8);
+            ApplyPlatform(importer, "iPhone", overridden: true, TextureImporterFormat.ASTC_6x6);
+            ApplyPlatform(importer, "WebGL", overridden: true, TextureImporterFormat.Automatic);
+            ApplyPlatform(importer, "Standalone", overridden: true, TextureImporterFormat.Automatic);
+        }
+
+        static void ApplyPlatform(
+            TextureImporter importer,
+            string platform,
+            bool overridden,
+            TextureImporterFormat format)
+        {
+            var ps = new TextureImporterPlatformSettings
+            {
+                name = platform,
+                overridden = overridden,
+                maxTextureSize = PortraitMaxSize,
+                resizeAlgorithm = TextureResizeAlgorithm.Bilinear,
+                format = format,
+                textureCompression = TextureImporterCompression.Compressed,
+                compressionQuality = 50,
+                crunchedCompression = true,
+                allowsAlphaSplitting = false,
+            };
+            importer.SetPlatformTextureSettings(ps);
         }
     }
 }
