@@ -10,6 +10,10 @@ namespace PeopleOfMath.Editor
 
         public const float FilterButtonWidth = 1440f;
         public const float FilterButtonHeight = 208f;
+        /// <summary>
+        /// Compact height so 4 quiz options fit under a long fact prompt above FeedbackView.
+        /// </summary>
+        public const float QuizAnswerButtonHeight = 128f;
         public const float FilterButtonBaseFontSize = 18f;
         public const float FilterButtonLabelHorizontalInset = 40f;
 

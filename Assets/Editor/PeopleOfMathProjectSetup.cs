@@ -3007,22 +3007,22 @@ namespace PeopleOfMath.Editor
             var promptText = CreateTmpChild(view.transform, "PromptText", 18, FontStyles.Normal, new Vector2(40, -72));
             var promptRt = promptText.GetComponent<RectTransform>();
             // Stretch X: with pivot.x=0, pos.x=40 and sizeDelta.x=-80 → 40px left+right.
-            // Height leaves room for 4×208 answer buttons above FeedbackView (title ~y=220).
-            promptRt.sizeDelta = new Vector2(-80, 400);
+            // Height sized for ~900-char fact prompts; leaves room for answers above FeedbackView.
+            promptRt.sizeDelta = new Vector2(-80, 480);
             var promptTmp = promptText.GetComponent<TextMeshProUGUI>();
             promptTmp.alignment = TextAlignmentOptions.TopLeft;
             promptTmp.textWrappingMode = TextWrappingModes.Normal;
             promptTmp.overflowMode = TextOverflowModes.Overflow;
             promptText.SetActive(false);
 
-            var answers = new GameObject("Answers", typeof(RectTransform), typeof(VerticalLayoutGroup));
+            var answers = new GameObject("Answers", typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(RectMask2D));
             answers.transform.SetParent(view.transform, false);
             var answersRt = answers.GetComponent<RectTransform>();
             answersRt.anchorMin = new Vector2(0, 0);
             answersRt.anchorMax = new Vector2(1, 1);
             // Bottom inset clears FeedbackView (title at y=220 + height 40); top sits under PromptText.
-            answersRt.offsetMin = new Vector2(40, 360);
-            answersRt.offsetMax = new Vector2(-40, -480);
+            answersRt.offsetMin = new Vector2(40, 380);
+            answersRt.offsetMax = new Vector2(-40, -560);
             var vlg = answers.GetComponent<VerticalLayoutGroup>();
             vlg.spacing = 16f;
             vlg.childControlHeight = true;
@@ -3163,8 +3163,8 @@ namespace PeopleOfMath.Editor
         static void ConfigureQuizAnswerButton(GameObject go)
         {
             var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
-            le.preferredHeight = UiLayoutMetrics.FilterButtonHeight;
-            le.minHeight = UiLayoutMetrics.FilterButtonHeight;
+            le.preferredHeight = UiLayoutMetrics.QuizAnswerButtonHeight;
+            le.minHeight = UiLayoutMetrics.QuizAnswerButtonHeight;
 
             var label = go.GetComponentInChildren<TextMeshProUGUI>(true);
             if (label == null)
@@ -4922,14 +4922,18 @@ namespace PeopleOfMath.Editor
                 var playingView = quizPanelGo.transform.Find("PlayingView");
                 var promptRt = playingView?.Find("PromptText")?.GetComponent<RectTransform>();
                 if (promptRt != null)
-                    promptRt.sizeDelta = new Vector2(-80, 400);
+                    promptRt.sizeDelta = new Vector2(-80, 480);
 
                 var answersRt = playingView?.Find("Answers")?.GetComponent<RectTransform>();
                 if (answersRt != null)
                 {
-                    answersRt.offsetMin = new Vector2(40, 360);
-                    answersRt.offsetMax = new Vector2(-40, -480);
+                    answersRt.offsetMin = new Vector2(40, 380);
+                    answersRt.offsetMax = new Vector2(-40, -560);
+                    if (answersRt.GetComponent<RectMask2D>() == null)
+                        answersRt.gameObject.AddComponent<RectMask2D>();
                 }
+
+                EnsureQuizAnswerButtonPrefab();
             }
 
             var header = GameObject.Find("Header");

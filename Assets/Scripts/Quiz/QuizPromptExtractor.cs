@@ -11,7 +11,7 @@ namespace PeopleOfMath.Quiz
 {
     public static class QuizPromptExtractor
     {
-        const int MaxPromptLength = 720;
+        const int MaxPromptLength = 900;
 
         static readonly char[] LineSeparators = { '\n', '\r' };
         static readonly char[] BulletPrefixes = { '•', '-', '–', '—', '*', '·' };
@@ -32,21 +32,21 @@ namespace PeopleOfMath.Quiz
 
             // No cross-locale fallback: English UI must not surface Russian quiz copy.
             const bool fallbackToOtherLocale = false;
-            var facts = data.GetInterestingFacts(english, fallbackToOtherLocale);
+            var facts = NormalizeStoredText(data.GetInterestingFacts(english, fallbackToOtherLocale));
             if (TryPickRandomLine(facts, out prompt))
             {
                 prompt = RedactNameComponents(prompt, data.GetFullName(english));
                 return true;
             }
 
-            var achievements = data.GetAchievements(english, fallbackToOtherLocale);
+            var achievements = NormalizeStoredText(data.GetAchievements(english, fallbackToOtherLocale));
             if (TryFirstSentence(achievements, out prompt))
             {
                 prompt = RedactNameComponents(prompt, data.GetFullName(english));
                 return true;
             }
 
-            var bio = data.GetShortBio(english, fallbackToOtherLocale);
+            var bio = NormalizeStoredText(data.GetShortBio(english, fallbackToOtherLocale));
             if (TryTruncate(bio, out prompt))
             {
                 prompt = RedactNameComponents(prompt, data.GetFullName(english));
@@ -54,6 +54,20 @@ namespace PeopleOfMath.Quiz
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Unity YAML often stores long strings with visual wraps as real newlines plus
+        /// indentation spaces ("\n    "). Collapse those so RU/EN quiz prompts both use
+        /// the same MaxPromptLength budget instead of ~25-char wrap fragments.
+        /// Intentional paragraph breaks (newline without indent) are kept.
+        /// </summary>
+        static string NormalizeStoredText(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            return Regex.Replace(text, @"\n[ \t]+", " ");
         }
 
         public static bool HasFactPrompt(MathematicianData data, bool english) =>
@@ -244,8 +258,8 @@ namespace PeopleOfMath.Quiz
         {
             for (var i = start; i < text.Length; i++)
             {
-                if (text[i] is '.' or '!' or '?')
-                    return i + 1;
+                if (TryGetSentenceEndExclusive(text, i, out var end))
+                    return end;
             }
 
             return -1;
@@ -260,6 +274,11 @@ namespace PeopleOfMath.Quiz
             if (normalized.Length <= MaxPromptLength)
                 return normalized;
 
+            // Prefer ending on a complete sentence within the budget — do not start the next one.
+            var sentenceEnd = FindLastSentenceEndExclusive(normalized, MaxPromptLength);
+            if (sentenceEnd >= 20)
+                return normalized[..sentenceEnd].TrimEnd();
+
             var cut = normalized[..MaxPromptLength];
             var lastSpace = cut.LastIndexOf(' ');
             if (lastSpace > MaxPromptLength / 2)
@@ -267,6 +286,71 @@ namespace PeopleOfMath.Quiz
 
             return cut.TrimEnd() + "…";
         }
+
+        /// <summary>
+        /// Length of the longest prefix that ends on a complete sentence and stays
+        /// within <paramref name="maxLength"/> (exclusive end index). Returns -1 if none.
+        /// </summary>
+        static int FindLastSentenceEndExclusive(string text, int maxLength)
+        {
+            var limit = Math.Min(text.Length, maxLength);
+            for (var i = limit - 1; i >= 0; i--)
+            {
+                if (!TryGetSentenceEndExclusive(text, i, out var end))
+                    continue;
+
+                if (end > maxLength)
+                    continue;
+
+                // Skip single-letter initials ("A.", "И.").
+                if (text[i] == '.' && i > 0 && char.IsLetter(text[i - 1]) &&
+                    (i == 1 || !char.IsLetter(text[i - 2])))
+                    continue;
+
+                // Terminator must close the text or be followed by whitespace (next sentence starts later).
+                if (end < text.Length && !char.IsWhiteSpace(text[end]))
+                    continue;
+
+                return end;
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// If <paramref name="index"/> is the last character of a sentence terminator
+        /// (. ! ? … or "..."), sets <paramref name="endExclusive"/> past optional closing quotes.
+        /// </summary>
+        static bool TryGetSentenceEndExclusive(string text, int index, out int endExclusive)
+        {
+            endExclusive = index + 1;
+            if (index < 0 || index >= text.Length)
+                return false;
+
+            var c = text[index];
+            if (c == '…')
+            {
+                endExclusive = index + 1;
+            }
+            else if (c is '.' or '!' or '?')
+            {
+                // Only treat the final '.' of "..." / ".." as the terminator.
+                if (c == '.' && index + 1 < text.Length && text[index + 1] == '.')
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
+
+            while (endExclusive < text.Length && IsClosingQuote(text[endExclusive]))
+                endExclusive++;
+
+            return true;
+        }
+
+        static bool IsClosingQuote(char c) =>
+            c is '"' or '\'' or '»' or '”' or '’' or '‹' or '›';
     }
 
 }
