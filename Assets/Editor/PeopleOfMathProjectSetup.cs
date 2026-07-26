@@ -1060,7 +1060,8 @@ namespace PeopleOfMath.Editor
             ConfigureListItemPortrait(go);
 
             ConfigureListItemText(go, "Name", UiLayoutMetrics.ListItemNameFontSize, FontStyles.Bold,
-                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemNameHeight, truncate: false, UiTheme.TextPrimary);
+                UiLayoutMetrics.ListItemNamePos, UiLayoutMetrics.ListItemNameHeight, truncate: true, UiTheme.TextPrimary,
+                autoSize: true);
             ConfigureListItemText(go, "Dates", UiLayoutMetrics.ListItemDatesFontSize, FontStyles.Normal,
                 UiLayoutMetrics.ListItemDatesPos, UiLayoutMetrics.ListItemTextLineHeight, truncate: false, UiTheme.TextSecondary);
             ConfigureListItemText(go, "Bio", UiLayoutMetrics.ListItemBioFontSize, FontStyles.Normal,
@@ -1075,7 +1076,11 @@ namespace PeopleOfMath.Editor
 
         static void ConfigureListItemFavoriteButton(GameObject root)
         {
-            var favoriteButton = ConfigureFavoriteButton(root.transform);
+            var favoriteButton = ConfigureFavoriteButton(
+                root.transform, UiLayoutMetrics.ListItemFavoriteButtonPos);
+            ApplyListItemActionButtonLayout(
+                favoriteButton.GetComponent<RectTransform>(),
+                UiLayoutMetrics.ListItemFavoriteButtonPos);
             var item = root.GetComponent<MathematicianListItem>();
             if (item == null)
                 return;
@@ -1087,7 +1092,11 @@ namespace PeopleOfMath.Editor
 
         static void ConfigureListItemShareButton(GameObject root)
         {
-            var shareButton = ConfigureShareButton(root.transform);
+            var shareButton = ConfigureShareButton(
+                root.transform, UiLayoutMetrics.ListItemShareButtonPos);
+            ApplyListItemActionButtonLayout(
+                shareButton.GetComponent<RectTransform>(),
+                UiLayoutMetrics.ListItemShareButtonPos);
             var item = root.GetComponent<MathematicianListItem>();
             if (item == null)
                 return;
@@ -1095,6 +1104,40 @@ namespace PeopleOfMath.Editor
             var so = new SerializedObject(item);
             so.FindProperty("shareButton").objectReferenceValue = shareButton;
             so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void ApplyListItemActionButtonLayout(RectTransform rt, Vector2 anchoredPosition)
+        {
+            if (rt == null)
+                return;
+
+            var size = UiLayoutMetrics.ListItemActionButtonSize;
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = anchoredPosition;
+            rt.sizeDelta = new Vector2(size, size);
+
+            var icon = rt.Find("Icon") as RectTransform;
+            if (icon != null)
+            {
+                icon.anchorMin = Vector2.zero;
+                icon.anchorMax = Vector2.one;
+                icon.pivot = new Vector2(0.5f, 0.5f);
+                icon.anchoredPosition = Vector2.zero;
+                icon.offsetMin = Vector2.zero;
+                icon.offsetMax = Vector2.zero;
+                icon.sizeDelta = Vector2.zero;
+            }
+
+            var layoutElement = rt.GetComponent<LayoutElement>();
+            if (layoutElement == null)
+                return;
+
+            layoutElement.minWidth = size;
+            layoutElement.minHeight = size;
+            layoutElement.preferredWidth = size;
+            layoutElement.preferredHeight = size;
         }
 
         public static ShareIconButton ConfigureShareButton(Transform parent, Vector2? anchoredPosition = null)
@@ -1240,10 +1283,12 @@ namespace PeopleOfMath.Editor
             portraitTransform.SetAsFirstSibling();
 
             var rt = portraitGo.GetComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0f, 0.5f);
-            rt.anchorMax = new Vector2(0f, 0.5f);
-            rt.pivot = new Vector2(0f, 0.5f);
-            rt.anchoredPosition = new Vector2(UiLayoutMetrics.ListItemLeftPadding, 0f);
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(
+                UiLayoutMetrics.ListItemLeftPadding,
+                -UiLayoutMetrics.ListItemTopPadding);
             rt.sizeDelta = new Vector2(
                 UiLayoutMetrics.ListItemThumbnailSize,
                 UiLayoutMetrics.ListItemThumbnailSize);
@@ -1270,7 +1315,8 @@ namespace PeopleOfMath.Editor
             Vector2 anchoredPos,
             float height,
             bool truncate,
-            Color textColor)
+            Color textColor,
+            bool autoSize = false)
         {
             var child = root.transform.Find(childName);
             if (child == null)
@@ -1289,6 +1335,17 @@ namespace PeopleOfMath.Editor
             tmp.color = textColor;
             tmp.textWrappingMode = TextWrappingModes.Normal;
             tmp.overflowMode = truncate ? TextOverflowModes.Ellipsis : TextOverflowModes.Overflow;
+            if (autoSize)
+            {
+                tmp.enableAutoSizing = true;
+                tmp.fontSizeMax = fontSize;
+                tmp.fontSizeMin = fontSize * ListItemLayoutMetrics.NameFontSizeMinMultiplier;
+            }
+            else
+            {
+                tmp.enableAutoSizing = false;
+            }
+
             var so = new SerializedObject(tmp);
             var baseProp = so.FindProperty("m_fontSizeBase");
             if (baseProp != null)

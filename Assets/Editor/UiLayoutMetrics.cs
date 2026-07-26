@@ -64,11 +64,12 @@ namespace PeopleOfMath.Editor
         public const float ListItemThumbnailGap = 20f;
         public const float ListItemLeftPadding = 20f;
         public const float ListItemTextRightInset = 20f;
-        public const float ListItemShareButtonWidth = 72f;
+        public const float ListItemActionButtonSize = 108f / 1.3f;
+        public const float ListItemPortraitActionGap = 8f;
         public static float ListItemTextColumnLeft =>
             ListItemLeftPadding + ListItemThumbnailSize + ListItemThumbnailGap;
         public static float ListItemTextWidthInset =>
-            ListItemTextColumnLeft + ListItemTextRightInset + ListItemShareButtonWidth;
+            ListItemTextColumnLeft + ListItemTextRightInset;
         public const float ListItemNameBaseFontSize = 20f;
         public const float ListItemDatesBaseFontSize = 14f;
         public const float ListItemBioBaseFontSize = 13f;
@@ -76,7 +77,17 @@ namespace PeopleOfMath.Editor
         public static float ListItemNameFontSize => ScaleFont(ListItemNameBaseFontSize) * 2f;
         public static float ListItemDatesFontSize => ScaleFont(ListItemDatesBaseFontSize) * 2f;
         public static float ListItemBioFontSize => ScaleFont(ListItemBioBaseFontSize) * 2f;
-        public static float ListItemNameHeight => ListItemNameFontSize * 2f;
+        public static float ListItemNameHeight =>
+            ListItemNameFontSize * ListItemLayoutMetrics.NameLineHeightFactor * ListItemLayoutMetrics.NameMaxLines;
+        public static float ListItemActionButtonsTop =>
+            ListItemTopPadding + ListItemThumbnailSize + ListItemPortraitActionGap;
+        public static Vector2 ListItemFavoriteButtonPos => new Vector2(
+            ListItemLeftPadding, -ListItemActionButtonsTop);
+        public static Vector2 ListItemShareButtonPos => new Vector2(
+            ListItemLeftPadding,
+            -(ListItemActionButtonsTop
+              + ListItemActionButtonSize
+              + ListItemLayoutMetrics.ActionButtonGap));
         public static Vector2 ListItemNamePos => new Vector2(ListItemTextColumnLeft, -ListItemTopPadding);
         public static Vector2 ListItemDatesPos => new Vector2(
             ListItemTextColumnLeft, -(ListItemTopPadding + ListItemNameHeight + ListItemVerticalGap));

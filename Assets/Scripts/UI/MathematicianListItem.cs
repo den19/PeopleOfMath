@@ -129,27 +129,33 @@ namespace PeopleOfMath.UI
             var multiplier = FontSizeHelper.Multiplier;
             var textWidth = ResolveTextColumnWidth(nameText.rectTransform);
 
-            nameText.textWrappingMode = TextWrappingModes.Normal;
-            nameText.overflowMode = TextOverflowModes.Overflow;
+            var nameHeight = ConfigureNameText(textWidth);
             datesText.textWrappingMode = TextWrappingModes.Normal;
             datesText.overflowMode = TextOverflowModes.Overflow;
+            datesText.enableAutoSizing = false;
             ConfigureBioText(bioText);
 
-            TmpOrphanWrap.AvoidShortLastLine(nameText, textWidth);
-
-            var nameHeight = MeasureTextHeight(nameText, textWidth, nameText.fontSize * 1.1f);
             var datesHeight = MeasureTextHeight(datesText, textWidth, datesText.fontSize * 1.1f);
-            var bioHeight = ListItemLayoutMetrics.BioBaseHeight * multiplier;
 
             var y = ListItemLayoutMetrics.TopPadding;
             PositionTextBlock(nameText.rectTransform, y, nameHeight);
             y += nameHeight + ListItemLayoutMetrics.VerticalGap;
             PositionTextBlock(datesText.rectTransform, y, datesHeight);
             y += datesHeight + ListItemLayoutMetrics.VerticalGap;
-            PositionTextBlock(bioText.rectTransform, y, bioHeight);
 
-            var contentHeight = y + bioHeight + ListItemLayoutMetrics.TopPadding;
-            var rowHeight = Mathf.Max(ListItemLayoutMetrics.RowMinHeight * multiplier, contentHeight);
+            var bioTop = y;
+            var minContentHeight = bioTop
+                + ListItemLayoutMetrics.BioBaseHeight * multiplier
+                + ListItemLayoutMetrics.TopPadding;
+            var rowHeight = Mathf.Max(
+                ListItemLayoutMetrics.RowMinHeight * multiplier,
+                minContentHeight,
+                ListItemLayoutMetrics.LeftColumnHeight);
+            var bioHeight = rowHeight - bioTop - ListItemLayoutMetrics.TopPadding;
+            PositionTextBlock(bioText.rectTransform, bioTop, bioHeight);
+
+            PositionPortrait();
+            PositionActionButtons();
 
             var rootRt = transform as RectTransform;
             if (rootRt != null)
@@ -158,6 +164,82 @@ namespace PeopleOfMath.UI
             var le = GetComponent<LayoutElement>();
             if (le != null)
                 le.preferredHeight = rowHeight;
+        }
+
+        float ConfigureNameText(float textWidth)
+        {
+            nameText.enableAutoSizing = false;
+            FontSizeHelper.ApplyTo(nameText);
+
+            var fontSizeMax = nameText.fontSize;
+            var nameHeight = ListItemLayoutMetrics.NameBlockHeight(fontSizeMax);
+
+            nameText.textWrappingMode = TextWrappingModes.Normal;
+            nameText.overflowMode = TextOverflowModes.Ellipsis;
+            nameText.fontSizeMax = fontSizeMax;
+            nameText.fontSizeMin = fontSizeMax * ListItemLayoutMetrics.NameFontSizeMinMultiplier;
+            nameText.enableAutoSizing = true;
+
+            nameText.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textWidth);
+            nameText.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, nameHeight);
+            TmpOrphanWrap.AvoidShortLastLine(nameText, textWidth);
+            nameText.ForceMeshUpdate();
+
+            return nameHeight;
+        }
+
+        void PositionPortrait()
+        {
+            if (portraitImage == null)
+                return;
+
+            var rt = portraitImage.rectTransform;
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(
+                ListItemLayoutMetrics.LeftPadding,
+                -ListItemLayoutMetrics.TopPadding);
+            rt.sizeDelta = new Vector2(
+                ListItemLayoutMetrics.PortraitSize,
+                ListItemLayoutMetrics.PortraitSize);
+        }
+
+        void PositionActionButtons()
+        {
+            PositionActionButton(
+                favoriteButton != null ? favoriteButton.transform as RectTransform : null,
+                ListItemLayoutMetrics.FavoriteButtonX,
+                -ListItemLayoutMetrics.FavoriteButtonY);
+            PositionActionButton(
+                shareButton != null ? shareButton.transform as RectTransform : null,
+                ListItemLayoutMetrics.ShareButtonX,
+                -ListItemLayoutMetrics.ShareButtonY);
+        }
+
+        static void PositionActionButton(RectTransform rt, float x, float y)
+        {
+            if (rt == null)
+                return;
+
+            var size = ListItemLayoutMetrics.ActionButtonSize;
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(x, y);
+            rt.sizeDelta = new Vector2(size, size);
+
+            var icon = rt.Find("Icon") as RectTransform;
+            if (icon == null)
+                return;
+
+            icon.anchorMin = Vector2.zero;
+            icon.anchorMax = Vector2.one;
+            icon.pivot = new Vector2(0.5f, 0.5f);
+            icon.anchoredPosition = Vector2.zero;
+            icon.offsetMin = Vector2.zero;
+            icon.offsetMax = Vector2.zero;
+            icon.sizeDelta = Vector2.zero;
         }
 
         void ScheduleLayoutRefresh()
