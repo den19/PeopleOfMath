@@ -213,6 +213,9 @@ namespace PeopleOfMath.UI
 
         void RefreshList()
         {
+            if (listContent == null)
+                return;
+
             foreach (Transform child in listContent)
                 Destroy(child.gameObject);
 
@@ -239,13 +242,11 @@ namespace PeopleOfMath.UI
             foreach (var data in results)
             {
                 var item = Instantiate(itemPrefab, listContent);
-                var card = item.GetComponent<UiThemedCard>();
-                card?.Configure(UiCardVariant.ListItem);
                 item.Bind(data, id => navigation.ShowDetail(id));
             }
 
             listContent.GetComponentInParent<FontSizeScope>()?.Apply();
-            RefreshTheme();
+            GlassThemeController.RefreshAllSurfaces();
         }
 
         void UpdateEmptyStateMessage()

@@ -8,6 +8,7 @@ namespace PeopleOfMath.Data
     public static class PortraitResolver
     {
         static readonly Dictionary<string, Sprite> PrimaryCache = new();
+        static readonly Dictionary<string, bool> PlaceholderMarkerCache = new(StringComparer.Ordinal);
 
         public static Sprite GetPrimaryPortrait(MathematicianData data)
         {
@@ -99,8 +100,20 @@ namespace PeopleOfMath.Data
                 .ToList();
         }
 
-        public static bool HasPlaceholderMarker(string mathematicianId, string assetName) =>
-            Resources.Load<TextAsset>($"Portraits/{mathematicianId}/{assetName}.placeholder") != null;
+        public static bool HasPlaceholderMarker(string mathematicianId, string assetName)
+        {
+            if (string.IsNullOrEmpty(mathematicianId) || string.IsNullOrEmpty(assetName))
+                return false;
+
+            var cacheKey = mathematicianId + "/" + assetName;
+            if (PlaceholderMarkerCache.TryGetValue(cacheKey, out var cached))
+                return cached;
+
+            var hasMarker =
+                Resources.Load<TextAsset>($"Portraits/{mathematicianId}/{assetName}.placeholder") != null;
+            PlaceholderMarkerCache[cacheKey] = hasMarker;
+            return hasMarker;
+        }
 
         static List<PortraitEntry> MergeWithResourcePortraits(
             IReadOnlyList<PortraitEntry> assetEntries,

@@ -17,7 +17,9 @@ namespace PeopleOfMath.Sharing
             ShareAndroid(text, chooserTitle);
 #else
             GUIUtility.systemCopyBuffer = text;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log($"[Share] Copied to clipboard:\n{text}");
+#endif
 #endif
         }
 

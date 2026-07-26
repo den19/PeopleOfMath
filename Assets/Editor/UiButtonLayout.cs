@@ -124,6 +124,9 @@ namespace PeopleOfMath.Editor
         public static readonly SceneButton SettingsThemeGlass = new(
             "GlassThemeButton", new Vector2(40f, -1040f), new Vector2(400f, 64f), "btn_theme_glass", UiButtonStyle.Secondary);
 
+        public static readonly SceneButton SettingsReset = new(
+            "ResetButton", new Vector2(40f, -1280f), new Vector2(400f, 64f), "btn_reset_cache", UiButtonStyle.Secondary);
+
         /// <summary>About CTA height (layout-driven; position unused).</summary>
         public const float AboutButtonHeight = 64f;
         public const float AboutSectionSpacing = 20f;

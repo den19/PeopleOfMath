@@ -30,6 +30,7 @@ namespace PeopleOfMath.UI
         [SerializeField] RectTransform busyIndicator;
 
         readonly Image[] _busyDots = new Image[3];
+        static readonly WaitForSecondsRealtime DebounceDelay = new(DebounceSeconds);
         Coroutine _debounceRoutine;
         Coroutine _busyPulseRoutine;
         Coroutine _endBusyRoutine;
@@ -199,7 +200,7 @@ namespace PeopleOfMath.UI
 
         IEnumerator DebounceSearch()
         {
-            yield return new WaitForSecondsRealtime(DebounceSeconds);
+            yield return DebounceDelay;
             _debounceRoutine = null;
             TriggerSearch(inputField != null ? inputField.text : "");
         }

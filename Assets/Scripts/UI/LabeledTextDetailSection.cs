@@ -128,7 +128,8 @@ namespace PeopleOfMath.UI
             if (navigation != null)
                 return navigation;
 
-            return FindFirstObjectByType<NavigationController>();
+            navigation = FindFirstObjectByType<NavigationController>();
+            return navigation;
         }
 
         FilterKind GetFilterKind() => sectionKind switch

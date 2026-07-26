@@ -216,7 +216,7 @@ namespace PeopleOfMath.Editor
                 return true;
             }
 
-            if (name is "LangLabel" or "FontSizeLabel" or "ThemeLabel"
+            if (name is "LangLabel" or "FontSizeLabel" or "ThemeLabel" or "ResetLabel"
                 || name.StartsWith("section_")
                 || name is "HomeTitle" or "IndexTitle" or "SettingsTitle"
                     or "FavoritesTitle" or "PlainTitle")

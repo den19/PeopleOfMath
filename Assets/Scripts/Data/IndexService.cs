@@ -26,7 +26,7 @@ namespace PeopleOfMath.Data
             english ? LatinAlphabet : CyrillicAlphabet;
 
         public static bool IsStripLetter(char letter, bool english) =>
-            letter == OtherLetter || GetAlphabet(english).Contains(letter);
+            letter == OtherLetter || Array.IndexOf(english ? LatinAlphabet : CyrillicAlphabet, letter) >= 0;
 
         public static char GetSortLetter(string name, bool english)
         {
@@ -42,11 +42,8 @@ namespace PeopleOfMath.Data
             if (!char.IsLetter(first))
                 return OtherLetter;
 
-            var alphabet = GetAlphabet(english);
-            if (alphabet.Contains(first))
-                return first;
-
-            return OtherLetter;
+            var alphabet = english ? LatinAlphabet : CyrillicAlphabet;
+            return Array.IndexOf(alphabet, first) >= 0 ? first : OtherLetter;
         }
 
         public static HashSet<char> GetUsedLetters(IEnumerable<MathematicianData> source, bool english)

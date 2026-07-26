@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using PeopleOfMath.Data;
 using PeopleOfMath.Localization;
-using PeopleOfMath.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Settings;

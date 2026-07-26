@@ -27,6 +27,14 @@ namespace PeopleOfMath.Data
             }
         }
 
+        public static void Clear()
+        {
+            _orderedIds.Clear();
+            PlayerPrefs.DeleteKey(PrefsKey);
+            PlayerPrefs.Save();
+            FavoritesChanged?.Invoke();
+        }
+
         public static bool IsFavorite(string id) =>
             !string.IsNullOrEmpty(id) && _orderedIds.Contains(id);
 

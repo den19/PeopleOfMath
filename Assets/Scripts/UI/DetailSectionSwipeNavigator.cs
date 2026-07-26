@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -11,6 +12,8 @@ namespace PeopleOfMath.UI
         [SerializeField] float swipeThreshold = 60f;
         [SerializeField] float horizontalDominanceRatio = 1.5f;
 
+        readonly List<RaycastResult> _raycastResults = new();
+        PointerEventData _pointerEventData;
         Vector2 _pressPosition;
         bool _tracking;
         GalleryScrollSnap _galleryAtPress;
@@ -43,11 +46,13 @@ namespace PeopleOfMath.UI
             if (EventSystem.current == null)
                 return;
 
-            var eventData = new PointerEventData(EventSystem.current) { position = screenPosition };
-            var results = new System.Collections.Generic.List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, results);
+            _pointerEventData ??= new PointerEventData(EventSystem.current);
+            _pointerEventData.Reset();
+            _pointerEventData.position = screenPosition;
+            _raycastResults.Clear();
+            EventSystem.current.RaycastAll(_pointerEventData, _raycastResults);
 
-            foreach (var hit in results)
+            foreach (var hit in _raycastResults)
             {
                 var snap = hit.gameObject.GetComponentInParent<GalleryScrollSnap>();
                 if (snap == null)

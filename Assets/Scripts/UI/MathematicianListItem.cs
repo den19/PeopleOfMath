@@ -61,6 +61,9 @@ namespace PeopleOfMath.UI
 
         public void Bind(MathematicianData data, Action<string> onSelected)
         {
+            if (data == null)
+                return;
+
             _id = data.id;
             _data = data;
             _onSelected = onSelected;

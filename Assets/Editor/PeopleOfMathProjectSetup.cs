@@ -570,6 +570,35 @@ namespace PeopleOfMath.Editor
             Debug.Log("Glass theme support patched in Main scene.");
         }
 
+        [MenuItem("PeopleOfMath/Patch Settings Reset")]
+        public static void PatchSettingsReset()
+        {
+            if (DeferUntilEditMode(PatchSettingsReset))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            var loc = SetupLocalization();
+            AddUiEntry(loc.UiCollection, "settings_reset", "Данные и кэш", "Data & cache");
+            AddUiEntry(loc.UiCollection, "btn_reset_cache", "Сбросить настройки", "Reset settings");
+            AddUiEntry(loc.UiCollection, "settings_reset_confirm_title", "Сбросить всё?", "Reset everything?");
+            AddUiEntry(loc.UiCollection, "settings_reset_confirm_body",
+                "Будут удалены язык, тема, размер шрифта, избранное и результаты квиза. Приложение вернётся к состоянию новой установки.",
+                "Language, theme, font size, favorites, and quiz results will be deleted. The app will return to a fresh-install state.");
+            AddUiEntry(loc.UiCollection, "settings_reset_confirm", "Сбросить", "Reset");
+            AddUiEntry(loc.UiCollection, "settings_reset_cancel", "Отмена", "Cancel");
+            AssetDatabase.SaveAssets();
+            EditorSceneManager.OpenScene(ScenePath);
+            PatchSettingsResetInOpenScene(loc.UiCollection);
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+            AssetDatabase.SaveAssets();
+            Debug.Log("Settings reset control patched in Main scene.");
+        }
+
         [MenuItem("PeopleOfMath/Patch Theme Support")]
         public static void PatchThemeSupport()
         {
@@ -844,6 +873,14 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "btn_theme_dark", "Тёмная", "Dark");
             AddUiEntry(collection, "btn_theme_light", "Светлая", "Light");
             AddUiEntry(collection, "btn_theme_glass", "Стекло", "Glass");
+            AddUiEntry(collection, "settings_reset", "Данные и кэш", "Data & cache");
+            AddUiEntry(collection, "btn_reset_cache", "Сбросить настройки", "Reset settings");
+            AddUiEntry(collection, "settings_reset_confirm_title", "Сбросить всё?", "Reset everything?");
+            AddUiEntry(collection, "settings_reset_confirm_body",
+                "Будут удалены язык, тема, размер шрифта, избранное и результаты квиза. Приложение вернётся к состоянию новой установки.",
+                "Language, theme, font size, favorites, and quiz results will be deleted. The app will return to a fresh-install state.");
+            AddUiEntry(collection, "settings_reset_confirm", "Сбросить", "Reset");
+            AddUiEntry(collection, "settings_reset_cancel", "Отмена", "Cancel");
             AddUiEntry(collection, "empty_list", "Нет математиков по выбранному фильтру", "No mathematicians for this filter");
             AddUiEntry(collection, "empty_index", "Нет математиков на эту букву", "No mathematicians for this letter");
             AddUiEntry(collection, "search_placeholder", "Имя, биография, раздел…", "Name, bio, branch…");
@@ -3675,6 +3712,16 @@ namespace PeopleOfMath.Editor
             themeStatus.GetComponent<TextMeshProUGUI>().raycastTarget = false;
             AddThemeBinding(themeStatus, UiThemeToken.TextSecondary);
 
+            var resetLabel = CreateTmpChild(panel.transform, "ResetLabel", 18, FontStyles.Bold, new Vector2(40, -1200));
+            resetLabel.GetComponent<TextMeshProUGUI>().color = UiTheme.TextPrimary;
+            AddThemeBinding(resetLabel, UiThemeToken.TextPrimary);
+            var resetLse = resetLabel.AddComponent<LocalizeStringEvent>();
+            var resetLseSo = new SerializedObject(resetLse);
+            AssignLocalized(resetLseSo.FindProperty("m_StringReference"), MakeLocalized(collection, "settings_reset"));
+            resetLseSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var resetBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsReset, collection);
+
             var settings = panel.AddComponent<SettingsPanel>();
             var so = new SerializedObject(settings);
             so.FindProperty("russianButton").objectReferenceValue = ruBtn.GetComponent<Button>();
@@ -3688,6 +3735,8 @@ namespace PeopleOfMath.Editor
             so.FindProperty("lightThemeButton").objectReferenceValue = lightBtn.GetComponent<Button>();
             so.FindProperty("glassThemeButton").objectReferenceValue = glassBtn.GetComponent<Button>();
             so.FindProperty("themeStatusText").objectReferenceValue = themeStatus.GetComponent<TMP_Text>();
+            so.FindProperty("resetButton").objectReferenceValue = resetBtn.GetComponent<Button>();
+            so.FindProperty("resetLabelText").objectReferenceValue = resetLabel.GetComponent<TMP_Text>();
             so.ApplyModifiedPropertiesWithoutUndo();
 
             WireButtonClick(ruBtn.GetComponent<Button>(), settings.SelectRussian);
@@ -3698,6 +3747,7 @@ namespace PeopleOfMath.Editor
             WireButtonClick(darkBtn.GetComponent<Button>(), settings.SelectDark);
             WireButtonClick(lightBtn.GetComponent<Button>(), settings.SelectLight);
             WireButtonClick(glassBtn.GetComponent<Button>(), settings.SelectGlass);
+            WireButtonClick(resetBtn.GetComponent<Button>(), settings.PromptReset);
             return panel;
         }
 
@@ -4551,6 +4601,37 @@ namespace PeopleOfMath.Editor
             EnsureThemedCardOnPrefab($"{PrefabFolder}/SearchBar.prefab", UiCardVariant.Filter);
             EnsureThemedCardOnPrefab($"{PrefabFolder}/MathematicianListItem.prefab", UiCardVariant.ListItem);
             EnsureThemedCardOnPrefab("Assets/Resources/MathematicianListItem.prefab", UiCardVariant.ListItem);
+        }
+
+        static void PatchSettingsResetInOpenScene(StringTableCollection collection)
+        {
+            var settings = Object.FindFirstObjectByType<SettingsPanel>(FindObjectsInactive.Include);
+            if (settings == null)
+                return;
+
+            var panel = settings.gameObject;
+            var resetLabel = panel.transform.Find("ResetLabel")?.gameObject;
+            if (resetLabel == null)
+            {
+                resetLabel = CreateTmpChild(panel.transform, "ResetLabel", 18, FontStyles.Bold, new Vector2(40, -1200));
+                resetLabel.GetComponent<TextMeshProUGUI>().color = UiTheme.TextPrimary;
+                AddThemeBinding(resetLabel, UiThemeToken.TextPrimary);
+                var resetLse = resetLabel.AddComponent<LocalizeStringEvent>();
+                var resetLseSo = new SerializedObject(resetLse);
+                AssignLocalized(resetLseSo.FindProperty("m_StringReference"), MakeLocalized(collection, "settings_reset"));
+                resetLseSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            var resetBtn = panel.transform.Find("ResetButton")?.gameObject;
+            if (resetBtn == null)
+                resetBtn = CreateSceneButton(panel.transform, UiButtonLayout.SettingsReset, collection);
+
+            var settingsSo = new SerializedObject(settings);
+            settingsSo.FindProperty("resetButton").objectReferenceValue = resetBtn.GetComponent<Button>();
+            settingsSo.FindProperty("resetLabelText").objectReferenceValue = resetLabel.GetComponent<TMP_Text>();
+            settingsSo.ApplyModifiedPropertiesWithoutUndo();
+
+            WireButtonClick(resetBtn.GetComponent<Button>(), settings.PromptReset);
         }
 
         [MenuItem("PeopleOfMath/Patch About Screen")]

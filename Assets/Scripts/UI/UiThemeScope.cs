@@ -84,6 +84,9 @@ namespace PeopleOfMath.UI
                 if (text.GetComponentInParent<OnboardingOverlay>() != null)
                     continue;
 
+                if (text.GetComponentInParent<ConfirmDialogOverlay>() != null)
+                    continue;
+
                 var name = text.gameObject.name;
                 if (name == "section_century")
                     text.color = UiTheme.GetFilterAccent(FilterKind.Century);
@@ -176,6 +179,9 @@ namespace PeopleOfMath.UI
                     continue;
 
                 if (button.GetComponentInParent<OnboardingOverlay>() != null)
+                    continue;
+
+                if (button.GetComponentInParent<ConfirmDialogOverlay>() != null)
                     continue;
 
                 var name = button.gameObject.name;

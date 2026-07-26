@@ -113,13 +113,14 @@ namespace PeopleOfMath.UI
 
             var english = LocaleHelper.IsEnglish;
             var source = repository != null ? repository.All : null;
+            var counts = FilterService.CountAll(source, kind);
 
             foreach (var key in keys)
             {
                 if (!labels.ContainsKey(key))
                     continue;
 
-                var count = source != null ? FilterService.Count(source, kind, key) : 0;
+                counts.TryGetValue(key, out var count);
                 if (source != null && count == 0)
                     continue;
 

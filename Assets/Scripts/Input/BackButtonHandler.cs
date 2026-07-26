@@ -1,11 +1,8 @@
-using System;
 using PeopleOfMath.Core;
 using PeopleOfMath.Localization;
 using PeopleOfMath.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
-using UnityEngine.InputSystem.Utilities;
 
 namespace PeopleOfMath.Input
 {
@@ -17,7 +14,6 @@ namespace PeopleOfMath.Input
 
         int _lastBackFrame = -1;
         float _lastExitPromptTime = -10f;
-        IDisposable _buttonPressSubscription;
 
         void Awake()
         {
@@ -25,15 +21,6 @@ namespace PeopleOfMath.Input
             if (Keyboard.current == null)
                 InputSystem.AddDevice<Keyboard>();
 #endif
-        }
-
-        void OnEnable() =>
-            _buttonPressSubscription = InputSystem.onAnyButtonPress.Call(OnButtonPressed);
-
-        void OnDisable()
-        {
-            _buttonPressSubscription?.Dispose();
-            _buttonPressSubscription = null;
         }
 
         void Update()
@@ -46,18 +33,19 @@ namespace PeopleOfMath.Input
                 OnBackPressed();
         }
 
-        void OnButtonPressed(InputControl control)
-        {
-            if (control is KeyControl { keyCode: Key.Escape })
-                OnBackPressed();
-        }
-
         void OnBackPressed()
         {
             if (navigation == null || _lastBackFrame == Time.frameCount)
                 return;
 
             _lastBackFrame = Time.frameCount;
+
+            var confirm = FindFirstObjectByType<ConfirmDialogOverlay>();
+            if (confirm != null)
+            {
+                Destroy(confirm.gameObject);
+                return;
+            }
 
             switch (navigation.CurrentScreen)
             {

@@ -14,9 +14,11 @@ namespace PeopleOfMath.UI
         RenderTexture _blurredBackdrop;
         RenderTexture _blurScratch;
         bool _isActive;
+        static GlassThemeController _instance;
 
         void Awake()
         {
+            _instance = this;
             if (rootCanvas == null)
                 rootCanvas = GetComponent<Canvas>() ?? GetComponentInParent<Canvas>();
         }
@@ -28,6 +30,8 @@ namespace PeopleOfMath.UI
 
         void OnDestroy()
         {
+            if (_instance == this)
+                _instance = null;
             ReleaseTextures();
         }
 
@@ -52,8 +56,9 @@ namespace PeopleOfMath.UI
 
         public static void RefreshAllSurfaces()
         {
-            var controller = Object.FindFirstObjectByType<GlassThemeController>();
-            controller?.ApplyGlassSurfaces();
+            if (_instance == null)
+                _instance = Object.FindFirstObjectByType<GlassThemeController>();
+            _instance?.ApplyGlassSurfaces();
         }
 
         UiGlassSurface[] FindSurfaces()

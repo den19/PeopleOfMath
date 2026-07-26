@@ -10,11 +10,14 @@ namespace PeopleOfMath.UI
         [SerializeField] float snapThreshold = 50f;
         [SerializeField] float snapSpeed = 12f;
 
+        const float SettleEpsilon = 0.001f;
+
         ScrollRect _scroll;
         RectTransform _content;
         int _pageCount;
         int _targetIndex;
         bool _dragging;
+        bool _settled = true;
 
         public int CurrentIndex { get; private set; }
 
@@ -50,13 +53,18 @@ namespace PeopleOfMath.UI
             SnapImmediate(CurrentIndex);
         }
 
-        public void OnBeginDrag(PointerEventData eventData) => _dragging = true;
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            _dragging = true;
+            _settled = false;
+        }
 
         public void OnDrag(PointerEventData eventData) { }
 
         public void OnEndDrag(PointerEventData eventData)
         {
             _dragging = false;
+            _settled = false;
             if (_pageCount <= 1)
                 return;
 
@@ -74,25 +82,30 @@ namespace PeopleOfMath.UI
 
         void Update()
         {
-            EnsureInitialized();
-            if (_pageCount <= 1 || _content == null || _scroll == null)
+            if (_scroll == null)
+                EnsureInitialized();
+            if (_pageCount <= 1 || _content == null || _scroll == null || _dragging || _settled)
                 return;
 
-            if (!_dragging)
+            var target = GetNormalizedPosition(_targetIndex);
+            var current = _scroll.horizontalNormalizedPosition;
+            if (Mathf.Abs(current - target) < SettleEpsilon)
             {
-                var target = GetNormalizedPosition(_targetIndex);
-                _scroll.horizontalNormalizedPosition = Mathf.Lerp(
-                    _scroll.horizontalNormalizedPosition,
-                    target,
-                    Time.unscaledDeltaTime * snapSpeed);
-
-                var nearest = NearestIndex();
-                if (nearest != CurrentIndex && Mathf.Abs(_scroll.horizontalNormalizedPosition - target) < 0.01f)
+                _scroll.horizontalNormalizedPosition = target;
+                if (CurrentIndex != _targetIndex)
                 {
-                    CurrentIndex = nearest;
+                    CurrentIndex = _targetIndex;
                     PageChanged?.Invoke(CurrentIndex);
                 }
+
+                _settled = true;
+                return;
             }
+
+            _scroll.horizontalNormalizedPosition = Mathf.Lerp(
+                current,
+                target,
+                Time.unscaledDeltaTime * snapSpeed);
         }
 
         int NearestIndex()
@@ -120,6 +133,7 @@ namespace PeopleOfMath.UI
             _targetIndex = index;
             CurrentIndex = index;
             _scroll.horizontalNormalizedPosition = GetNormalizedPosition(index);
+            _settled = true;
             PageChanged?.Invoke(CurrentIndex);
         }
     }

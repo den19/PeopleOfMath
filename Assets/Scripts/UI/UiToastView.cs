@@ -11,6 +11,7 @@ namespace PeopleOfMath.UI
     {
         const float VisibleSeconds = 2.2f;
 
+        static readonly WaitForSecondsRealtime HideDelay = new(VisibleSeconds);
         static UiToastView _instance;
 
         CanvasGroup _canvasGroup;
@@ -23,6 +24,9 @@ namespace PeopleOfMath.UI
                 return;
 
             EnsureInstance();
+            if (_instance == null)
+                return;
+
             _instance.Present(message);
         }
 
@@ -86,7 +90,7 @@ namespace PeopleOfMath.UI
 
         IEnumerator HideAfterDelay()
         {
-            yield return new WaitForSecondsRealtime(VisibleSeconds);
+            yield return HideDelay;
             _canvasGroup.alpha = 0f;
             gameObject.SetActive(false);
             _hideRoutine = null;

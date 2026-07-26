@@ -22,16 +22,14 @@ namespace PeopleOfMath.UI
 
         void OnEnable() => Apply();
 
-        void OnRectTransformDimensionsChange() => Apply();
-
-        void LateUpdate()
+        void OnRectTransformDimensionsChange()
         {
             if (_rt == null)
+                _rt = transform as RectTransform;
+            if (_rt == null || Mathf.Approximately(_rt.rect.width, _lastWidth))
                 return;
 
-            var width = _rt.rect.width;
-            if (!Mathf.Approximately(width, _lastWidth))
-                Apply();
+            Apply();
         }
 
         public void Apply()

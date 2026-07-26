@@ -33,6 +33,15 @@ namespace PeopleOfMath.Quiz
             PlayerPrefs.Save();
         }
 
+        public static void Clear()
+        {
+            PlayerPrefs.DeleteKey(BestPortraitKey);
+            PlayerPrefs.DeleteKey(BestFactKey);
+            PlayerPrefs.DeleteKey(BestMixedKey);
+            PlayerPrefs.DeleteKey(GamesPlayedKey);
+            PlayerPrefs.Save();
+        }
+
         static string GetBestKey(QuizMode mode) =>
             mode switch
             {
@@ -41,5 +50,4 @@ namespace PeopleOfMath.Quiz
                 _ => BestMixedKey
             };
     }
-
 }

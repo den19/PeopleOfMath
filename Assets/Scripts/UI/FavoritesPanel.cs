@@ -125,6 +125,9 @@ namespace PeopleOfMath.UI
             var animateItems = _animateOnNextRefresh;
             _animateOnNextRefresh = false;
 
+            if (listContent == null)
+                return;
+
             foreach (Transform child in listContent)
                 Destroy(child.gameObject);
 
@@ -153,8 +156,6 @@ namespace PeopleOfMath.UI
             foreach (var data in favorites)
             {
                 var item = Instantiate(itemPrefab, listContent);
-                var card = item.GetComponent<UiThemedCard>();
-                card?.Configure(UiCardVariant.ListItem);
                 item.Bind(data, id => navigation.ShowDetail(id));
 
                 if (animateItems)
@@ -168,7 +169,7 @@ namespace PeopleOfMath.UI
                 ResetListScrollToTop();
 
             GetComponent<FontSizeScope>()?.Apply();
-            RefreshTheme();
+            GlassThemeController.RefreshAllSurfaces();
         }
 
         IEnumerable<Transform> CollectRevealTargets()

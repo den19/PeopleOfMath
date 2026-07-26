@@ -128,12 +128,26 @@ namespace PeopleOfMath.Quiz
             HashSet<string> usedIds,
             System.Random rng)
         {
-            var available = pool.Where(d => !usedIds.Contains(d.id)).ToList();
-            if (available.Count == 0)
+            var availableCount = 0;
+            for (var i = 0; i < pool.Count; i++)
+            {
+                if (!usedIds.Contains(pool[i].id))
+                    availableCount++;
+            }
+
+            if (availableCount == 0)
                 return null;
 
-            var index = rng?.Next(0, available.Count) ?? UnityEngine.Random.Range(0, available.Count);
-            return available[index];
+            var pick = rng?.Next(0, availableCount) ?? UnityEngine.Random.Range(0, availableCount);
+            for (var i = 0; i < pool.Count; i++)
+            {
+                if (usedIds.Contains(pool[i].id))
+                    continue;
+                if (pick-- == 0)
+                    return pool[i];
+            }
+
+            return null;
         }
 
         static QuizQuestion BuildQuestion(
