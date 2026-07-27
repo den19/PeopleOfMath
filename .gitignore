@@ -84,6 +84,11 @@ Tools/keystore.local.ps1
 *.app
 /[Pp]ublish/
 
+# Bluetooth OBEX push tool (Tools/BluetoothObexPush) — keep project, ignore build output
+!Tools/BluetoothObexPush/*.csproj
+Tools/BluetoothObexPush/bin/
+Tools/BluetoothObexPush/obj/
+
 # Crashlytics generated file
 crashlytics-build.properties
 
