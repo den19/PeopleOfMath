@@ -71,11 +71,17 @@ namespace PeopleOfMath.Editor
 
         public static void ConfigureEmptyState(GameObject go)
         {
+            var inset = UiLayoutMetrics.EmptyStateHorizontalInset;
             var rt = go.GetComponent<RectTransform>();
             if (rt != null)
             {
-                rt.anchoredPosition = UiLayoutMetrics.EmptyStatePosition;
-                rt.sizeDelta = new Vector2(rt.sizeDelta.x, UiLayoutMetrics.EmptyStateLineHeight);
+                // Stretch horizontally with equal insets. Do not put inset into anchoredPosition.x
+                // while sizeDelta.x only shrinks by a small amount — that overflows past the right edge.
+                rt.anchorMin = new Vector2(0f, 1f);
+                rt.anchorMax = new Vector2(1f, 1f);
+                rt.pivot = new Vector2(0.5f, 1f);
+                rt.anchoredPosition = new Vector2(0f, UiLayoutMetrics.EmptyStateTopOffset);
+                rt.sizeDelta = new Vector2(-(inset * 2f), UiLayoutMetrics.EmptyStateHeight);
             }
 
             var tmp = go.GetComponent<TextMeshProUGUI>();
@@ -85,6 +91,9 @@ namespace PeopleOfMath.Editor
             var fontSize = UiLayoutMetrics.EmptyStateFontSize;
             tmp.fontSize = fontSize;
             tmp.color = UiTheme.TextSecondary;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.overflowMode = TextOverflowModes.Overflow;
+            tmp.alignment = TextAlignmentOptions.TopLeft;
             var so = new SerializedObject(tmp);
             var baseProp = so.FindProperty("m_fontSizeBase");
             if (baseProp != null)

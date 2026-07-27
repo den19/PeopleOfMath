@@ -361,9 +361,15 @@ namespace PeopleOfMath.Editor
             var hlg = bottomBar.GetComponent<HorizontalLayoutGroup>();
             if (hlg != null)
             {
-                hlg.padding = new RectOffset(4, 4, 4, 4);
+                hlg.padding = new RectOffset(
+                    BottomBarSafeArea.HorizontalLayoutPadding,
+                    BottomBarSafeArea.HorizontalLayoutPadding,
+                    BottomBarSafeArea.BaseLayoutPadding,
+                    BottomBarSafeArea.BaseLayoutPadding);
                 EditorUtility.SetDirty(hlg);
             }
+
+            EnsureBottomBarSafeArea(bottomBar, contentArea);
 
             foreach (Transform child in bottomBar.transform)
             {
@@ -2205,19 +2211,22 @@ namespace PeopleOfMath.Editor
             var media = root.Find("Media")?.GetComponent<RectTransform>();
             if (media != null)
             {
-                media.anchorMin = new Vector2(0f, 1f);
+                // Fractional top band so Media scales with AdaptiveBrowseGrid cell height.
+                var mediaMinY = 1f - CategoryTileMetrics.MediaHeightRatio;
+                media.anchorMin = new Vector2(0f, mediaMinY);
                 media.anchorMax = new Vector2(1f, 1f);
                 media.pivot = new Vector2(0.5f, 1f);
                 media.anchoredPosition = Vector2.zero;
-                media.sizeDelta = new Vector2(0f, CategoryTileMetrics.MediaHeight);
+                media.sizeDelta = Vector2.zero;
             }
 
             var label = root.Find("Label");
             if (label != null)
             {
                 var labelRt = label.GetComponent<RectTransform>();
-                labelRt.anchorMin = new Vector2(0f, 1f);
-                labelRt.anchorMax = new Vector2(1f, 1f);
+                // Bottom-anchored so Label stays inside the cell when height shrinks.
+                labelRt.anchorMin = new Vector2(0f, 0f);
+                labelRt.anchorMax = new Vector2(1f, 0f);
                 labelRt.pivot = new Vector2(0f, 1f);
                 labelRt.anchoredPosition = CategoryTileMetrics.LabelOffset;
                 labelRt.sizeDelta = new Vector2(
@@ -2240,8 +2249,9 @@ namespace PeopleOfMath.Editor
             if (count != null)
             {
                 var countRt = count.GetComponent<RectTransform>();
-                countRt.anchorMin = new Vector2(0f, 1f);
-                countRt.anchorMax = new Vector2(1f, 1f);
+                // Bottom-anchored so Count stays inside the cell when height shrinks.
+                countRt.anchorMin = new Vector2(0f, 0f);
+                countRt.anchorMax = new Vector2(1f, 0f);
                 countRt.pivot = new Vector2(0f, 1f);
                 countRt.anchoredPosition = CategoryTileMetrics.CountOffset;
                 countRt.sizeDelta = new Vector2(
@@ -3777,7 +3787,11 @@ namespace PeopleOfMath.Editor
                 rootImage.raycastTarget = true;
 
             var hlg = bar.AddComponent<HorizontalLayoutGroup>();
-            hlg.padding = new RectOffset(4, 4, 4, 4);
+            hlg.padding = new RectOffset(
+                BottomBarSafeArea.HorizontalLayoutPadding,
+                BottomBarSafeArea.HorizontalLayoutPadding,
+                BottomBarSafeArea.BaseLayoutPadding,
+                BottomBarSafeArea.BaseLayoutPadding);
             hlg.spacing = 0f;
             hlg.childAlignment = TextAnchor.MiddleCenter;
             hlg.childControlWidth = true;
@@ -3799,6 +3813,9 @@ namespace PeopleOfMath.Editor
             WireButtonClick(settings.GetComponent<Button>(), nav.OnSettingsTabClicked);
             WireButtonClick(about.GetComponent<Button>(), nav.OnAboutTabClicked);
 
+            var contentArea = canvas.Find("ContentArea")?.gameObject;
+            EnsureBottomBarSafeArea(bar, contentArea);
+
             return new BottomBarResult
             {
                 browseTab = browse.GetComponent<Button>(),
@@ -3808,6 +3825,22 @@ namespace PeopleOfMath.Editor
                 settingsTab = settings.GetComponent<Button>(),
                 aboutTab = about.GetComponent<Button>()
             };
+        }
+
+        static void EnsureBottomBarSafeArea(GameObject bottomBar, GameObject contentArea)
+        {
+            if (bottomBar == null)
+                return;
+
+            var safe = bottomBar.GetComponent<BottomBarSafeArea>();
+            if (safe == null)
+                safe = bottomBar.AddComponent<BottomBarSafeArea>();
+
+            var contentRt = contentArea != null ? contentArea.GetComponent<RectTransform>() : null;
+            var hlg = bottomBar.GetComponent<HorizontalLayoutGroup>();
+            safe.Configure(contentRt, hlg);
+            EditorUtility.SetDirty(safe);
+            EditorUtility.SetDirty(bottomBar);
         }
 
         static GameObject CreateNavTabButton(

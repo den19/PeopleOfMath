@@ -11,7 +11,9 @@ namespace PeopleOfMath.UI
 
         public const float MediaHeightRatio = 0.64f;
         public const float LabelHorizontalInset = 28f;
+        /// <summary>Distance from tile bottom to the top edge of the Label (bottom-anchored).</summary>
         public const float LabelTopFromBottom = 108f;
+        /// <summary>Distance from tile bottom to the top edge of the Count (bottom-anchored).</summary>
         public const float CountTopFromBottom = 52f;
         public const float LabelHeight = 48f;
         public const float CountHeight = 36f;
@@ -22,10 +24,12 @@ namespace PeopleOfMath.UI
 
         public static float MediaHeight => CellHeight * MediaHeightRatio;
 
+        /// <summary>Bottom-anchored Label position (pivot top-left).</summary>
         public static Vector2 LabelOffset =>
-            new(LabelHorizontalInset, -(CellHeight - LabelTopFromBottom));
+            new(LabelHorizontalInset, LabelTopFromBottom);
 
+        /// <summary>Bottom-anchored Count position (pivot top-left).</summary>
         public static Vector2 CountOffset =>
-            new(LabelHorizontalInset, -(CellHeight - CountTopFromBottom));
+            new(LabelHorizontalInset, CountTopFromBottom);
     }
 }

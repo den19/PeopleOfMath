@@ -116,8 +116,14 @@ namespace PeopleOfMath.Editor
 
         public const float EmptyStateBaseFontSize = 16f;
         public static float EmptyStateFontSize => ScaleFont(EmptyStateBaseFontSize) * 2f;
-        public static Vector2 EmptyStatePosition => new Vector2(80f, -400f);
-        public static float EmptyStateLineHeight = 48f;
+        /// <summary>Left/right inset when Empty is stretch-width under the panel.</summary>
+        public const float EmptyStateHorizontalInset = 80f;
+        public const float EmptyStateTopOffset = -400f;
+        /// <summary>Legacy: x = horizontal inset, y = top offset. Prefer the named constants.</summary>
+        public static Vector2 EmptyStatePosition => new Vector2(EmptyStateHorizontalInset, EmptyStateTopOffset);
+        /// <summary>Tall enough for the multi-line favorites / list empty copy at EmptyStateFontSize.</summary>
+        public static float EmptyStateHeight => Mathf.Max(180f, EmptyStateFontSize * 3.75f);
+        public static float EmptyStateLineHeight => EmptyStateHeight;
 
         // Header bar titles (Settings / Index / …); home is larger for the short brand line.
         public const float HeaderTitleFontSize = 42f;

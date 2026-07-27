@@ -30,6 +30,7 @@ namespace PeopleOfMath.Editor
             var home = GameObject.Find("HomePanel");
             var index = GameObject.Find("IndexPanel");
             var list = GameObject.Find("ListPanel");
+            var favorites = GameObject.Find("FavoritesPanel");
 
             if (home != null)
                 HomeListPanelLayout.ApplyToPanel(home);
@@ -37,6 +38,8 @@ namespace PeopleOfMath.Editor
                 HomeListPanelLayout.ApplyToIndexPanel(index);
             if (list != null)
                 HomeListPanelLayout.ApplyToPanel(list);
+            if (favorites != null)
+                HomeListPanelLayout.ApplyToPanel(favorites);
 
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();

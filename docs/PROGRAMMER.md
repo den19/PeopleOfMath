@@ -46,7 +46,9 @@ NavigationController  ← стек ScreenContext
 | `Assets/Scripts/Input/` | Android Back / Escape |
 | `Assets/Scripts/Sharing/` | Share / clipboard |
 | `Assets/Scripts/Text/` | Markdown → TMP, orphans |
-| `Assets/Editor/` | Меню `PeopleOfMath/…`, импорт, патчи сцены |
+| `Assets/Editor/` | Меню `PeopleOfMath/…`, импорт, патчи сцены, `AndroidApkBuilder` |
+| `Tools/build_apk.ps1` | Релизный APK: бамп версии + подпись `main` → `com.densappstudio.peopleofmath.apk` |
+| `Tools/keystore.local.ps1.example` | Шаблон пароля; рабочий файл — gitignored `keystore.local.ps1` |
 | `Assets/Data/Mathematicians/` | SO-карточки (`{id}.asset`) |
 | `Assets/Data/mathematicians_catalog.json` | Источник импорта |
 | `Assets/Resources/Portraits/{id}/` | JPEG портретов для runtime |
@@ -171,7 +173,7 @@ ScriptableObject, меню создания: **PeopleOfMath → Mathematician Da
 | `IndexPanel` | буквенный индекс |
 | `ListPanel` | результаты фильтра или поиска |
 | `DetailPanel` | постраничные секции карточки |
-| `FavoritesPanel` | избранное + stagger reveal |
+| `FavoritesPanel` | избранное + stagger reveal; empty state — §5.2.2 |
 | `QuizPanel` | меню → игра → feedback → результаты |
 | `SettingsPanel` | язык, шрифт, тема, сброс |
 | `AboutPanel` | о приложении |
@@ -189,7 +191,9 @@ ScriptableObject, меню создания: **PeopleOfMath → Mathematician Da
 | `CategoryTileMetrics` | Базовый размер ячейки (492×460), spacing 20, 2 колонки; метрики подписей |
 | `AdaptiveBrowseGrid` | Runtime: подгоняет `GridLayoutGroup.cellSize` под доступную ширину |
 | `CategoryTile` prefab | Плитка; `LayoutElement` — только preferred, **без** жёсткого `minWidth` |
-| `HomeListPanelLayout` / `UiLayoutMetrics` | Editor: padding скролла (32), настройка grid/групп |
+| `HomeListPanelLayout` / `UiLayoutMetrics` | Editor: padding скролла (32), grid/группы, empty state (§5.2.2) |
+
+**Якоря внутри плитки.** `Media` — fractional top (`anchorMin.y = 1 − MediaHeightRatio`); `Label` / `Count` — от **низа** ячейки (`LabelTopFromBottom` / `CountTopFromBottom`). Так счётчик `(n)` и название остаются внутри плитки, когда `AdaptiveBrowseGrid` сжимает `cellSize`. Не возвращать top-fixed offsets вроде `y = −408` — при меньшей высоте текст уезжает в gap между рядами.
 
 **Как считается ширина.** `AdaptiveBrowseGrid` берёт внутреннюю ширину родителя (минус padding `VerticalLayoutGroup` у `Content`), вычитает spacing и 2 px slack, затем `Floor` на колонку — чтобы `2×cell + spacing` не переполнял rect из‑за округления.
 
@@ -198,6 +202,33 @@ ScriptableObject, меню создания: **PeopleOfMath → Mathematician Da
 **Не ломать.** Не ставить у `CategoryTile` фиксированный `minWidth`/`minHeight` (= базовой ячейке) — это снова раздувает preferred-ширину сетки шире viewport. Не убирать `LateUpdate` «ради оптимизации» без замены на другой гарантированный хук после layout.
 
 Метрики редактора: `PeopleOfMath → Patch Home Category Tiles` (`EnsureHomeGridGroup` вешает `AdaptiveBrowseGrid` на группы).
+
+### 5.2.1. BottomBar Safe Area
+
+`BottomBarSafeArea` на `BottomBar` поднимает таббар и подписи над bottom inset. Высота бара = `148 + inset`, HLG `padding.bottom` растёт на inset, `ContentArea.offsetMin.y` = той же сумме.
+
+**Inset.** Берётся `max(Screen.safeArea.y → canvas, MinBottomCornerInset=20)`: на многих Android скругления **не** входят в `safeArea`, и без floor подписи остаются в зоне угла.
+
+**HLG бара.** Left/right = `HorizontalLayoutPadding` (18) — только на BottomBar, чтобы крайние вкладки не заходили в физические углы. Top/base bottom = `BaseLayoutPadding` (4).
+
+**ContentArea — только вертикально.** Не паддить `ContentArea` слева/справа под safe area — горизонтальный inset сужает viewport и рискует снова вытолкнуть вторую колонку tiles; ширину сетки держит только `AdaptiveBrowseGrid`.
+
+Метрики редактора: `PeopleOfMath → Fix Bottom Bar Layout` / `Patch Bottom Tab Bar` вешают и линкуют компонент.
+
+### 5.2.2. Empty state (Favorites / List / Index)
+
+Подсказка «пока пусто» (`Empty` на `FavoritesPanel`, `ListPanel`, `IndexPanel`) — stretch-width TMP под панелью, ключи `empty_favorites` / `empty_list` / `empty_search`.
+
+| Метрика / код | Роль |
+|---------------|------|
+| `UiLayoutMetrics.EmptyStateHorizontalInset` (80) | Отступ слева и справа |
+| `EmptyStateTopOffset` (−400) | Смещение вниз от верха панели |
+| `EmptyStateHeight` (≥180) | Высота под многострочный RU/EN текст |
+| `HomeListPanelLayout.ConfigureEmptyState` | Якоря stretch, pivot top-center, wrapping |
+
+**Не ломать.** Не класть inset в `anchoredPosition.x` при stretch-якорях `(0,1)–(1,1)`, оставляя `sizeDelta.x ≈ −20`: левый край уезжает вправо, а ширина почти равна родителю — текст вылезает за правый край экрана. Правильно: `anchoredPosition.x = 0`, `sizeDelta.x = −2 × inset`.
+
+Меню: `PeopleOfMath → Apply Home & List Panel Layout (+100%)` также применяет layout к `FavoritesPanel`.
 
 ### 5.3. Детальная карточка
 
@@ -335,9 +366,23 @@ Assets/Scripts/Localization/LocaleHelper.cs
 Assets/Scripts/Localization/UiStrings.cs
 ```
 
+### Сборка APK
+
+| | |
+|---|---|
+| Выход | `{projectRoot}/com.densappstudio.peopleofmath.apk` |
+| Меню | `PeopleOfMath → Build Release APK (project root)` |
+| Batch | `Tools/build_apk.ps1` → `AndroidApkBuilder.BuildFromBatch` |
+| Версия | Перед билдом: last segment `bundleVersion` +1; `bundleVersionCode` = то же число |
+| Подпись | `C:/git/cloud/den.kolesov..keystore`, alias `main`; пароль из `Tools/keystore.local.ps1` (`$KeystorePassword`) или `ANDROID_KEYSTORE_PASS` |
+| Автозапуск | **Нет** — только по «собери APK» (`.cursor/rules/build-apk.mdc`) |
+
+Без пароля сборка **падает** (debug signing отключён). Перед batch закройте Unity Editor. Подробности — [README.md § Сборка Android](../README.md#сборка-android).
+
 ### Editor / контент
 
 ```
+Assets/Editor/AndroidApkBuilder.cs
 Assets/Editor/PeopleOfMathImportMenu.cs
 Assets/Editor/MathematicianImportPipeline.cs
 Assets/Editor/WikimediaPortraitImporter.cs
@@ -350,6 +395,7 @@ Assets/Resources/CategoryTile.prefab
 Assets/Data/mathematicians_catalog.json
 Assets/Data/Mathematicians/
 Assets/Resources/Portraits/
+Tools/build_apk.ps1
 Tools/
 ```
 
@@ -366,6 +412,9 @@ Tools/
 | Цвет / тема | `UiTheme` + `UiThemeBinding` (не хардкодить в панелях без нужды) |
 | Баг «назад» | `BackButtonHandler`, `HandleBack`, `DetailPanel.TryGoBack`, `QuizPanel.TryHandleBack` |
 | Правая колонка плиток уезжает за край | `AdaptiveBrowseGrid`, `CategoryTileMetrics`; не ставить `minWidth` на `CategoryTile` |
+| Счётчик `(n)` между рядами плиток | Якоря `Label`/`Count` от низа; не top-fixed `y = −408` |
+| Подписи BottomBar режет скругление | `BottomBarSafeArea` (`MinBottomCornerInset`, HLG L/R); не паддить `ContentArea` по X |
+| Собрать релизный APK | `AndroidApkBuilder` / `Tools/build_apk.ps1` + `keystore.local.ps1`; **только по просьбе** |
 | Нет портрета | `PortraitResolver`, папка Resources, `.placeholder`, меню Link/Import |
 | Квиз без фактов на EN | Заполнить `*En` или временно тестировать RU locale |
 

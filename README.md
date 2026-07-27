@@ -66,19 +66,62 @@
 
 ## Сборка Android
 
+Релизный пайплайн пишет APK в **корень проекта**: `com.densappstudio.peopleofmath.apk` (в `.gitignore`).
+
+Каждый релизный билд:
+
+1. Увеличивает последнюю цифру **Version** после последней точки (`1.1.39` → `1.1.40`).
+2. Ставит **Bundle Version Code** в то же целое (`40`).
+3. Подписывает keystore `C:/git/cloud/den.kolesov..keystore`, alias **`main`** (один пароль на keystore и alias).
+
+Debug-подпись **отключена**: без пароля сборка падает.
+
+### Секреты (один раз)
+
+```powershell
+copy Tools\keystore.local.ps1.example Tools\keystore.local.ps1
+# отредактируйте: $KeystorePassword = "ваш_пароль"
+```
+
+Файл `Tools/keystore.local.ps1` в `.gitignore` — **не коммитить**. Альтернатива: `$env:ANDROID_KEYSTORE_PASS = "..."`.
+
+### Быстрый способ (рекомендуется)
+
+**В открытом Unity Editor:** меню **PeopleOfMath → Build Release APK (project root)** (нужен `keystore.local.ps1` или env).
+
+**Из терминала** (Unity Editor **должен быть закрыт**):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File Tools\build_apk.ps1
+```
+
+Опции скрипта:
+
+- `-UnityPath "C:\Program Files\Unity\Hub\Editor\6000.4.5f1\Editor\Unity.exe"` — если Hub не в стандартном пути
+- `-SkipEditorLockCheck` — если `Temp\UnityLockfile` остался после краша
+- Лог: `build_apk.log` в корне проекта
+
+Эквивалент вручную:
+
+```text
+"C:\Program Files\Unity\Hub\Editor\6000.4.5f1\Editor\Unity.exe" -batchmode -nographics -quit -projectPath "C:\git\PeopleOfMath" -executeMethod PeopleOfMath.Editor.AndroidApkBuilder.BuildFromBatch -logFile "C:\git\PeopleOfMath\build_apk.log"
+```
+
+Addressables (локализация) собираются вместе с player build (`BuildAddressablesWithPlayerBuild`).
+
+### Классический UI Unity
+
 1. **File → Build Settings** — платформа **Android**.
 2. Сцена `Assets/Scenes/Main.unity` (index 0).
-3. **Build** или **Build And Run** (Addressables пересобираются автоматически перед билдом).
+3. **Build** или **Build And Run** (версия/подпись — как в Player Settings; релизный бамп только через меню/скрипт выше).
 
-Если меняли только строки локализации и APK собираете вручную: **Window → Asset Management → Addressables → Groups → Build → New Build**, затем снова **Build** APK. Старую версию приложения на устройстве удалите перед установкой.
-
-Пакетный setup сцены (редактор закрыт):
+Пакетный setup сцены (не APK; редактор закрыт):
 
 ```text
 "C:\Program Files\Unity\Hub\Editor\6000.4.5f1\Editor\Unity.exe" -batchmode -quit -projectPath "C:\git\PeopleOfMath" -executeMethod PeopleOfMath.Editor.PeopleOfMathProjectSetup.RunBatch
 ```
 
-## Функции
+**Агенту Cursor:** по фразе «собери APK» / «build apk» — только `Tools\build_apk.ps1` (релиз: бамп + подпись). Правило: `.cursor/rules/build-apk.mdc`. Автозапуск после правок не настроен.## Функции
 
 - До **100** математиков, биография на RU (из Wikipedia), EN — вручную или fallback.
 - Фильтры: век, страна, раздел.
@@ -92,7 +135,9 @@
 - `Assets/Data/Mathematicians` — ScriptableObject карточки
 - `Assets/Resources/Portraits/{id}` — портреты runtime
 - `Assets/Data/mathematicians_catalog.json` — каталог импорта
-- `Assets/Editor` — `MathematicianImportPipeline`, `WikimediaPortraitImporter`
+- `Assets/Editor` — `MathematicianImportPipeline`, `WikimediaPortraitImporter`, `AndroidApkBuilder`
+- `Tools/build_apk.ps1` — релизный APK (бамп + подпись) → `com.densappstudio.peopleofmath.apk`
+- `Tools/keystore.local.ps1.example` — шаблон пароля keystore (локальный `.ps1` в gitignore)
 - `Assets/Localization` — String Table UI
 - `Assets/Scenes/Main.unity` — основная сцена
 - `docs/PROGRAMMER.md` — документация для разработчиков

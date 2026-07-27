@@ -13,14 +13,17 @@ namespace PeopleOfMath.Editor
         public static readonly Vector2 SectionNavBarPosition = new(0f, 45f);
         public static readonly Vector2 SectionNavBarSize = new(0f, 90f);
 
-        /// <summary>Matches BottomBar HorizontalLayoutGroup left/right padding.</summary>
+        /// <summary>Inset for section/header nav actions (not BottomBar HLG).</summary>
         public const float EdgeInset = 4f;
+
+        /// <summary>Matches BottomBar HorizontalLayoutGroup left/right padding.</summary>
+        public const int BottomBarEdgeInset = BottomBarSafeArea.HorizontalLayoutPadding;
         public const float ReferenceCanvasWidth = 1080f;
         public const float NavActionButtonWidth = 220f;
         public const float NavActionButtonHeight = 66f;
 
         /// <summary>Single-row Figma-style tab bar height (reference 1080 canvas).</summary>
-        public const float BottomBarHeight = 148f;
+        public const float BottomBarHeight = BottomBarSafeArea.BottomBarHeight;
         public static readonly Vector2 BottomBarPosition = new(0f, BottomBarHeight * 0.5f);
         public static readonly Vector2 BottomBarSize = new(0f, BottomBarHeight);
 
