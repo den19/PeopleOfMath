@@ -115,3 +115,6 @@ InitTestScene*.unity*
 /Tools/_en_inventory_report.json
 /Tools/_en_*.log
 /Tools/_en_translate_pid.txt
+
+# Local Cursor plan (not for the repo)
+.cursor/plans/release_apk_pipeline_ef3218c0.plan.md
