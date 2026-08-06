@@ -30,7 +30,8 @@ namespace PeopleOfMath.UI
             CurrentLevel = Enum.IsDefined(typeof(FontSizeLevel), saved)
                 ? (FontSizeLevel)saved
                 : FontSizeLevel.Normal;
-            BaseSizes.Clear();
+            // Keep BaseSizes so already-scaled TMP texts re-apply from authored bases
+            // (clearing here after ExtraLarge made Reset stick at the large size).
             FontSizeChanged?.Invoke();
         }
 

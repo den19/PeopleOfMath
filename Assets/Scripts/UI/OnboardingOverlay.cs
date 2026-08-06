@@ -267,6 +267,15 @@ namespace PeopleOfMath.UI
                 label.text = text;
         }
 
+        /// <summary>
+        /// Android/system back: dismiss onboarding (same as Skip) instead of exiting the app.
+        /// </summary>
+        public bool TryHandleBack()
+        {
+            Complete();
+            return true;
+        }
+
         void Complete()
         {
             MarkComplete();

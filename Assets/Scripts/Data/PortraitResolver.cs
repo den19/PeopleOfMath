@@ -9,6 +9,7 @@ namespace PeopleOfMath.Data
     {
         static readonly Dictionary<string, Sprite> PrimaryCache = new();
         static readonly Dictionary<string, bool> PlaceholderMarkerCache = new(StringComparer.Ordinal);
+        static readonly Dictionary<int, Sprite> RuntimeSpritesByTexture = new();
 
         public static Sprite GetPrimaryPortrait(MathematicianData data)
         {
@@ -19,7 +20,9 @@ namespace PeopleOfMath.Data
                 return cached;
 
             var sprite = ResolvePrimaryPortrait(data);
-            PrimaryCache[data.id] = sprite;
+            // Do not cache misses — a later import / Resources fix can succeed.
+            if (sprite != null)
+                PrimaryCache[data.id] = sprite;
             return sprite;
         }
 
@@ -88,16 +91,27 @@ namespace PeopleOfMath.Data
             return textures
                 .Where(t => !HasPlaceholderMarker(mathematicianId, t.name))
                 .OrderBy(t => t.name, StringComparer.OrdinalIgnoreCase)
-                .Select(t =>
-                {
-                    var sprite = Sprite.Create(
-                        t,
-                        new Rect(0, 0, t.width, t.height),
-                        new Vector2(0.5f, 0.5f),
-                        100f);
-                    return new PortraitEntry { sprite = sprite };
-                })
+                .Select(t => new PortraitEntry { sprite = GetOrCreateRuntimeSprite(t) })
+                .Where(e => e.sprite != null)
                 .ToList();
+        }
+
+        static Sprite GetOrCreateRuntimeSprite(Texture2D texture)
+        {
+            if (texture == null)
+                return null;
+
+            var key = texture.GetInstanceID();
+            if (RuntimeSpritesByTexture.TryGetValue(key, out var existing) && existing != null)
+                return existing;
+
+            var sprite = Sprite.Create(
+                texture,
+                new Rect(0, 0, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f),
+                100f);
+            RuntimeSpritesByTexture[key] = sprite;
+            return sprite;
         }
 
         public static bool HasPlaceholderMarker(string mathematicianId, string assetName)

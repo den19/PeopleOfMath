@@ -163,6 +163,7 @@ namespace PeopleOfMath.UI
             if (_questions == null || _questions.Count == 0)
             {
                 ShowMenu();
+                UiToastView.Show(L("quiz_not_enough_data"));
                 return;
             }
 
@@ -392,10 +393,8 @@ namespace PeopleOfMath.UI
 
         void RefreshStartAvailability()
         {
-            var pool = repository != null
-                ? QuizService.GetEligiblePool(_selectedMode, repository.All)
-                : null;
-            var hasEnough = pool != null && pool.Count >= QuizService.OptionCount;
+            var hasEnough = repository != null
+                && QuizService.CanGenerateRound(_selectedMode, repository.All);
 
             if (startButton != null)
                 startButton.interactable = hasEnough;

@@ -47,6 +47,10 @@ namespace PeopleOfMath.Input
                 return;
             }
 
+            var onboarding = FindFirstObjectByType<OnboardingOverlay>();
+            if (onboarding != null && onboarding.TryHandleBack())
+                return;
+
             switch (navigation.CurrentScreen)
             {
                 case AppScreen.Home:

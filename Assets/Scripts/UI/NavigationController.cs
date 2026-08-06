@@ -125,52 +125,74 @@ namespace PeopleOfMath.Core
             switch (context.Screen)
             {
                 case AppScreen.Home:
-                    homePanel.gameObject.SetActive(true);
-                    headerBackButton.SetActive(false);
+                    if (homePanel != null)
+                        homePanel.gameObject.SetActive(true);
+                    if (headerBackButton != null)
+                        headerBackButton.SetActive(false);
                     headerTitle?.SetHomeTitle();
                     break;
                 case AppScreen.Index:
-                    indexPanel.gameObject.SetActive(true);
-                    headerBackButton.SetActive(false);
+                    if (indexPanel != null)
+                        indexPanel.gameObject.SetActive(true);
+                    if (headerBackButton != null)
+                        headerBackButton.SetActive(false);
                     headerTitle?.SetIndexTitle();
                     break;
                 case AppScreen.List:
-                    if (context.ListFromSearch)
-                        listPanel.BindSearch(context.SearchQuery);
-                    else
-                        listPanel.BindFilter(context.FilterKind, context.FilterKey);
+                    if (listPanel != null)
+                    {
+                        if (context.ListFromSearch)
+                            listPanel.BindSearch(context.SearchQuery);
+                        else
+                            listPanel.BindFilter(context.FilterKind, context.FilterKey);
 
-                    listPanel.gameObject.SetActive(true);
-                    headerBackButton.SetActive(true);
-                    if (context.ListFromSearch)
-                        headerTitle?.SetSearchTitle(context.SearchQuery, listPanel.LastResultCount);
-                    else
-                        headerTitle?.SetFilterTitle(context.FilterKind, context.FilterKey);
+                        listPanel.gameObject.SetActive(true);
+                        if (context.ListFromSearch)
+                            headerTitle?.SetSearchTitle(context.SearchQuery, listPanel.LastResultCount);
+                        else
+                            headerTitle?.SetFilterTitle(context.FilterKind, context.FilterKey);
+                    }
+
+                    if (headerBackButton != null)
+                        headerBackButton.SetActive(true);
                     break;
                 case AppScreen.Detail:
-                    detailPanel.gameObject.SetActive(true);
-                    detailPanel.Bind(context.MathematicianId);
-                    headerBackButton.SetActive(true);
+                    if (detailPanel != null)
+                    {
+                        detailPanel.gameObject.SetActive(true);
+                        detailPanel.Bind(context.MathematicianId);
+                    }
+
+                    if (headerBackButton != null)
+                        headerBackButton.SetActive(true);
                     break;
                 case AppScreen.Settings:
-                    settingsPanel.gameObject.SetActive(true);
-                    headerBackButton.SetActive(false);
+                    if (settingsPanel != null)
+                        settingsPanel.gameObject.SetActive(true);
+                    if (headerBackButton != null)
+                        headerBackButton.SetActive(false);
                     headerTitle?.SetSettingsTitle();
                     break;
                 case AppScreen.Favorites:
                     PresentFavorites(restoring);
                     break;
                 case AppScreen.Quiz:
-                    quizPanel.gameObject.SetActive(true);
-                    if (!restoring || !quizPanel.IsInActiveRound)
-                        quizPanel.ShowMenu();
-                    headerBackButton.SetActive(true);
+                    if (quizPanel != null)
+                    {
+                        quizPanel.gameObject.SetActive(true);
+                        if (!restoring || !quizPanel.IsInActiveRound)
+                            quizPanel.ShowMenu();
+                    }
+
+                    if (headerBackButton != null)
+                        headerBackButton.SetActive(true);
                     headerTitle?.SetQuizTitle();
                     break;
                 case AppScreen.About:
                     if (aboutPanel != null)
                         aboutPanel.gameObject.SetActive(true);
-                    headerBackButton.SetActive(false);
+                    if (headerBackButton != null)
+                        headerBackButton.SetActive(false);
                     headerTitle?.SetAboutTitle();
                     break;
             }
@@ -180,8 +202,12 @@ namespace PeopleOfMath.Core
 
         void PresentFavorites(bool restoring)
         {
+            if (favoritesPanel == null)
+                return;
+
             HideAllPanelsExceptFavorites();
-            headerBackButton.SetActive(true);
+            if (headerBackButton != null)
+                headerBackButton.SetActive(true);
             headerTitle?.SetFavoritesTitle();
 
             if (!restoring)
@@ -354,9 +380,11 @@ namespace PeopleOfMath.Core
                         break;
                     Pop();
                     break;
+                case AppScreen.Favorites:
+                    Pop();
+                    break;
                 case AppScreen.Index:
                 case AppScreen.Settings:
-                case AppScreen.Favorites:
                 case AppScreen.About:
                     ShowHome();
                     break;

@@ -76,7 +76,10 @@ namespace PeopleOfMath.UI
         {
             var data = repository?.GetById(_currentId);
             if (data == null)
+            {
+                ClearEmptyState();
                 return;
+            }
 
             var english = LocaleHelper.IsEnglish;
             if (sections == null)
@@ -140,6 +143,15 @@ namespace PeopleOfMath.UI
             if (current != null && headerTitle != null)
                 headerTitle.SetDetailSectionTitle(current.GetSectionTitle(english));
 
+            UpdateNavState();
+        }
+
+        void ClearEmptyState()
+        {
+            _visibleIndices.Clear();
+            _visibleSectionIndex = 0;
+            HideAllSections();
+            headerTitle?.SetDetailSectionTitle("");
             UpdateNavState();
         }
 

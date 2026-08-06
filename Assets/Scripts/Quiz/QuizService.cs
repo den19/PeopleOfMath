@@ -30,6 +30,32 @@ namespace PeopleOfMath.Quiz
             };
         }
 
+        /// <summary>
+        /// Round needs <paramref name="count"/> unique correct answers and at least
+        /// <see cref="OptionCount"/> entries in a prompt pool for distractors.
+        /// </summary>
+        public static bool CanGenerateRound(
+            QuizMode mode,
+            IReadOnlyList<MathematicianData> all,
+            int count = DefaultQuestionCount)
+        {
+            if (all == null || count < 1 || count < OptionCount)
+                return false;
+
+            var eligible = GetEligiblePool(mode, all);
+            if (eligible.Count < count)
+                return false;
+
+            if (mode != QuizMode.Mixed)
+                return true;
+
+            // Mixed picks portrait or fact per question; at least one sub-pool must
+            // be large enough to build OptionCount answers.
+            var portraitOk = GetPortraitPool(all).Count >= OptionCount;
+            var factOk = GetFactPool(all).Count >= OptionCount;
+            return portraitOk || factOk;
+        }
+
         public static IReadOnlyList<MathematicianData> GetPortraitPool(IReadOnlyList<MathematicianData> all) =>
             all?.Where(HasPortrait).ToList() ?? new List<MathematicianData>();
 
@@ -48,23 +74,12 @@ namespace PeopleOfMath.Quiz
             int count = DefaultQuestionCount,
             int? seed = null)
         {
-            if (all == null || all.Count < MinPoolSize)
+            if (!CanGenerateRound(mode, all, count))
                 return null;
 
             var rng = seed.HasValue ? new System.Random(seed.Value) : null;
             var portraitPool = GetPortraitPool(all);
             var factPool = GetFactPool(all);
-
-            if (mode == QuizMode.Portrait && portraitPool.Count < MinPoolSize)
-                return null;
-            if (mode == QuizMode.Fact && factPool.Count < MinPoolSize)
-                return null;
-            if (mode == QuizMode.Mixed && portraitPool.Count < MinPoolSize && factPool.Count < MinPoolSize)
-                return null;
-
-            var mixedPool = GetEligiblePool(QuizMode.Mixed, all);
-            if (mixedPool.Count < MinPoolSize)
-                return null;
 
             var questions = new List<QuizQuestion>(count);
             var usedIds = new HashSet<string>();
