@@ -46,8 +46,10 @@ NavigationController  ← стек ScreenContext
 | `Assets/Scripts/Input/` | Android Back / Escape |
 | `Assets/Scripts/Sharing/` | Share / clipboard |
 | `Assets/Scripts/Text/` | Markdown → TMP, orphans |
-| `Assets/Editor/` | Меню `PeopleOfMath/…`, импорт, патчи сцены, `AndroidApkBuilder` |
+| `Assets/Editor/` | Меню `PeopleOfMath/…`, импорт, патчи сцены, `AndroidApkBuilder`, `AndroidDeployMenu` |
 | `Tools/build_apk.ps1` | Релизный APK: бамп версии + подпись `main` → `com.densappstudio.peopleofmath.apk` |
+| `Tools/install_apk_adb.ps1` | Сборка + `adb install -r` по USB (`com.peopleofmath.app`) |
+| `Tools/deploy_apk_bluetooth.ps1` | Сборка + Bluetooth OBEX / fallback `fsquirt` |
 | `Tools/keystore.local.ps1.example` | Шаблон пароля; рабочий файл — gitignored `keystore.local.ps1` |
 | `Assets/Data/Mathematicians/` | SO-карточки (`{id}.asset`) |
 | `Assets/Data/mathematicians_catalog.json` | Источник импорта |
@@ -379,10 +381,23 @@ Assets/Scripts/Localization/UiStrings.cs
 
 Без пароля сборка **падает** (debug signing отключён). Перед batch закройте Unity Editor. Подробности — [README.md § Сборка Android](../README.md#сборка-android).
 
+### Установка / деплой APK
+
+| | |
+|---|---|
+| USB (ADB) | `Tools/install_apk_adb.ps1` → `adb install -r`; package `com.peopleofmath.app` |
+| Bluetooth | `Tools/deploy_apk_bluetooth.ps1` → OBEX / `fsquirt`; устройство по умолчанию `TECHNO POVA 7 Ultra 5G` |
+| Меню | `PeopleOfMath → Android → …` (`AndroidDeployMenu`) — install/deploy и build+install/deploy |
+| CLI без сборки | `-SkipBuild` (Editor может оставаться открытым) |
+| Агент | «установи APK» → `.cursor/rules/install-apk-adb.mdc`; «отправь APK» → `.cursor/rules/deploy-apk-bluetooth.mdc` |
+
+Эталонные пайплайны (перенос на другие проекты): `c:\git\pipeline\peopleofmath\ADB_PIPELINE.*.md`, `BLUETOOTH_DEPLOY_PIPELINE.*.md`.
+
 ### Editor / контент
 
 ```
 Assets/Editor/AndroidApkBuilder.cs
+Assets/Editor/AndroidDeployMenu.cs
 Assets/Editor/PeopleOfMathImportMenu.cs
 Assets/Editor/MathematicianImportPipeline.cs
 Assets/Editor/WikimediaPortraitImporter.cs
@@ -396,6 +411,8 @@ Assets/Data/mathematicians_catalog.json
 Assets/Data/Mathematicians/
 Assets/Resources/Portraits/
 Tools/build_apk.ps1
+Tools/install_apk_adb.ps1
+Tools/deploy_apk_bluetooth.ps1
 Tools/
 ```
 
@@ -415,6 +432,8 @@ Tools/
 | Счётчик `(n)` между рядами плиток | Якоря `Label`/`Count` от низа; не top-fixed `y = −408` |
 | Подписи BottomBar режет скругление | `BottomBarSafeArea` (`MinBottomCornerInset`, HLG L/R); не паддить `ContentArea` по X |
 | Собрать релизный APK | `AndroidApkBuilder` / `Tools/build_apk.ps1` + `keystore.local.ps1`; **только по просьбе** |
+| Установить APK по USB | `Tools/install_apk_adb.ps1` / меню Android; **только по просьбе** |
+| Отправить APK по Bluetooth | `Tools/deploy_apk_bluetooth.ps1` / меню Android; **только по просьбе** |
 | Нет портрета | `PortraitResolver`, папка Resources, `.placeholder`, меню Link/Import |
 | Квиз без фактов на EN | Заполнить `*En` или временно тестировать RU locale |
 

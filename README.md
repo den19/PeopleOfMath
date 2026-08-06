@@ -121,7 +121,44 @@ Addressables (локализация) собираются вместе с playe
 "C:\Program Files\Unity\Hub\Editor\6000.4.5f1\Editor\Unity.exe" -batchmode -quit -projectPath "C:\git\PeopleOfMath" -executeMethod PeopleOfMath.Editor.PeopleOfMathProjectSetup.RunBatch
 ```
 
-**Агенту Cursor:** по фразе «собери APK» / «build apk» — только `Tools\build_apk.ps1` (релиз: бамп + подпись). Правило: `.cursor/rules/build-apk.mdc`. Автозапуск после правок не настроен.## Функции
+**Агенту Cursor:** по фразе «собери APK» / «build apk» — только `Tools\build_apk.ps1` (релиз: бамп + подпись). Правило: `.cursor/rules/build-apk.mdc`. Автозапуск после правок не настроен.
+
+### Установка по USB (ADB)
+
+Сборка + `adb install -r` на подключённый телефон (package id `com.peopleofmath.app`):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File Tools\install_apk_adb.ps1
+```
+
+Только установка уже собранного APK: `-SkipBuild`. Несколько устройств: `-Serial <id>`.
+
+Нужны USB-кабель, отладка по USB и статус `device` (не `unauthorized` — Accept на телефоне). Скрипт сам ищет `adb.exe` (SDK / Unity AndroidPlayer).
+
+При конфликте подписи:
+
+```powershell
+adb uninstall com.peopleofmath.app
+powershell -ExecutionPolicy Bypass -File Tools\install_apk_adb.ps1 -SkipBuild
+```
+
+**В Unity Editor:** **PeopleOfMath → Android → Install / Build and Install APK via ADB (USB)** (build-and-install собирает в Editor, затем `-SkipBuild`).
+
+**Агенту Cursor:** «установи APK» / «install apk» / «залей APK по usb» → `Tools\install_apk_adb.ps1`. Правило: `.cursor/rules/install-apk-adb.mdc`.
+
+### Отправка по Bluetooth
+
+```powershell
+powershell -ExecutionPolicy Bypass -File Tools\deploy_apk_bluetooth.ps1
+```
+
+По умолчанию устройство `TECHNO POVA 7 Ultra 5G`; headless OBEX, при ошибке — `fsquirt.exe`. На телефоне нужно **Accept**. Только отправка без сборки: `-SkipBuild`.
+
+**В Unity Editor:** **PeopleOfMath → Android → Deploy / Build and Deploy APK via Bluetooth**.
+
+**Агенту Cursor:** «отправь APK» / «send apk» → `Tools\deploy_apk_bluetooth.ps1`. Правило: `.cursor/rules/deploy-apk-bluetooth.mdc`.
+
+## Функции
 
 - До **100** математиков, биография на RU (из Wikipedia), EN — вручную или fallback.
 - Фильтры: век, страна, раздел.
@@ -135,8 +172,10 @@ Addressables (локализация) собираются вместе с playe
 - `Assets/Data/Mathematicians` — ScriptableObject карточки
 - `Assets/Resources/Portraits/{id}` — портреты runtime
 - `Assets/Data/mathematicians_catalog.json` — каталог импорта
-- `Assets/Editor` — `MathematicianImportPipeline`, `WikimediaPortraitImporter`, `AndroidApkBuilder`
+- `Assets/Editor` — `MathematicianImportPipeline`, `WikimediaPortraitImporter`, `AndroidApkBuilder`, `AndroidDeployMenu`
 - `Tools/build_apk.ps1` — релизный APK (бамп + подпись) → `com.densappstudio.peopleofmath.apk`
+- `Tools/install_apk_adb.ps1` — сборка + установка по USB (`adb install -r`)
+- `Tools/deploy_apk_bluetooth.ps1` — сборка + отправка по Bluetooth (OBEX / fsquirt)
 - `Tools/keystore.local.ps1.example` — шаблон пароля keystore (локальный `.ps1` в gitignore)
 - `Assets/Localization` — String Table UI
 - `Assets/Scenes/Main.unity` — основная сцена
