@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using PeopleOfMath.Core;
 using PeopleOfMath.Data;
 using PeopleOfMath.Localization;
 using PeopleOfMath.Sharing;
@@ -19,6 +20,7 @@ namespace PeopleOfMath.UI
         [SerializeField] Button button;
         [SerializeField] ShareIconButton shareButton;
         [SerializeField] FavoriteIconButton favoriteButton;
+        [SerializeField] CalendarIconButton calendarButton;
 
         string _id;
         Action<string> _onSelected;
@@ -74,6 +76,7 @@ namespace PeopleOfMath.UI
             BindPortrait(data);
             BindShareButton(data, english);
             BindFavoriteButton();
+            BindCalendarButton();
 
             ApplyCardTheme();
 
@@ -121,6 +124,19 @@ namespace PeopleOfMath.UI
             {
                 FavoritesHelper.Toggle(_id);
                 favoriteButton.SetFavorite(FavoritesHelper.IsFavorite(_id));
+            });
+        }
+
+        void BindCalendarButton()
+        {
+            if (calendarButton == null)
+                return;
+
+            calendarButton.SetVisible(true);
+            calendarButton.SetClickHandler(() =>
+            {
+                var nav = FindFirstObjectByType<NavigationController>();
+                nav?.ShowCalendar();
             });
         }
 
@@ -218,6 +234,10 @@ namespace PeopleOfMath.UI
                 shareButton != null ? shareButton.transform as RectTransform : null,
                 ListItemLayoutMetrics.ShareButtonX,
                 -ListItemLayoutMetrics.ShareButtonY);
+            PositionActionButton(
+                calendarButton != null ? calendarButton.transform as RectTransform : null,
+                ListItemLayoutMetrics.CalendarButtonX,
+                -ListItemLayoutMetrics.CalendarButtonY);
         }
 
         static void PositionActionButton(RectTransform rt, float x, float y)

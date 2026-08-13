@@ -687,6 +687,26 @@ MonoBehaviour:
     m_Localized: Cancel
     m_Metadata:
       m_Items: []
+  - m_Id: 25506818602336256
+    m_Localized: Birthdays
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25506818648473600
+    m_Localized: No known birthdays in the catalog on this day.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25521489703108608
+    m_Localized: Anniversaries in {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25521489749245952
+    m_Localized: No birth anniversaries in the catalog this year.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25521489749245953
+    m_Localized: '{0} years'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

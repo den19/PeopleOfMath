@@ -15,6 +15,7 @@ namespace PeopleOfMath.UI
         [SerializeField] LocalizeStringEvent indexTitleEvent;
         [SerializeField] LocalizeStringEvent settingsTitleEvent;
         [SerializeField] LocalizeStringEvent favoritesTitleEvent;
+        [SerializeField] LocalizeStringEvent calendarTitleEvent;
         [SerializeField] LocalizeStringEvent quizTitleEvent;
         [SerializeField] LocalizeStringEvent aboutTitleEvent;
         [SerializeField] LocalizedString detailTitle;
@@ -48,6 +49,7 @@ namespace PeopleOfMath.UI
             ApplyTitleColor(indexTitleEvent, color);
             ApplyTitleColor(settingsTitleEvent, color);
             ApplyTitleColor(favoritesTitleEvent, color);
+            ApplyTitleColor(calendarTitleEvent, color);
             ApplyTitleColor(quizTitleEvent, color);
             ApplyTitleColor(aboutTitleEvent, color);
         }
@@ -77,6 +79,7 @@ namespace PeopleOfMath.UI
             Search,
             Detail,
             Favorites,
+            Calendar,
             Quiz,
             About
         }
@@ -87,6 +90,7 @@ namespace PeopleOfMath.UI
             indexTitleEvent?.gameObject.SetActive(false);
             settingsTitleEvent?.gameObject.SetActive(false);
             favoritesTitleEvent?.gameObject.SetActive(false);
+            calendarTitleEvent?.gameObject.SetActive(false);
             quizTitleEvent?.gameObject.SetActive(false);
             aboutTitleEvent?.gameObject.SetActive(false);
         }
@@ -137,6 +141,17 @@ namespace PeopleOfMath.UI
             if (titleText != null)
                 titleText.gameObject.SetActive(false);
             favoritesTitleEvent?.RefreshString();
+            RefreshTitleColors();
+        }
+
+        public void SetCalendarTitle()
+        {
+            _mode = TitleMode.Calendar;
+            HideLocalizedTitles();
+            calendarTitleEvent?.gameObject.SetActive(true);
+            if (titleText != null)
+                titleText.gameObject.SetActive(false);
+            calendarTitleEvent?.RefreshString();
             RefreshTitleColors();
         }
 
@@ -225,6 +240,9 @@ namespace PeopleOfMath.UI
                     break;
                 case TitleMode.Favorites:
                     SetFavoritesTitle();
+                    break;
+                case TitleMode.Calendar:
+                    SetCalendarTitle();
                     break;
                 case TitleMode.Quiz:
                     SetQuizTitle();

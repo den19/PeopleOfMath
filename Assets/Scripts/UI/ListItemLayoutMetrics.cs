@@ -25,13 +25,19 @@ namespace PeopleOfMath.UI
 
         public static float ShareButtonX => FavoriteButtonX;
 
+        public static float CalendarButtonX => FavoriteButtonX;
+
         public static float FavoriteButtonY => ActionButtonsTop;
 
         public static float ShareButtonY => FavoriteButtonY + ActionButtonSize + ActionButtonGap;
 
+        public static float CalendarButtonY => ShareButtonY + ActionButtonSize + ActionButtonGap;
+
         public static float LeftColumnHeight =>
             TopPadding + PortraitSize + PortraitActionGap
-            + ActionButtonSize + ActionButtonGap + ActionButtonSize
+            + ActionButtonSize + ActionButtonGap
+            + ActionButtonSize + ActionButtonGap
+            + ActionButtonSize
             + TopPadding;
 
         public static float NameBlockHeight(float fontSizeMax) =>

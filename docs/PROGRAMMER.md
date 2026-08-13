@@ -21,7 +21,7 @@ AppBootstrap
 
 NavigationController  ← стек ScreenContext
     ├── HomePanel / IndexPanel / ListPanel / DetailPanel
-    ├── FavoritesPanel / QuizPanel / SettingsPanel / AboutPanel
+    ├── FavoritesPanel / CalendarPanel / QuizPanel / SettingsPanel / AboutPanel
     └── MathematicianRepository.All  ← ScriptableObject карточки
 ```
 
@@ -39,7 +39,7 @@ NavigationController  ← стек ScreenContext
 | Путь | Назначение |
 |------|------------|
 | `Assets/Scripts/Core/` | Старт приложения, контекст экрана, сброс данных |
-| `Assets/Scripts/Data/` | Модель, репозиторий, фильтры, поиск, индекс, портреты, избранное |
+| `Assets/Scripts/Data/` | Модель, репозиторий, фильтры, поиск, индекс, портреты, избранное, парсер дат рождения |
 | `Assets/Scripts/UI/` | Панели, тема, glass, навигация, виджеты |
 | `Assets/Scripts/Quiz/` | Генерация раунда, промпты, статистика |
 | `Assets/Scripts/Localization/` | `LocaleHelper`, `UiStrings` |
@@ -90,13 +90,14 @@ NavigationController  ← стек ScreenContext
 | `ShowSearch(query)` | Push/замена списка поиска |
 | `ShowDetail(id)` | Push карточки |
 | `ShowFavorites` | Push + slide-анимация |
+| `ShowCalendar` | Push календаря дней рождения / юбилеев |
 | `HandleBack` | Pop / особые случаи (секции детали, раунд квиза) |
 
-Экраны (`AppScreen`): Home, Index, List, Detail, Settings, Favorites, Quiz, About.
+Экраны (`AppScreen`): Home, Index, List, Detail, Settings, Favorites, Quiz, About, **Calendar**.
 
-`DetailOrigin` влияет на подсветку нижней вкладки, когда открыта деталь (откуда пришли: Home / Index / Favorites / Quiz / Search / FilterList).
+`DetailOrigin` влияет на подсветку нижней вкладки, когда открыта деталь (откуда пришли: Home / Index / Favorites / Quiz / Search / FilterList / **Calendar**). Календарь подсвечивает вкладку Browse.
 
-`ScreenContext` — структура-фабрика (`Home()`, `ListFilter(...)`, `Detail(...)` и т.д.) в `Assets/Scripts/Core/ScreenContext.cs`.
+`ScreenContext` — структура-фабрика (`Home()`, `ListFilter(...)`, `Detail(...)`, `Calendar()` и т.д.) в `Assets/Scripts/Core/ScreenContext.cs`.
 
 ### 3.3. Аппаратная кнопка «Назад»
 
@@ -163,6 +164,23 @@ ScriptableObject, меню создания: **PeopleOfMath → Mathematician Da
 
 `FavoritesHelper` — PlayerPrefs `favorite_mathematician_ids`, события `FavoritesChanged`.
 
+### 4.7. Даты рождения (`BirthDateParser`)
+
+Файл: `Assets/Scripts/Data/BirthDateParser.cs`. Поля `birthDate` / `deathDate` в SO — **строки для отображения**, не `DateTime`. Парсер нужен только календарю.
+
+| API | Назначение |
+|-----|------------|
+| `TryGetMonthDays` | День/месяц из `dd.MM.yyyy` и dual `4(16).05.1821` → пары `(month, day)` |
+| `TryGetBirthYear` | Год: полный `dd.MM.yyyy`, year-only (`~780`, `1114`), BCE (`ок. 325 до н.э.` → `-325`) |
+| `YearsSinceBirth` | `currentYear - birthYear` (BCE: 325 до н.э. в 2026 → `2351`) |
+| `TryGetAnniversaryMilestone` | Крупнейший milestone `M` из набора, для которого `yearsSince % M == 0` |
+| `FindBornOn` / `BirthdayDaysInMonth` | Дни рождения в сетке месяца |
+| `FindAnniversaries` | Юбилеи текущего **гражданского** года |
+
+**Milestones:** `10, 20, …, 90, 100, 200, …, 1000`. Год-only / BCE **не** попадают в сетку дней (нет месяца/дня), только в блок «Юбилеи».
+
+Не нормализуйте строки дат в ассетах ради календаря — расширяйте парсер.
+
 ---
 
 ## 5. UI
@@ -176,6 +194,7 @@ ScriptableObject, меню создания: **PeopleOfMath → Mathematician Da
 | `ListPanel` | результаты фильтра или поиска |
 | `DetailPanel` | постраничные секции карточки |
 | `FavoritesPanel` | избранное + stagger reveal; empty state — §5.2.2 |
+| `CalendarPanel` | месяц + дни рождения + юбилеи года; §5.8 |
 | `QuizPanel` | меню → игра → feedback → результаты |
 | `SettingsPanel` | язык, шрифт, тема, сброс |
 | `AboutPanel` | о приложении |
@@ -269,7 +288,40 @@ ScriptableObject, меню создания: **PeopleOfMath → Mathematician Da
 
 ### 5.7. Прочие виджеты
 
-`SearchBar` (debounce 2 s), `UiToastView`, `ConfirmDialogOverlay`, `OnboardingOverlay`, `UiPanelSlideTransition`, `FavoriteIconButton`, `ShareIconButton`, `NavTabView`.
+`SearchBar` (debounce 2 s), `UiToastView`, `ConfirmDialogOverlay`, `OnboardingOverlay`, `UiPanelSlideTransition`, `FavoriteIconButton`, `ShareIconButton`, `CalendarIconButton`, `NavTabView`.
+
+### 5.8. Календарь дней рождения
+
+Вход: иконка **Calendar** под Share на строке `MathematicianListItem` → `NavigationController.ShowCalendar()`. Отдельной вкладки BottomBar нет.
+
+**Иерархия `CalendarPanel`** (сцена, не runtime-спавн сетки):
+
+```
+CalendarPanel
+├── MonthBar (Prev / Next / MonthLabel)
+├── WeekdayHeader (Dow0…Dow6)
+├── DayGrid          ← 42× CalendarDayCell уже в сцене
+├── CurrentYearSection
+│   ├── YearLabel
+│   ├── AnniversaryScroll → Content
+│   └── AnniversaryEmpty
+├── BirthdayListScroll → Content   (родившиеся в выбранный день)
+└── Empty                          (empty_birthdays)
+```
+
+| Часть | Поведение |
+|-------|-----------|
+| Сетка месяца | Только `Bind` существующих `CalendarDayCell`; маркер дня с известным ДР; today / selected highlight |
+| Список дня | `MathematicianListItem` для `FindBornOn(month, day)` |
+| Current Year | Заголовок `title_anniversaries` с **сегодняшним** годом; список `FindAnniversaries`; ключ `empty_anniversaries` |
+
+Префаб ячейки (шаблон для editor-patch): `Assets/Prefabs/UI/CalendarDayCell.prefab`. Иконка: `Assets/Resources/UI/CalendarIcon.png` (`UiSprites` / `UiSpriteFactory`).
+
+Локализация UI: `title_calendar`, `empty_birthdays`, `title_anniversaries`, `empty_anniversaries`, `anniversary_years`.
+
+**Патч сцены:** `PeopleOfMath → Patch Birthday Calendar` (`EnsureCalendarPanelUpgraded`: 42 ячейки, `CurrentYearSection`, wiring). Batch: `PeopleOfMathProjectSetup.RunPatchBirthdayCalendarBatch`.
+
+**Не ломать.** Не возвращать runtime-`Instantiate` 42 ячеек. Юбилеи считают гражданский год (`DateTime.Today.Year`), не год просматриваемого месяца.
 
 ---
 
@@ -299,7 +351,7 @@ ScriptableObject, меню создания: **PeopleOfMath → Mathematician Da
 3. Портреты в `Assets/Resources/Portraits/{id}/` → **Link Portraits From Folders** (+ **Fix Portrait Texture Import** при необходимости).
 4. При необходимости заполнить `*En` в Inspector.
 5. **Refresh Repository List**.
-6. Проверить карточку в Play Mode (фильтры, индекс, квиз, share).
+6. Проверить карточку в Play Mode (фильтры, индекс, квиз, share, календарь: день/месяц или юбилей года).
 
 Лицензии изображений: только PD / CC BY / CC BY-SA.
 
@@ -352,12 +404,17 @@ Assets/Scripts/Data/SearchService.cs
 Assets/Scripts/Data/IndexService.cs
 Assets/Scripts/Data/PortraitResolver.cs
 Assets/Scripts/Data/FavoritesHelper.cs
+Assets/Scripts/Data/BirthDateParser.cs
 
 Assets/Scripts/Quiz/QuizService.cs
 Assets/Scripts/Quiz/QuizPromptExtractor.cs
 Assets/Scripts/Quiz/QuizStatsHelper.cs
 
 Assets/Scripts/UI/HomePanel.cs
+Assets/Scripts/UI/CalendarPanel.cs
+Assets/Scripts/UI/CalendarDayCell.cs
+Assets/Scripts/UI/CalendarIconButton.cs
+Assets/Scripts/UI/MathematicianListItem.cs
 Assets/Scripts/UI/AdaptiveBrowseGrid.cs
 Assets/Scripts/UI/CategoryTileMetrics.cs
 Assets/Scripts/UI/ThemeHelper.cs
@@ -406,7 +463,11 @@ Assets/Editor/PeopleOfMathProjectSetup.cs
 Assets/Editor/HomeListPanelLayout.cs
 Assets/Editor/UiLayoutMetrics.cs
 Assets/Prefabs/UI/CategoryTile.prefab
+Assets/Prefabs/UI/CalendarDayCell.prefab
+Assets/Prefabs/UI/MathematicianListItem.prefab
+Assets/Resources/MathematicianListItem.prefab
 Assets/Resources/CategoryTile.prefab
+Assets/Resources/UI/CalendarIcon.png
 Assets/Data/mathematicians_catalog.json
 Assets/Data/Mathematicians/
 Assets/Resources/Portraits/
@@ -428,6 +489,8 @@ Tools/
 | Текст биографии | Поля `MathematicianData` |
 | Цвет / тема | `UiTheme` + `UiThemeBinding` (не хардкодить в панелях без нужды) |
 | Баг «назад» | `BackButtonHandler`, `HandleBack`, `DetailPanel.TryGoBack`, `QuizPanel.TryHandleBack` |
+| Календарь / юбилеи | `CalendarPanel`, `BirthDateParser`; патч **Patch Birthday Calendar** |
+| ДР не в сетке | Нет `dd.MM.yyyy` в `birthDate` — только year-only/BCE → смотреть Current Year |
 | Правая колонка плиток уезжает за край | `AdaptiveBrowseGrid`, `CategoryTileMetrics`; не ставить `minWidth` на `CategoryTile` |
 | Счётчик `(n)` между рядами плиток | Якоря `Label`/`Count` от низа; не top-fixed `y = −408` |
 | Подписи BottomBar режет скругление | `BottomBarSafeArea` (`MinBottomCornerInset`, HLG L/R); не паддить `ContentArea` по X |

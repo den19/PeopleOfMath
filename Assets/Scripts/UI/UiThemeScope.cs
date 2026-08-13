@@ -103,7 +103,7 @@ namespace PeopleOfMath.UI
                 }
                 else if (name.StartsWith("section_")
                     || name is "Name" or "HomeTitle" or "IndexTitle" or "SettingsTitle"
-                        or "FavoritesTitle" or "PlainTitle")
+                        or "FavoritesTitle" or "CalendarTitle" or "PlainTitle")
                 {
                     text.color = UiTheme.TextPrimary;
                 }

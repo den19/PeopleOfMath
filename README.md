@@ -2,7 +2,7 @@
 
 Справочник о математиках для Android. Unity **6000.4.5f1**, URP 2D, одна сцена `Main`.
 
-Архитектура runtime-кода, модель данных, UI и квиз: **[docs/PROGRAMMER.md](docs/PROGRAMMER.md)**.
+Архитектура runtime-кода, модель данных, UI, квиз и календарь дней рождения: **[docs/PROGRAMMER.md](docs/PROGRAMMER.md)**.
 
 ## Требования
 

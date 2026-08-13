@@ -11,7 +11,8 @@ namespace PeopleOfMath.Core
         Settings,
         Favorites,
         Quiz,
-        About
+        About,
+        Calendar
     }
 
     public enum DetailOrigin
@@ -22,7 +23,8 @@ namespace PeopleOfMath.Core
         Favorites,
         Quiz,
         Search,
-        FilterList
+        FilterList,
+        Calendar
     }
 
     public struct ScreenContext
@@ -46,6 +48,8 @@ namespace PeopleOfMath.Core
         public static ScreenContext Favorites() => new() { Screen = AppScreen.Favorites };
 
         public static ScreenContext About() => new() { Screen = AppScreen.About };
+
+        public static ScreenContext Calendar() => new() { Screen = AppScreen.Calendar };
 
         public static ScreenContext ListFilter(FilterKind kind, string key, bool fromDetail = false, string mathematicianId = null) =>
             new()

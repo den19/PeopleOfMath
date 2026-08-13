@@ -221,20 +221,28 @@ namespace PeopleOfMath.Editor
             var indexPanelGo = contentArea.Find("IndexPanel")?.gameObject;
             var list = contentArea.Find("ListPanel")?.gameObject;
             var favorites = contentArea.Find("FavoritesPanel")?.gameObject;
+            var calendar = contentArea.Find("CalendarPanel")?.gameObject;
             var quiz = contentArea.Find("QuizPanel")?.gameObject;
             var detail = contentArea.Find("DetailPanel")?.gameObject;
             var settings = contentArea.Find("SettingsPanel")?.gameObject;
             var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
+            var repository = Object.FindFirstObjectByType<MathematicianRepository>();
+            var listItemPrefab = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab");
 
             if (home != null && indexPanelGo != null && list != null && favorites != null && quiz != null
                 && aboutPanel != null && detail != null && settings != null && backButton != null && headerBinder != null)
             {
+                if (calendar == null)
+                    calendar = CreateCalendarPanel(contentArea, navigation, repository, listItemPrefab, loc);
+
                 WireNavigation(
                     navigation,
                     home,
                     indexPanelGo,
                     list,
                     favorites,
+                    calendar,
                     quiz,
                     aboutPanel,
                     detail,
@@ -818,6 +826,7 @@ namespace PeopleOfMath.Editor
             public LocalizedString IndexTitle;
             public LocalizedString SettingsTitle;
             public LocalizedString FavoritesTitle;
+            public LocalizedString CalendarTitle;
             public LocalizedString QuizTitle;
             public LocalizedString AboutTitle;
             public LocalizedString DetailTitle;
@@ -902,6 +911,15 @@ namespace PeopleOfMath.Editor
             AddUiEntry(collection, "empty_favorites",
                 "Пока нет избранных математиков. Нажмите ♥ на карточке, чтобы добавить.",
                 "No favorites yet. Tap ♥ on a card to add one.");
+            AddUiEntry(collection, "title_calendar", "Дни рождения", "Birthdays");
+            AddUiEntry(collection, "empty_birthdays",
+                "В этот день нет известных дней рождения в каталоге.",
+                "No known birthdays in the catalog on this day.");
+            AddUiEntry(collection, "title_anniversaries", "Юбилеи в {0}", "Anniversaries in {0}");
+            AddUiEntry(collection, "empty_anniversaries",
+                "В этом году нет юбилеев рождения по каталогу.",
+                "No birth anniversaries in the catalog this year.");
+            AddUiEntry(collection, "anniversary_years", "{0} лет", "{0} years");
             AddUiEntry(collection, "title_quiz", "Квиз", "Quiz");
             AddUiEntry(collection, "tab_quiz", "Квиз", "Quiz");
             AddUiEntry(collection, "quiz_home_card_title", "Угадай математика", "Guess the mathematician");
@@ -981,6 +999,7 @@ namespace PeopleOfMath.Editor
                 IndexTitle = MakeLocalized(collection, "title_index"),
                 SettingsTitle = MakeLocalized(collection, "title_settings"),
                 FavoritesTitle = MakeLocalized(collection, "title_favorites"),
+                CalendarTitle = MakeLocalized(collection, "title_calendar"),
                 QuizTitle = MakeLocalized(collection, "title_quiz"),
                 AboutTitle = MakeLocalized(collection, "title_about"),
                 DetailTitle = MakeLocalized(collection, "title_detail"),
@@ -1110,6 +1129,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("button").objectReferenceValue = root.GetComponent<Button>();
             so.FindProperty("shareButton").objectReferenceValue = ConfigureShareButton(root.transform);
             so.FindProperty("favoriteButton").objectReferenceValue = ConfigureFavoriteButton(root.transform);
+            so.FindProperty("calendarButton").objectReferenceValue = ConfigureCalendarButton(root.transform);
             so.ApplyModifiedPropertiesWithoutUndo();
             return root;
         }
@@ -1153,6 +1173,7 @@ namespace PeopleOfMath.Editor
             EnsureThemedCard(go, UiCardVariant.ListItem);
             ConfigureListItemShareButton(go);
             ConfigureListItemFavoriteButton(go);
+            ConfigureListItemCalendarButton(go);
         }
 
         static void ConfigureListItemFavoriteButton(GameObject root)
@@ -1184,6 +1205,22 @@ namespace PeopleOfMath.Editor
 
             var so = new SerializedObject(item);
             so.FindProperty("shareButton").objectReferenceValue = shareButton;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void ConfigureListItemCalendarButton(GameObject root)
+        {
+            var calendarButton = ConfigureCalendarButton(
+                root.transform, UiLayoutMetrics.ListItemCalendarButtonPos);
+            ApplyListItemActionButtonLayout(
+                calendarButton.GetComponent<RectTransform>(),
+                UiLayoutMetrics.ListItemCalendarButtonPos);
+            var item = root.GetComponent<MathematicianListItem>();
+            if (item == null)
+                return;
+
+            var so = new SerializedObject(item);
+            so.FindProperty("calendarButton").objectReferenceValue = calendarButton;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -1344,6 +1381,66 @@ namespace PeopleOfMath.Editor
             return favoriteButton;
         }
 
+        public static CalendarIconButton ConfigureCalendarButton(Transform parent, Vector2? anchoredPosition = null)
+        {
+            var buttonSize = UiLayoutMetrics.SearchBarClearButtonWidth;
+            var position = anchoredPosition ?? new Vector2(-12f, -12f);
+
+            var existing = parent.Find("CalendarButton");
+            GameObject calendarGo;
+            if (existing != null)
+                calendarGo = existing.gameObject;
+            else
+            {
+                calendarGo = new GameObject(
+                    "CalendarButton",
+                    typeof(RectTransform),
+                    typeof(Image),
+                    typeof(Button),
+                    typeof(CalendarIconButton));
+                calendarGo.transform.SetParent(parent, false);
+            }
+
+            calendarGo.transform.SetAsLastSibling();
+
+            var rt = calendarGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(1f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot = new Vector2(1f, 1f);
+            rt.anchoredPosition = position;
+            rt.sizeDelta = new Vector2(buttonSize, buttonSize);
+
+            var iconTransform = calendarGo.transform.Find("Icon");
+            GameObject iconGo;
+            if (iconTransform == null)
+            {
+                iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+                iconGo.transform.SetParent(calendarGo.transform, false);
+            }
+            else
+            {
+                iconGo = iconTransform.gameObject;
+            }
+
+            var iconRt = iconGo.GetComponent<RectTransform>();
+            StretchToParent(iconRt);
+            iconRt.offsetMin = new Vector2(8f, 8f);
+            iconRt.offsetMax = new Vector2(-8f, -8f);
+
+            var layoutElement = calendarGo.GetComponent<LayoutElement>() ?? calendarGo.AddComponent<LayoutElement>();
+            layoutElement.ignoreLayout = true;
+            layoutElement.minWidth = buttonSize;
+            layoutElement.minHeight = buttonSize;
+            layoutElement.preferredWidth = buttonSize;
+            layoutElement.preferredHeight = buttonSize;
+
+            var calendarButton = calendarGo.GetComponent<CalendarIconButton>();
+            var so = new SerializedObject(calendarButton);
+            so.FindProperty("iconImage").objectReferenceValue = iconGo.GetComponent<Image>();
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return calendarButton;
+        }
+
         static void CreateListItemPortrait(GameObject root)
         {
             var portrait = new GameObject("Portrait", typeof(RectTransform), typeof(Image));
@@ -1496,6 +1593,7 @@ namespace PeopleOfMath.Editor
             var index = CreateIndexPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var list = CreateListPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var favorites = CreateFavoritesPanel(content.transform, navigation, repository, listItemPrefab, loc);
+            var calendar = CreateCalendarPanel(content.transform, navigation, repository, listItemPrefab, loc);
             var quiz = CreateQuizPanel(content.transform, navigation, repository, loc);
             var about = CreateAboutPanel(content.transform, loc);
             var headerBinder = header.root.GetComponent<HeaderTitleBinder>();
@@ -1503,7 +1601,7 @@ namespace PeopleOfMath.Editor
             var settings = CreateSettingsPanel(content.transform, loc);
             var bottom = CreateBottomBar(canvasGo.transform, navigation, loc);
 
-            WireNavigation(navigation, home, index, list, favorites, quiz, about, detail, settings, header.backButton, headerBinder, bottom);
+            WireNavigation(navigation, home, index, list, favorites, calendar, quiz, about, detail, settings, header.backButton, headerBinder, bottom);
             WireBootstrap(bootstrap, navigation);
             WireBackHandler(app.GetComponent<BackButtonHandler>(), navigation);
             WireThemeScope(canvasGo, cam, navigation, settings, detail);
@@ -1544,6 +1642,8 @@ namespace PeopleOfMath.Editor
             indexTitle.SetActive(false);
             var favoritesTitle = CreateLocalizedTitle(header.transform, "FavoritesTitle", loc.FavoritesTitle);
             favoritesTitle.SetActive(false);
+            var calendarTitle = CreateLocalizedTitle(header.transform, "CalendarTitle", loc.CalendarTitle);
+            calendarTitle.SetActive(false);
             var quizTitle = CreateLocalizedTitle(header.transform, "QuizTitle", loc.QuizTitle);
             quizTitle.SetActive(false);
             var aboutTitle = CreateLocalizedTitle(header.transform, "AboutTitle", loc.AboutTitle);
@@ -1564,6 +1664,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("indexTitleEvent").objectReferenceValue = indexTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("settingsTitleEvent").objectReferenceValue = settingsTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("favoritesTitleEvent").objectReferenceValue = favoritesTitle.GetComponent<LocalizeStringEvent>();
+            so.FindProperty("calendarTitleEvent").objectReferenceValue = calendarTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("quizTitleEvent").objectReferenceValue = quizTitle.GetComponent<LocalizeStringEvent>();
             so.FindProperty("aboutTitleEvent").objectReferenceValue = aboutTitle.GetComponent<LocalizeStringEvent>();
             AssignLocalized(so.FindProperty("detailTitle"), loc.DetailTitle);
@@ -2935,6 +3036,267 @@ namespace PeopleOfMath.Editor
             return panel;
         }
 
+        static GameObject CreateCalendarPanel(
+            Transform parent,
+            NavigationController nav,
+            MathematicianRepository repo,
+            MathematicianListItem prefab,
+            LocalizationRefs loc)
+        {
+            var panel = CreatePanel(parent, "CalendarPanel", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            panel.SetActive(false);
+            panel.AddComponent<FontSizeScope>();
+
+            var monthBar = new GameObject("MonthBar", typeof(RectTransform));
+            monthBar.transform.SetParent(panel.transform, false);
+            var monthBarRt = monthBar.GetComponent<RectTransform>();
+            monthBarRt.anchorMin = new Vector2(0f, 1f);
+            monthBarRt.anchorMax = new Vector2(1f, 1f);
+            monthBarRt.pivot = new Vector2(0.5f, 1f);
+            monthBarRt.anchoredPosition = new Vector2(0f, -16f);
+            monthBarRt.sizeDelta = new Vector2(0f, 72f);
+
+            var prevBtn = CreateCalendarNavButton(monthBar.transform, "PrevMonth", new Vector2(24f, 0f), "‹");
+            var nextBtn = CreateCalendarNavButton(monthBar.transform, "NextMonth", new Vector2(-24f, 0f), "›");
+            nextBtn.GetComponent<RectTransform>().anchorMin = new Vector2(1f, 0.5f);
+            nextBtn.GetComponent<RectTransform>().anchorMax = new Vector2(1f, 0.5f);
+            nextBtn.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
+
+            var monthLabel = CreateTmpChild(monthBar.transform, "MonthLabel", 28, FontStyles.Bold, Vector2.zero);
+            var monthLabelRt = monthLabel.GetComponent<RectTransform>();
+            monthLabelRt.anchorMin = new Vector2(0f, 0f);
+            monthLabelRt.anchorMax = new Vector2(1f, 1f);
+            monthLabelRt.offsetMin = new Vector2(100f, 0f);
+            monthLabelRt.offsetMax = new Vector2(-100f, 0f);
+            var monthTmp = monthLabel.GetComponent<TextMeshProUGUI>();
+            monthTmp.alignment = TextAlignmentOptions.Center;
+            monthTmp.color = UiTheme.TextPrimary;
+
+            var weekdayHeader = new GameObject("WeekdayHeader", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            weekdayHeader.transform.SetParent(panel.transform, false);
+            var weekdayRt = weekdayHeader.GetComponent<RectTransform>();
+            weekdayRt.anchorMin = new Vector2(0f, 1f);
+            weekdayRt.anchorMax = new Vector2(1f, 1f);
+            weekdayRt.pivot = new Vector2(0.5f, 1f);
+            weekdayRt.anchoredPosition = new Vector2(0f, -96f);
+            weekdayRt.sizeDelta = new Vector2(-48f, 40f);
+            weekdayRt.anchoredPosition = new Vector2(0f, -96f);
+            var weekdayHlg = weekdayHeader.GetComponent<HorizontalLayoutGroup>();
+            weekdayHlg.childAlignment = TextAnchor.MiddleCenter;
+            weekdayHlg.childControlWidth = true;
+            weekdayHlg.childControlHeight = true;
+            weekdayHlg.childForceExpandWidth = true;
+            weekdayHlg.childForceExpandHeight = true;
+            weekdayHlg.padding = new RectOffset(24, 24, 0, 0);
+            for (var i = 0; i < 7; i++)
+            {
+                var dayName = CreateTmpChild(weekdayHeader.transform, $"Dow{i}", 18, FontStyles.Normal, Vector2.zero);
+                var dowTmp = dayName.GetComponent<TextMeshProUGUI>();
+                dowTmp.alignment = TextAlignmentOptions.Center;
+                dowTmp.color = UiTheme.TextSecondary;
+            }
+
+            var dayGrid = new GameObject("DayGrid", typeof(RectTransform), typeof(GridLayoutGroup));
+            dayGrid.transform.SetParent(panel.transform, false);
+            var dayGridRt = dayGrid.GetComponent<RectTransform>();
+            dayGridRt.anchorMin = new Vector2(0f, 1f);
+            dayGridRt.anchorMax = new Vector2(1f, 1f);
+            dayGridRt.pivot = new Vector2(0.5f, 1f);
+            dayGridRt.anchoredPosition = new Vector2(0f, -144f);
+            dayGridRt.sizeDelta = new Vector2(-48f, 360f);
+            var grid = dayGrid.GetComponent<GridLayoutGroup>();
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = 7;
+            grid.cellSize = new Vector2(128f, 56f);
+            grid.spacing = new Vector2(4f, 4f);
+            grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+            grid.childAlignment = TextAnchor.UpperCenter;
+            grid.padding = new RectOffset(24, 24, 0, 0);
+
+            var dayCellPrefab = EnsureCalendarDayCellPrefab();
+            PopulateStaticDayCells(dayGrid.transform, dayCellPrefab);
+
+            var yearSection = CreateCalendarCurrentYearSection(panel.transform, loc);
+            var yearSectionRt = yearSection.GetComponent<RectTransform>();
+            yearSectionRt.anchorMin = new Vector2(0f, 0.42f);
+            yearSectionRt.anchorMax = new Vector2(1f, 1f);
+            yearSectionRt.offsetMin = new Vector2(0f, 0f);
+            yearSectionRt.offsetMax = new Vector2(0f, -520f);
+
+            var listScroll = CreateScrollView(panel.transform, "BirthdayListScroll");
+            var listScrollRt = listScroll.GetComponent<RectTransform>();
+            listScrollRt.anchorMin = Vector2.zero;
+            listScrollRt.anchorMax = new Vector2(1f, 0.42f);
+            listScrollRt.offsetMin = new Vector2(0f, 0f);
+            listScrollRt.offsetMax = new Vector2(0f, 0f);
+
+            var empty = CreateTmpChild(panel.transform, "Empty", UiLayoutMetrics.EmptyStateBaseFontSize, FontStyles.Italic, UiLayoutMetrics.EmptyStatePosition);
+            HomeListPanelLayout.ConfigureEmptyState(empty);
+            empty.SetActive(false);
+            var emptyRt = empty.GetComponent<RectTransform>();
+            emptyRt.anchorMin = new Vector2(0f, 0f);
+            emptyRt.anchorMax = new Vector2(1f, 0.42f);
+            emptyRt.offsetMin = new Vector2(40f, 40f);
+            emptyRt.offsetMax = new Vector2(-40f, -40f);
+            var lse = empty.AddComponent<LocalizeStringEvent>();
+            var soLse = new SerializedObject(lse);
+            AssignLocalized(soLse.FindProperty("m_StringReference"), MakeLocalized(loc.UiCollection, "empty_birthdays"));
+            soLse.ApplyModifiedPropertiesWithoutUndo();
+
+            var anniversaryYearLabel = yearSection.transform.Find("YearLabel")?.GetComponent<TMP_Text>();
+            var anniversaryListContent = yearSection.transform.Find("AnniversaryScroll")?.GetComponent<ScrollRect>()?.content;
+            var anniversaryEmpty = yearSection.transform.Find("AnniversaryEmpty")?.gameObject;
+
+            var calendar = panel.AddComponent<CalendarPanel>();
+            var prefabRef = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab") ?? prefab;
+            var so = new SerializedObject(calendar);
+            so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("repository").objectReferenceValue = repo;
+            so.FindProperty("monthLabel").objectReferenceValue = monthTmp;
+            so.FindProperty("prevMonthButton").objectReferenceValue = prevBtn.GetComponent<Button>();
+            so.FindProperty("nextMonthButton").objectReferenceValue = nextBtn.GetComponent<Button>();
+            so.FindProperty("weekdayHeader").objectReferenceValue = weekdayHeader.transform;
+            so.FindProperty("dayGrid").objectReferenceValue = dayGrid.transform;
+            so.FindProperty("listContent").objectReferenceValue = listScroll.content;
+            so.FindProperty("itemPrefab").objectReferenceValue = prefabRef;
+            so.FindProperty("emptyState").objectReferenceValue = empty;
+            so.FindProperty("anniversaryYearLabel").objectReferenceValue = anniversaryYearLabel;
+            so.FindProperty("anniversaryListContent").objectReferenceValue = anniversaryListContent;
+            so.FindProperty("anniversaryEmptyState").objectReferenceValue = anniversaryEmpty;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return panel;
+        }
+
+        static GameObject CreateCalendarCurrentYearSection(Transform parent, LocalizationRefs loc)
+        {
+            var section = new GameObject("CurrentYearSection", typeof(RectTransform));
+            section.transform.SetParent(parent, false);
+
+            var yearLabel = CreateTmpChild(section.transform, "YearLabel", 24, FontStyles.Bold, new Vector2(24f, -8f));
+            var yearLabelRt = yearLabel.GetComponent<RectTransform>();
+            yearLabelRt.anchorMin = new Vector2(0f, 1f);
+            yearLabelRt.anchorMax = new Vector2(1f, 1f);
+            yearLabelRt.pivot = new Vector2(0.5f, 1f);
+            yearLabelRt.anchoredPosition = new Vector2(0f, -8f);
+            yearLabelRt.sizeDelta = new Vector2(-48f, 40f);
+            var yearTmp = yearLabel.GetComponent<TextMeshProUGUI>();
+            yearTmp.alignment = TextAlignmentOptions.Left;
+            yearTmp.color = UiTheme.TextPrimary;
+
+            var scroll = CreateScrollView(section.transform, "AnniversaryScroll");
+            var scrollRt = scroll.GetComponent<RectTransform>();
+            scrollRt.anchorMin = Vector2.zero;
+            scrollRt.anchorMax = Vector2.one;
+            scrollRt.offsetMin = new Vector2(0f, 0f);
+            scrollRt.offsetMax = new Vector2(0f, -52f);
+
+            var empty = CreateTmpChild(section.transform, "AnniversaryEmpty", UiLayoutMetrics.EmptyStateBaseFontSize, FontStyles.Italic, new Vector2(24f, -60f));
+            var emptyRt = empty.GetComponent<RectTransform>();
+            emptyRt.anchorMin = new Vector2(0f, 0f);
+            emptyRt.anchorMax = new Vector2(1f, 1f);
+            emptyRt.offsetMin = new Vector2(24f, 24f);
+            emptyRt.offsetMax = new Vector2(-24f, -60f);
+            empty.GetComponent<TextMeshProUGUI>().color = UiTheme.TextSecondary;
+            empty.SetActive(false);
+            var lse = empty.AddComponent<LocalizeStringEvent>();
+            var soLse = new SerializedObject(lse);
+            AssignLocalized(soLse.FindProperty("m_StringReference"), MakeLocalized(loc.UiCollection, "empty_anniversaries"));
+            soLse.ApplyModifiedPropertiesWithoutUndo();
+
+            return section;
+        }
+
+        static void PopulateStaticDayCells(Transform dayGrid, CalendarDayCell prefab)
+        {
+            if (dayGrid == null || prefab == null)
+                return;
+
+            const int cellCount = 42;
+            while (dayGrid.childCount < cellCount)
+            {
+                var cell = (CalendarDayCell)PrefabUtility.InstantiatePrefab(prefab, dayGrid);
+                cell.name = $"DayCell_{dayGrid.childCount - 1:00}";
+                cell.gameObject.SetActive(true);
+            }
+
+            for (var i = dayGrid.childCount - 1; i >= cellCount; i--)
+                Object.DestroyImmediate(dayGrid.GetChild(i).gameObject);
+        }
+
+        static GameObject CreateCalendarNavButton(Transform parent, string name, Vector2 anchoredPos, string label)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+            go.transform.SetParent(parent, false);
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0f, 0.5f);
+            rt.anchorMax = new Vector2(0f, 0.5f);
+            rt.pivot = new Vector2(0f, 0.5f);
+            rt.anchoredPosition = anchoredPos;
+            rt.sizeDelta = new Vector2(72f, 72f);
+            go.GetComponent<Image>().color = Color.clear;
+            go.GetComponent<Button>().transition = Selectable.Transition.None;
+
+            var text = CreateTmpChild(go.transform, "Label", 36, FontStyles.Bold, Vector2.zero);
+            var textRt = text.GetComponent<RectTransform>();
+            StretchToParent(textRt);
+            var tmp = text.GetComponent<TextMeshProUGUI>();
+            tmp.text = label;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = UiTheme.TextPrimary;
+            return go;
+        }
+
+        static CalendarDayCell EnsureCalendarDayCellPrefab()
+        {
+            const string path = PrefabFolder + "/CalendarDayCell.prefab";
+            var existing = AssetDatabase.LoadAssetAtPath<CalendarDayCell>(path);
+            if (existing != null)
+                return existing;
+
+            if (!AssetDatabase.IsValidFolder(PrefabFolder))
+            {
+                if (!AssetDatabase.IsValidFolder("Assets/Prefabs"))
+                    AssetDatabase.CreateFolder("Assets", "Prefabs");
+                AssetDatabase.CreateFolder("Assets/Prefabs", "UI");
+            }
+
+            var root = new GameObject("CalendarDayCell", typeof(RectTransform), typeof(Image), typeof(Button), typeof(CalendarDayCell));
+            root.GetComponent<Image>().color = Color.clear;
+            root.GetComponent<Button>().transition = Selectable.Transition.None;
+
+            var label = CreateTmpChild(root.transform, "DayLabel", 22, FontStyles.Normal, Vector2.zero);
+            var labelRt = label.GetComponent<RectTransform>();
+            StretchToParent(labelRt);
+            labelRt.offsetMax = new Vector2(0f, -8f);
+            var labelTmp = label.GetComponent<TextMeshProUGUI>();
+            labelTmp.alignment = TextAlignmentOptions.Center;
+            labelTmp.color = UiTheme.TextPrimary;
+
+            var marker = new GameObject("BirthdayMarker", typeof(RectTransform), typeof(Image));
+            marker.transform.SetParent(root.transform, false);
+            var markerRt = marker.GetComponent<RectTransform>();
+            markerRt.anchorMin = new Vector2(0.5f, 0f);
+            markerRt.anchorMax = new Vector2(0.5f, 0f);
+            markerRt.pivot = new Vector2(0.5f, 0f);
+            markerRt.anchoredPosition = new Vector2(0f, 6f);
+            markerRt.sizeDelta = new Vector2(10f, 10f);
+            marker.GetComponent<Image>().color = UiTheme.PrimaryAccent;
+
+            var cell = root.GetComponent<CalendarDayCell>();
+            var so = new SerializedObject(cell);
+            so.FindProperty("button").objectReferenceValue = root.GetComponent<Button>();
+            so.FindProperty("background").objectReferenceValue = root.GetComponent<Image>();
+            so.FindProperty("birthdayMarker").objectReferenceValue = marker.GetComponent<Image>();
+            so.FindProperty("dayLabel").objectReferenceValue = labelTmp;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+            Object.DestroyImmediate(root);
+            return prefab.GetComponent<CalendarDayCell>();
+        }
+
         static GameObject CreateQuizHomeCard(Transform parent, LocalizationRefs loc)
         {
             var card = new GameObject("QuizCard", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
@@ -3955,6 +4317,7 @@ namespace PeopleOfMath.Editor
             GameObject index,
             GameObject list,
             GameObject favorites,
+            GameObject calendar,
             GameObject quiz,
             GameObject about,
             GameObject detail,
@@ -3969,6 +4332,7 @@ namespace PeopleOfMath.Editor
             so.FindProperty("listPanel").objectReferenceValue = list.GetComponent<ListPanel>();
             so.FindProperty("favoritesPanel").objectReferenceValue = favorites.GetComponent<FavoritesPanel>();
             so.FindProperty("favoritesTransition").objectReferenceValue = favorites.GetComponent<UiPanelSlideTransition>();
+            so.FindProperty("calendarPanel").objectReferenceValue = calendar != null ? calendar.GetComponent<CalendarPanel>() : null;
             so.FindProperty("quizPanel").objectReferenceValue = quiz.GetComponent<QuizPanel>();
             so.FindProperty("aboutPanel").objectReferenceValue = about != null ? about.GetComponent<AboutPanel>() : null;
             so.FindProperty("detailPanel").objectReferenceValue = detail.GetComponent<DetailPanel>();
@@ -4740,6 +5104,235 @@ namespace PeopleOfMath.Editor
             Debug.Log("Quiz support patched in Main scene.");
         }
 
+        [MenuItem("PeopleOfMath/Patch Birthday Calendar")]
+        public static void PatchBirthdayCalendar()
+        {
+            if (DeferUntilEditMode(PatchBirthdayCalendar))
+                return;
+
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError($"Scene not found: {ScenePath}");
+                return;
+            }
+
+            UiSpriteFactory.EnsureSprites();
+            var loc = SetupLocalization();
+            AssetDatabase.SaveAssets();
+
+            PatchShareListItemPrefab($"{PrefabFolder}/MathematicianListItem.prefab");
+            PatchShareListItemPrefab("Assets/Resources/MathematicianListItem.prefab");
+            EnsureCalendarDayCellPrefab();
+
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            PatchBirthdayCalendarInOpenScene(loc);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Birthday calendar patched in Main scene.");
+        }
+
+        static void PatchBirthdayCalendarInOpenScene(LocalizationRefs loc)
+        {
+            var navigation = Object.FindFirstObjectByType<NavigationController>();
+            var repository = Object.FindFirstObjectByType<MathematicianRepository>();
+            if (navigation == null || repository == null)
+            {
+                Debug.LogError("NavigationController or MathematicianRepository not found in Main scene.");
+                return;
+            }
+
+            var contentArea = GameObject.Find("ContentArea")?.transform;
+            if (contentArea == null)
+            {
+                Debug.LogError("ContentArea not found in Main scene.");
+                return;
+            }
+
+            var listItemPrefab = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab");
+
+            var calendarPanelGo = contentArea.Find("CalendarPanel")?.gameObject;
+            if (calendarPanelGo == null)
+            {
+                calendarPanelGo = CreateCalendarPanel(contentArea, navigation, repository, listItemPrefab, loc);
+                var favoritesPanel = contentArea.Find("FavoritesPanel");
+                if (favoritesPanel != null)
+                    calendarPanelGo.transform.SetSiblingIndex(favoritesPanel.GetSiblingIndex() + 1);
+            }
+            else
+            {
+                EnsureCalendarPanelUpgraded(calendarPanelGo, navigation, repository, listItemPrefab, loc);
+            }
+
+            var header = GameObject.Find("Header");
+            HeaderTitleBinder headerBinder = null;
+            if (header != null)
+            {
+                headerBinder = header.GetComponent<HeaderTitleBinder>();
+                var calendarTitle = header.transform.Find("CalendarTitle")?.gameObject;
+                if (calendarTitle == null)
+                {
+                    calendarTitle = CreateLocalizedTitle(header.transform, "CalendarTitle", loc.CalendarTitle);
+                    calendarTitle.SetActive(false);
+                }
+
+                if (headerBinder != null)
+                {
+                    var binderSo = new SerializedObject(headerBinder);
+                    binderSo.FindProperty("calendarTitleEvent").objectReferenceValue =
+                        calendarTitle.GetComponent<LocalizeStringEvent>();
+                    binderSo.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+
+            var home = contentArea.Find("HomePanel")?.gameObject;
+            var indexPanelGo = contentArea.Find("IndexPanel")?.gameObject;
+            var list = contentArea.Find("ListPanel")?.gameObject;
+            var favorites = contentArea.Find("FavoritesPanel")?.gameObject;
+            var quiz = contentArea.Find("QuizPanel")?.gameObject;
+            var about = contentArea.Find("AboutPanel")?.gameObject;
+            var detail = contentArea.Find("DetailPanel")?.gameObject;
+            var settings = contentArea.Find("SettingsPanel")?.gameObject;
+            var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
+            var bottomBar = GameObject.Find("BottomBar")?.transform;
+
+            if (home != null && indexPanelGo != null && list != null && favorites != null && calendarPanelGo != null
+                && quiz != null && about != null && detail != null && settings != null && backButton != null
+                && headerBinder != null && bottomBar != null)
+            {
+                WireNavigation(
+                    navigation,
+                    home,
+                    indexPanelGo,
+                    list,
+                    favorites,
+                    calendarPanelGo,
+                    quiz,
+                    about,
+                    detail,
+                    settings,
+                    backButton,
+                    headerBinder,
+                    new BottomBarResult
+                    {
+                        browseTab = bottomBar.Find("BrowseTab")?.GetComponent<Button>(),
+                        indexTab = bottomBar.Find("IndexTab")?.GetComponent<Button>(),
+                        settingsTab = bottomBar.Find("SettingsTab")?.GetComponent<Button>(),
+                        favoritesButton = bottomBar.Find("FavoritesButton")?.GetComponent<Button>()
+                            ?? bottomBar.Find("FavoritesTab")?.GetComponent<Button>(),
+                        quizTab = bottomBar.Find("QuizTab")?.GetComponent<Button>(),
+                        aboutTab = bottomBar.Find("AboutTab")?.GetComponent<Button>()
+                    });
+            }
+            else
+            {
+                var navSo = new SerializedObject(navigation);
+                navSo.FindProperty("calendarPanel").objectReferenceValue =
+                    calendarPanelGo.GetComponent<CalendarPanel>();
+                navSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
+        static void EnsureCalendarPanelUpgraded(
+            GameObject calendarPanelGo,
+            NavigationController nav,
+            MathematicianRepository repo,
+            MathematicianListItem listItemPrefab,
+            LocalizationRefs loc)
+        {
+            if (calendarPanelGo == null)
+                return;
+
+            var dayGrid = calendarPanelGo.transform.Find("DayGrid");
+            if (dayGrid != null)
+            {
+                var dayGridRt = dayGrid.GetComponent<RectTransform>();
+                if (dayGridRt != null)
+                    dayGridRt.sizeDelta = new Vector2(-48f, 360f);
+
+                var grid = dayGrid.GetComponent<GridLayoutGroup>();
+                if (grid != null)
+                    grid.cellSize = new Vector2(128f, 56f);
+
+                PopulateStaticDayCells(dayGrid, EnsureCalendarDayCellPrefab());
+            }
+
+            var yearSection = calendarPanelGo.transform.Find("CurrentYearSection")?.gameObject;
+            if (yearSection == null)
+                yearSection = CreateCalendarCurrentYearSection(calendarPanelGo.transform, loc);
+
+            var yearSectionRt = yearSection.GetComponent<RectTransform>();
+            yearSectionRt.anchorMin = new Vector2(0f, 0.42f);
+            yearSectionRt.anchorMax = new Vector2(1f, 1f);
+            yearSectionRt.offsetMin = new Vector2(0f, 0f);
+            yearSectionRt.offsetMax = new Vector2(0f, -520f);
+
+            var birthdayScroll = calendarPanelGo.transform.Find("BirthdayListScroll")?.GetComponent<RectTransform>();
+            if (birthdayScroll != null)
+            {
+                birthdayScroll.anchorMin = Vector2.zero;
+                birthdayScroll.anchorMax = new Vector2(1f, 0.42f);
+                birthdayScroll.offsetMin = Vector2.zero;
+                birthdayScroll.offsetMax = Vector2.zero;
+            }
+
+            var empty = calendarPanelGo.transform.Find("Empty")?.gameObject;
+            if (empty != null)
+            {
+                var emptyRt = empty.GetComponent<RectTransform>();
+                if (emptyRt != null)
+                {
+                    emptyRt.anchorMin = new Vector2(0f, 0f);
+                    emptyRt.anchorMax = new Vector2(1f, 0.42f);
+                    emptyRt.offsetMin = new Vector2(40f, 40f);
+                    emptyRt.offsetMax = new Vector2(-40f, -40f);
+                }
+            }
+
+            var anniversaryYearLabel = yearSection.transform.Find("YearLabel")?.GetComponent<TMP_Text>();
+            var anniversaryListContent = yearSection.transform.Find("AnniversaryScroll")?.GetComponent<ScrollRect>()?.content;
+            var anniversaryEmpty = yearSection.transform.Find("AnniversaryEmpty")?.gameObject;
+
+            var calendar = calendarPanelGo.GetComponent<CalendarPanel>() ?? calendarPanelGo.AddComponent<CalendarPanel>();
+            var prefabRef = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab") ?? listItemPrefab;
+            var so = new SerializedObject(calendar);
+            so.FindProperty("navigation").objectReferenceValue = nav;
+            so.FindProperty("repository").objectReferenceValue = repo;
+            if (dayGrid != null)
+                so.FindProperty("dayGrid").objectReferenceValue = dayGrid;
+            var monthLabel = calendarPanelGo.transform.Find("MonthBar/MonthLabel")?.GetComponent<TMP_Text>();
+            if (monthLabel != null)
+                so.FindProperty("monthLabel").objectReferenceValue = monthLabel;
+            var prev = calendarPanelGo.transform.Find("MonthBar/PrevMonth")?.GetComponent<Button>();
+            if (prev != null)
+                so.FindProperty("prevMonthButton").objectReferenceValue = prev;
+            var next = calendarPanelGo.transform.Find("MonthBar/NextMonth")?.GetComponent<Button>();
+            if (next != null)
+                so.FindProperty("nextMonthButton").objectReferenceValue = next;
+            var weekdayHeader = calendarPanelGo.transform.Find("WeekdayHeader");
+            if (weekdayHeader != null)
+                so.FindProperty("weekdayHeader").objectReferenceValue = weekdayHeader;
+            var listContent = calendarPanelGo.transform.Find("BirthdayListScroll")?.GetComponent<ScrollRect>()?.content;
+            if (listContent != null)
+                so.FindProperty("listContent").objectReferenceValue = listContent;
+            if (prefabRef != null)
+                so.FindProperty("itemPrefab").objectReferenceValue = prefabRef;
+            if (empty != null)
+                so.FindProperty("emptyState").objectReferenceValue = empty;
+            so.FindProperty("anniversaryYearLabel").objectReferenceValue = anniversaryYearLabel;
+            so.FindProperty("anniversaryListContent").objectReferenceValue = anniversaryListContent;
+            so.FindProperty("anniversaryEmptyState").objectReferenceValue = anniversaryEmpty;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(calendarPanelGo);
+        }
+
+        public static void RunPatchBirthdayCalendarBatch()
+        {
+            PatchBirthdayCalendar();
+            EditorApplication.Exit(0);
+        }
+
         [MenuItem("PeopleOfMath/Patch Favorites Support")]
         public static void PatchFavoritesSupport()
         {
@@ -4961,6 +5554,7 @@ namespace PeopleOfMath.Editor
             var home = contentArea.Find("HomePanel")?.gameObject;
             var list = contentArea.Find("ListPanel")?.gameObject;
             var favorites = contentArea.Find("FavoritesPanel")?.gameObject;
+            var calendar = contentArea.Find("CalendarPanel")?.gameObject;
             var quiz = contentArea.Find("QuizPanel")?.gameObject;
             var detail = contentArea.Find("DetailPanel")?.gameObject;
             var settings = contentArea.Find("SettingsPanel")?.gameObject;
@@ -4971,12 +5565,15 @@ namespace PeopleOfMath.Editor
                 && browseTab != null && indexTab != null && settingsTab != null)
             {
                 var aboutGo = EnsureAboutPanel(contentArea, loc);
+                if (calendar == null)
+                    calendar = CreateCalendarPanel(contentArea, navigation, repository, listItemPrefab, loc);
                 WireNavigation(
                     navigation,
                     home,
                     indexPanelGo,
                     list,
                     favorites != null ? favorites : CreateFavoritesPanel(contentArea, navigation, repository, listItemPrefab, loc),
+                    calendar,
                     quiz != null ? quiz : CreateQuizPanel(contentArea, navigation, repository, loc),
                     aboutGo,
                     detail,
@@ -5138,21 +5735,27 @@ namespace PeopleOfMath.Editor
             var indexPanelGo = contentArea.Find("IndexPanel")?.gameObject;
             var list = contentArea.Find("ListPanel")?.gameObject;
             var favoritesPanelGo = contentArea.Find("FavoritesPanel")?.gameObject;
+            var calendarPanelGo = contentArea.Find("CalendarPanel")?.gameObject;
             var detail = contentArea.Find("DetailPanel")?.gameObject;
             var settings = contentArea.Find("SettingsPanel")?.gameObject;
             var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
+            var listItemPrefab = AssetDatabase.LoadAssetAtPath<MathematicianListItem>(
+                $"{PrefabFolder}/MathematicianListItem.prefab");
 
             if (homeGo != null && indexPanelGo != null && list != null && favoritesPanelGo != null && detail != null
                 && settings != null && backButton != null && headerBinder != null
                 && browseTab != null && indexTab != null && settingsTab != null && favoritesButton != null && quizTab != null)
             {
                 var aboutGo = EnsureAboutPanel(contentArea, loc);
+                if (calendarPanelGo == null)
+                    calendarPanelGo = CreateCalendarPanel(contentArea, navigation, repository, listItemPrefab, loc);
                 WireNavigation(
                     navigation,
                     homeGo,
                     indexPanelGo,
                     list,
                     favoritesPanelGo,
+                    calendarPanelGo,
                     quizPanelGo,
                     aboutGo,
                     detail,
@@ -5330,6 +5933,9 @@ namespace PeopleOfMath.Editor
             var detail = contentArea.Find("DetailPanel")?.gameObject;
             var settings = contentArea.Find("SettingsPanel")?.gameObject;
             var backButton = header != null ? header.transform.Find("BackButton")?.gameObject : null;
+            var calendarPanelGo = contentArea.Find("CalendarPanel")?.gameObject;
+            if (calendarPanelGo == null)
+                calendarPanelGo = CreateCalendarPanel(contentArea, navigation, repository, listItemPrefab, loc);
 
             if (home != null && indexPanelGo != null && list != null && detail != null && settings != null
                 && backButton != null && headerBinder != null && browseTab != null && indexTab != null
@@ -5342,6 +5948,7 @@ namespace PeopleOfMath.Editor
                     indexPanelGo,
                     list,
                     favoritesPanelGo,
+                    calendarPanelGo,
                     quizPanelGo,
                     aboutGo,
                     detail,

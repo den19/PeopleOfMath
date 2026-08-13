@@ -10,6 +10,7 @@ namespace PeopleOfMath.Editor
         const string RoundedRectPath = SpriteFolder + "/RoundedRect.png";
         const string ButtonGradientPath = SpriteFolder + "/ButtonGradient.png";
         const string ShareIconPath = "Assets/Resources/UI/ShareIcon.png";
+        const string CalendarIconPath = "Assets/Resources/UI/CalendarIcon.png";
         const string HeartOutlinePath = "Assets/Resources/UI/HeartOutline.png";
         const string HeartFilledPath = "Assets/Resources/UI/HeartFilled.png";
         const string TabBrowsePath = "Assets/Resources/UI/TabBrowse.png";
@@ -25,6 +26,7 @@ namespace PeopleOfMath.Editor
         static Sprite _roundedRect;
         static Sprite _buttonGradient;
         static Sprite _shareIcon;
+        static Sprite _calendarIcon;
         static Sprite _heartOutline;
         static Sprite _heartFilled;
         static Sprite _tabBrowse;
@@ -57,6 +59,15 @@ namespace PeopleOfMath.Editor
             {
                 EnsureSprites();
                 return _shareIcon;
+            }
+        }
+
+        public static Sprite CalendarIcon
+        {
+            get
+            {
+                EnsureSprites();
+                return _calendarIcon;
             }
         }
 
@@ -160,6 +171,9 @@ namespace PeopleOfMath.Editor
 
             if (_shareIcon == null)
                 _shareIcon = LoadOrCreateShareIcon();
+
+            if (_calendarIcon == null)
+                _calendarIcon = LoadOrCreateCalendarIcon();
 
             if (_heartOutline == null)
                 _heartOutline = LoadOrCreateHeartIcon(HeartOutlinePath, filled: false);
@@ -283,6 +297,34 @@ namespace PeopleOfMath.Editor
             return AssetDatabase.LoadAssetAtPath<Sprite>(ShareIconPath);
         }
 
+        static Sprite LoadOrCreateCalendarIcon()
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<Sprite>(CalendarIconPath);
+            if (existing != null)
+                return existing;
+
+            const int size = 64;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            tex.filterMode = FilterMode.Bilinear;
+            tex.wrapMode = TextureWrapMode.Clamp;
+
+            var pixels = new Color32[size * size];
+            for (var i = 0; i < pixels.Length; i++)
+                pixels[i] = new Color32(0, 0, 0, 0);
+
+            DrawCalendarIcon(pixels, size);
+            tex.SetPixels32(pixels);
+            tex.Apply();
+
+            var png = tex.EncodeToPNG();
+            File.WriteAllBytes(CalendarIconPath, png);
+            Object.DestroyImmediate(tex);
+
+            AssetDatabase.ImportAsset(CalendarIconPath);
+            ConfigureSpriteImporter(CalendarIconPath, 0);
+            return AssetDatabase.LoadAssetAtPath<Sprite>(CalendarIconPath);
+        }
+
         static Sprite LoadOrCreateHeartIcon(string path, bool filled)
         {
             var existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
@@ -363,6 +405,40 @@ namespace PeopleOfMath.Editor
             DrawCircle(pixels, size, bottom, 6f, white);
             DrawLine(pixels, size, left, top, 3f, white);
             DrawLine(pixels, size, left, bottom, 3f, white);
+        }
+
+        static void DrawCalendarIcon(Color32[] pixels, int size)
+        {
+            var white = new Color32(255, 255, 255, 255);
+            var pad = size * 0.14f;
+            var rect = new Rect(pad, pad + size * 0.06f, size - pad * 2f, size - pad * 2f - size * 0.04f);
+            const float radius = 6f;
+            const float stroke = 3.5f;
+            DrawRoundedRectOutline(pixels, size, rect, radius, stroke, white);
+
+            var headerTop = rect.yMax - size * 0.18f;
+            DrawLine(
+                pixels,
+                size,
+                new Vector2(rect.x + stroke, headerTop),
+                new Vector2(rect.xMax - stroke, headerTop),
+                stroke * 0.85f,
+                white);
+
+            var binderY1 = rect.yMax - size * 0.02f;
+            var binderY0 = rect.y + size * 0.02f;
+            var binderLeft = rect.x + rect.width * 0.28f;
+            var binderRight = rect.x + rect.width * 0.72f;
+            DrawLine(pixels, size, new Vector2(binderLeft, binderY0), new Vector2(binderLeft, binderY1), stroke, white);
+            DrawLine(pixels, size, new Vector2(binderRight, binderY0), new Vector2(binderRight, binderY1), stroke, white);
+
+            var cellY = rect.y + size * 0.22f;
+            var cellX0 = rect.x + size * 0.18f;
+            var cellGap = size * 0.16f;
+            for (var i = 0; i < 3; i++)
+                DrawCircle(pixels, size, new Vector2(cellX0 + cellGap * i, cellY), size * 0.045f, white);
+            for (var i = 0; i < 2; i++)
+                DrawCircle(pixels, size, new Vector2(cellX0 + cellGap * i, cellY + size * 0.14f), size * 0.045f, white);
         }
 
         delegate void TabIconDrawer(Color32[] pixels, int size);

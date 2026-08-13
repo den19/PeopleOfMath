@@ -94,6 +94,13 @@ namespace PeopleOfMath.Editor
             -(ListItemActionButtonsTop
               + ListItemActionButtonSize
               + ListItemLayoutMetrics.ActionButtonGap));
+        public static Vector2 ListItemCalendarButtonPos => new Vector2(
+            ListItemLeftPadding,
+            -(ListItemActionButtonsTop
+              + ListItemActionButtonSize
+              + ListItemLayoutMetrics.ActionButtonGap
+              + ListItemActionButtonSize
+              + ListItemLayoutMetrics.ActionButtonGap));
         public static Vector2 ListItemNamePos => new Vector2(ListItemTextColumnLeft, -ListItemTopPadding);
         public static Vector2 ListItemDatesPos => new Vector2(
             ListItemTextColumnLeft, -(ListItemTopPadding + ListItemNameHeight + ListItemVerticalGap));

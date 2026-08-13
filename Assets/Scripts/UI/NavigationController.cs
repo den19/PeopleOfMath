@@ -15,6 +15,7 @@ namespace PeopleOfMath.Core
         [SerializeField] DetailPanel detailPanel;
         [SerializeField] SettingsPanel settingsPanel;
         [SerializeField] FavoritesPanel favoritesPanel;
+        [SerializeField] CalendarPanel calendarPanel;
         [SerializeField] QuizPanel quizPanel;
         [SerializeField] AboutPanel aboutPanel;
         [SerializeField] UiPanelSlideTransition favoritesTransition;
@@ -63,6 +64,7 @@ namespace PeopleOfMath.Core
             detailPanel?.gameObject.SetActive(false);
             settingsPanel?.gameObject.SetActive(false);
             favoritesPanel?.gameObject.SetActive(false);
+            calendarPanel?.gameObject.SetActive(false);
             quizPanel?.gameObject.SetActive(false);
             aboutPanel?.gameObject.SetActive(false);
         }
@@ -74,6 +76,7 @@ namespace PeopleOfMath.Core
             listPanel?.gameObject.SetActive(false);
             detailPanel?.gameObject.SetActive(false);
             settingsPanel?.gameObject.SetActive(false);
+            calendarPanel?.gameObject.SetActive(false);
             quizPanel?.gameObject.SetActive(false);
             aboutPanel?.gameObject.SetActive(false);
         }
@@ -175,6 +178,18 @@ namespace PeopleOfMath.Core
                     break;
                 case AppScreen.Favorites:
                     PresentFavorites(restoring);
+                    break;
+                case AppScreen.Calendar:
+                    if (calendarPanel != null)
+                    {
+                        if (!restoring)
+                            calendarPanel.ResetToToday();
+                        calendarPanel.gameObject.SetActive(true);
+                    }
+
+                    if (headerBackButton != null)
+                        headerBackButton.SetActive(true);
+                    headerTitle?.SetCalendarTitle();
                     break;
                 case AppScreen.Quiz:
                     if (quizPanel != null)
@@ -299,6 +314,14 @@ namespace PeopleOfMath.Core
             Push(ScreenContext.Favorites());
         }
 
+        public void ShowCalendar()
+        {
+            if (CurrentScreen == AppScreen.Calendar)
+                return;
+
+            Push(ScreenContext.Calendar());
+        }
+
         public void ShowQuiz() => SetRoot(ScreenContext.Quiz());
 
         public void ShowAbout() => SetRoot(ScreenContext.About());
@@ -314,6 +337,7 @@ namespace PeopleOfMath.Core
                 AppScreen.Index => DetailOrigin.Index,
                 AppScreen.Favorites => DetailOrigin.Favorites,
                 AppScreen.Quiz => DetailOrigin.Quiz,
+                AppScreen.Calendar => DetailOrigin.Calendar,
                 AppScreen.Home => DetailOrigin.Home,
                 AppScreen.List when previous.ListFromSearch => DetailOrigin.Search,
                 AppScreen.List => DetailOrigin.FilterList,
@@ -328,7 +352,8 @@ namespace PeopleOfMath.Core
 
             var browseActive = ctx.Screen == AppScreen.Home
                 || ctx.Screen == AppScreen.List
-                || (ctx.Screen == AppScreen.Detail && detailOrigin is DetailOrigin.Home or DetailOrigin.Search or DetailOrigin.FilterList);
+                || ctx.Screen == AppScreen.Calendar
+                || (ctx.Screen == AppScreen.Detail && detailOrigin is DetailOrigin.Home or DetailOrigin.Search or DetailOrigin.FilterList or DetailOrigin.Calendar);
             var indexActive = ctx.Screen == AppScreen.Index
                 || (ctx.Screen == AppScreen.Detail && detailOrigin == DetailOrigin.Index);
             var settingsActive = ctx.Screen == AppScreen.Settings;
@@ -381,6 +406,9 @@ namespace PeopleOfMath.Core
                     Pop();
                     break;
                 case AppScreen.Favorites:
+                    Pop();
+                    break;
+                case AppScreen.Calendar:
                     Pop();
                     break;
                 case AppScreen.Index:
