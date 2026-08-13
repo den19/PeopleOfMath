@@ -386,7 +386,7 @@ Assets/Scripts/Localization/UiStrings.cs
 | | |
 |---|---|
 | USB (ADB) | `Tools/install_apk_adb.ps1` → `adb install -r`; package `com.peopleofmath.app` |
-| Bluetooth | `Tools/deploy_apk_bluetooth.ps1` → OBEX / `fsquirt`; устройство по умолчанию `TECHNO POVA 7 Ultra 5G` |
+| Bluetooth | `Tools/deploy_apk_bluetooth.ps1` → OBEX / `fsquirt`; телефоны в `Tools/phone_targets.ps1` (`-Phone pova` / `-Phone camon`) |
 | Меню | `PeopleOfMath → Android → …` (`AndroidDeployMenu`) — install/deploy и build+install/deploy |
 | CLI без сборки | `-SkipBuild` (Editor может оставаться открытым) |
 | Агент | «установи APK» → `.cursor/rules/install-apk-adb.mdc`; «отправь APK» → `.cursor/rules/deploy-apk-bluetooth.mdc` |

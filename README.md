@@ -152,7 +152,7 @@ powershell -ExecutionPolicy Bypass -File Tools\install_apk_adb.ps1 -SkipBuild
 powershell -ExecutionPolicy Bypass -File Tools\deploy_apk_bluetooth.ps1
 ```
 
-По умолчанию устройство `TECHNO POVA 7 Ultra 5G`; headless OBEX, при ошибке — `fsquirt.exe`. На телефоне нужно **Accept**. Только отправка без сборки: `-SkipBuild`.
+Известные телефоны: `TECNO POVA 7 Ultra 5G` (`-Phone pova`) и `TECNO CAMON 20 Pro` (`-Phone camon`); без `-Phone` пробуются оба. Headless OBEX, при ошибке — `fsquirt.exe`. На телефоне нужно **Accept**. Только отправка без сборки: `-SkipBuild`.
 
 **В Unity Editor:** **PeopleOfMath → Android → Deploy / Build and Deploy APK via Bluetooth**.
 
